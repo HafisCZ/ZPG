@@ -1,0 +1,6 @@
+.vs/**
+Debug/**
+Dependence/glew/**
+Dependence/glfw/**
+Dependence/glm/**
+imgui.ini

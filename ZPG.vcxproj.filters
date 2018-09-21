@@ -1,0 +1,135 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\Vendor">
+      <UniqueIdentifier>{0fdf4172-63b9-4ac8-9a4f-54c42e450064}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tests">
+      <UniqueIdentifier>{efbb89ac-ff16-4cf0-8287-ea8621754780}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VertexBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IndexBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VertexArray.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\imgui.cpp">
+      <Filter>Source Files\Vendor</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\imgui_demo.cpp">
+      <Filter>Source Files\Vendor</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\imgui_draw.cpp">
+      <Filter>Source Files\Vendor</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\imgui_impl_glfw.cpp">
+      <Filter>Source Files\Vendor</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\imgui_impl_opengl3.cpp">
+      <Filter>Source Files\Vendor</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\imgui_widgets.cpp">
+      <Filter>Source Files\Vendor</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\stb_image.cpp">
+      <Filter>Source Files\Vendor</Filter>
+    </ClCompile>
+    <ClCompile Include="TestClearColor.cpp">
+      <Filter>Source Files\Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="Test.cpp">
+      <Filter>Source Files\Tests</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="IndexBuffer.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexArray.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexBuffer.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexBufferLayout.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imconfig.h">
+      <Filter>Source Files\Vendor</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imgui.h">
+      <Filter>Source Files\Vendor</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imgui_impl_glfw.h">
+      <Filter>Source Files\Vendor</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imgui_impl_opengl3.h">
+      <Filter>Source Files\Vendor</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imgui_internal.h">
+      <Filter>Source Files\Vendor</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imstb_rectpack.h">
+      <Filter>Source Files\Vendor</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imstb_textedit.h">
+      <Filter>Source Files\Vendor</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\imstb_truetype.h">
+      <Filter>Source Files\Vendor</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\stb_image.h">
+      <Filter>Source Files\Vendor</Filter>
+    </ClInclude>
+    <ClInclude Include="Test.h">
+      <Filter>Source Files\Tests</Filter>
+    </ClInclude>
+    <ClInclude Include="TestClearColor.h">
+      <Filter>Source Files\Tests</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\shaders\Basic.shader">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\textures\avatar.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+</Project>
