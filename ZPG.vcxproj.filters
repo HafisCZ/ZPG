@@ -65,6 +65,9 @@
     <ClCompile Include="Test.cpp">
       <Filter>Source Files\Tests</Filter>
     </ClCompile>
+    <ClCompile Include="TestTexture2D.cpp">
+      <Filter>Source Files\Tests</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="IndexBuffer.h">
@@ -119,6 +122,9 @@
       <Filter>Source Files\Tests</Filter>
     </ClInclude>
     <ClInclude Include="TestClearColor.h">
+      <Filter>Source Files\Tests</Filter>
+    </ClInclude>
+    <ClInclude Include="TestTexture2D.h">
       <Filter>Source Files\Tests</Filter>
     </ClInclude>
   </ItemGroup>

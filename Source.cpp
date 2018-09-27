@@ -29,6 +29,7 @@
 #include "vendor/imgui_impl_opengl3.h"
 
 #include "TestClearColor.h"
+#include "TestTexture2D.h"
 
 int main(int argc, char** argv)
 {
@@ -60,55 +61,6 @@ int main(int argc, char** argv)
 	}
 
 	{
-		/*
-		// 4 vertexes for draw square
-		float positions[] = {
-			-50.0f, -50.0f, 0.0f, 0.0f,
-			 50.0f, -50.0f, 1.0f, 0.0f,
-			 50.0f,  50.0f, 1.0f, 1.0f,
-			-50.0f,  50.0f, 0.0f, 1.0f
-		};
-
-		// what vertexes use to draw a 2 triangles from vertex buffer
-		unsigned int indices[] = {
-			0, 1, 2,
-			0, 2, 3
-		};
-
-		// setup blending
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		
-		VertexArray va;
-
-		VertexBuffer vb(positions, 4 * 4 * sizeof(float));
-
-		VertexBufferLayout layout;
-		layout.push<float>(2);
-		layout.push<float>(2);
-
-		va.addBuffer(vb, layout);
-
-		IndexBuffer ib(indices, 6);
-		
-		// ortographic projection matrix (pixel mapped)
-		glm::mat4 proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f);
-		// view matrix
-		glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
-
-		Shader shader("resources/shaders/Basic.shader");
-		shader.bind();
-
-		Texture texture("resources/textures/avatar.png");
-		texture.bind();
-		shader.setUniform1i("u_texture", 0);
-
-		// unbind everything
-		va.unbind();
-		shader.unbind();
-		vb.unbind();
-		ib.unbind();
-		*/
 		Renderer renderer;
 
 
@@ -118,16 +70,12 @@ int main(int argc, char** argv)
 
 		ImGui::StyleColorsDark();
 
-		/*
-		glm::vec3 translationA(200, 200, 0);
-		glm::vec3 translationB(400, 200, 0);
-		*/
-
 		test::Test* currentTest = nullptr;
 		test::TestMenu* testMenu = new test::TestMenu(currentTest);
 		currentTest = testMenu;
 
 		testMenu->registerTest<test::ClearColor>("Clear color");
+		testMenu->registerTest<test::Texture2D>("Texture2D");
 
 		while (!glfwWindowShouldClose(window)) {
 			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);

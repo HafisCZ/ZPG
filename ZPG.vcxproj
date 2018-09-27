@@ -126,6 +126,7 @@
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="Test.cpp" />
     <ClCompile Include="TestClearColor.cpp" />
+    <ClCompile Include="TestTexture2D.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="vendor\imgui.cpp" />
     <ClCompile Include="vendor\imgui_demo.cpp" />
@@ -143,6 +144,7 @@
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Test.h" />
     <ClInclude Include="TestClearColor.h" />
+    <ClInclude Include="TestTexture2D.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="vendor\imconfig.h" />
     <ClInclude Include="vendor\imgui.h" />
