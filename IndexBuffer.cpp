@@ -2,7 +2,7 @@
 
 #include "Renderer.h"
 
-IndexBuffer::IndexBuffer(const unsigned int* data, unsigned int count) 
+IndexBuffer::IndexBuffer(const void* data, unsigned int count) 
 	: m_count(count)
 {
 	// generate 1 buffer

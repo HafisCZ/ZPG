@@ -1,3 +1,4 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include <GL/glew.h>
 
 #include <GLFW/glfw3.h>
@@ -18,18 +19,9 @@
 #include <sstream>
 
 #include "Renderer.h"
-#include "VertexBuffer.h"
-#include "IndexBuffer.h"
-#include "VertexArray.h"
-#include "Shader.h"
 #include "Texture.h"
-
-#include "vendor/imgui.h"
-#include "vendor/imgui_impl_glfw.h"
-#include "vendor/imgui_impl_opengl3.h"
-
-#include "TestClearColor.h"
-#include "TestTexture2D.h"
+#include "Model.h"
+#include "Input.h"
 
 int main(int argc, char** argv)
 {
@@ -43,118 +35,87 @@ int main(int argc, char** argv)
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	// create window
-	window = glfwCreateWindow(640, 480, "", NULL, NULL);
+	window = glfwCreateWindow(1200, 900, "", NULL, NULL);
 	if (!window) {
 		glfwTerminate();
 		exit(EXIT_FAILURE);
 	}
 
-	// create context
 	glfwMakeContextCurrent(window);
-
-	// sync max fps to monitor refresh (vsync)
 	glfwSwapInterval(1);
 
 	if (glewInit() != GLEW_OK) {
-
+		std::cout << "[GLEW Init] ERROR" << std::endl;
 	}
 
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
+
+	Input::setDefaults(window);
+	glfwSetKeyCallback(window, Input::keyboardCallback);
+	glfwSetMouseButtonCallback(window, Input::mouseCallback);
+
 	{
+		glm::mat4 proj = glm::perspective(glm::radians(45.0f), 1200.0f / 900.0f, 0.1f, 100.0f);
+		glm::vec3 pos = glm::vec3(0, 0, 5);
+
+		float angle = 0.0f, hor = 3.14f, ver = 0.0f, speed = 0.5f;
+		
+		Model model("resources/models/mymodel.obj");
+		Shader shader("resources/shaders/Basic.shader");
+		Texture texture("resources/textures/avatar.png");
+
+		shader.bind();
+		shader.setUniform1i("u_texture", 0);
+		shader.setUniform4f("u_color", 1.0f, 1.0f, 1.0f, 1.0f);
+
 		Renderer renderer;
 
-
-		ImGui::CreateContext();
-		ImGui_ImplGlfw_InitForOpenGL(window, true);
-		ImGui_ImplOpenGL3_Init("#version 130");
-
-		ImGui::StyleColorsDark();
-
-		test::Test* currentTest = nullptr;
-		test::TestMenu* testMenu = new test::TestMenu(currentTest);
-		currentTest = testMenu;
-
-		testMenu->registerTest<test::ClearColor>("Clear color");
-		testMenu->registerTest<test::Texture2D>("Texture2D");
-
 		while (!glfwWindowShouldClose(window)) {
-			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+			glClearColor(0.0f, 0.1f, 0.3f, 1.0f);
 			renderer.clear();
 
-			ImGui_ImplOpenGL3_NewFrame();
-			ImGui_ImplGlfw_NewFrame();
-			ImGui::NewFrame();
+			texture.bind();
 
-			if (currentTest) {
-				currentTest->onUpdate(0.0f);
-				currentTest->onRender();
+			{
+				double x, y;
+				glfwGetCursorPos(window, &x, &y);
+				glfwSetCursorPos(window, 1200 / 2, 900 / 2);
 
-				ImGui::Begin("Test");
-				if (currentTest != testMenu && ImGui::Button("<-")) {
-					delete currentTest;
-					
-					currentTest = testMenu;
-				}
+				hor += speed / 500.0f * float(1200.0 / 2.0 - x);
+				ver += speed / 500.0f * float(900.0 / 2.0 - y);
 
-				currentTest->onImGuiRender();
-				ImGui::End();
+				glm::vec3 dir(cos(ver) * sin(hor), sin(ver), cos(ver) * cos(hor));
+				glm::vec3 right(sin(hor - 3.14f / 2.0f), 0, cos(hor - 3.14f / 2.0f));
+				glm::vec3 up = glm::cross(right, dir);
+			
+				if (Input::isHeld(GLFW_KEY_W)) pos += dir * speed;
+				if (Input::isHeld(GLFW_KEY_S)) pos -= dir * speed;
+				if (Input::isHeld(GLFW_KEY_D)) pos += right * speed;
+				if (Input::isHeld(GLFW_KEY_A)) pos -= right * speed;
+				
+				glm::mat4 view = glm::lookAt(pos, pos + dir, up);
+
+				angle = angle + 1.0f > 360.0f ? 0.0f : angle + 1.0f;
+
+				glm::mat4 mox = glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(0.5f, 0.5f, 0.0f));
+
+				shader.bind();
+				shader.setUniformMat4f("u_mvp", proj * view * mox);
+
+				model.draw(renderer, shader);
 			}
 
-			ImGui::Render();
-			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-			// swap buffers
 			glfwSwapBuffers(window);
-			// poll events
+
+			Input::update();
 			glfwPollEvents();
 		}
 	}
 
-	ImGui_ImplOpenGL3_Shutdown();
-	ImGui_ImplGlfw_Shutdown();
-	ImGui::DestroyContext();
-
 	glfwTerminate();
 	exit(EXIT_SUCCESS);
 }
-
-/*
-
-
-			{
-				// model matrix
-				glm::mat4 model = glm::translate(glm::mat4(1.0f), translationA);
-				// resulting model view projection matrix (reverse because of opengl column major matrix handling)
-				glm::mat4 mvp = proj * view * model;
-				// set proj matrix
-				shader.bind();
-				shader.setUniformMat4f("u_mvp", mvp);
-
-				renderer.draw(va, ib, shader);
-			}
-
-			{
-				// model matrix
-				glm::mat4 model = glm::translate(glm::mat4(1.0f), translationB);
-				// resulting model view projection matrix (reverse because of opengl column major matrix handling)
-				glm::mat4 mvp = proj * view * model;
-				// set proj matrix
-				shader.bind();
-				shader.setUniformMat4f("u_mvp", mvp);
-
-				renderer.draw(va, ib, shader);
-			}
-
-			{
-				ImGui::Begin("Translation");
-				ImGui::Text("Matrix A");
-				ImGui::SliderFloat("A X", &translationA.x, 0.0f, 960.0f);
-				ImGui::SliderFloat("A Y", &translationA.y, 0.0f, 540.0f);
-				ImGui::Text("Matrix B");
-				ImGui::SliderFloat("B X", &translationB.x, 0.0f, 960.0f);
-				ImGui::SliderFloat("B Y", &translationB.y, 0.0f, 540.0f);
-
-				ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-				ImGui::End();
-			}
-*/
