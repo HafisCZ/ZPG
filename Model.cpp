@@ -79,5 +79,16 @@ void Model::loadModel(const std::string& filepath, std::vector<ModelVertex>& ver
 		indices.push_back(tempVertexIndices[i] - 1);
 	}
 
-	std::cout << "[OBJ LOADER]\nModel vertices:  \t" << vertices.size() << "\nModel indices:    \t" << indices.size() << std::endl;
+	std::stringstream ss;
+	ss << "[.OBJ Model Loader]";
+	ss << "\nRaw:";
+	ss << "\n  XYZ: \t" << tempVertices.size();
+	ss << "\n  UVs: \t" << tempUVs.size();
+	ss << "\n  NNN: \t" << tempNormals.size();
+	ss << "\nProcessed:";
+	ss << "\n  VBO: \t" << vertices.size();
+	ss << "\n  IBO: \t" << indices.size();
+	ss << std::endl;
+
+	std::cout << ss.str();
 }

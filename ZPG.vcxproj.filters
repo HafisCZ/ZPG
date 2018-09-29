@@ -35,9 +35,6 @@
     <ClCompile Include="Shader.cpp">
       <Filter>Source Files\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="Source.cpp">
-      <Filter>Source Files\Sources</Filter>
-    </ClCompile>
     <ClCompile Include="Texture.cpp">
       <Filter>Source Files\Sources</Filter>
     </ClCompile>
@@ -46,6 +43,9 @@
     </ClCompile>
     <ClCompile Include="VertexBuffer.cpp">
       <Filter>Source Files\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

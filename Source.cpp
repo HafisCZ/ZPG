@@ -54,13 +54,16 @@ int main(int argc, char** argv)
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+
 	Input::setDefaults(window);
 	glfwSetKeyCallback(window, Input::keyboardCallback);
 	glfwSetMouseButtonCallback(window, Input::mouseCallback);
 
 	{
 		glm::mat4 proj = glm::perspective(glm::radians(45.0f), 1200.0f / 900.0f, 0.1f, 100.0f);
-		glm::vec3 pos = glm::vec3(0, 0, 5);
+		glm::vec3 pos = glm::vec3(0, 0, 0);
 
 		float angle = 0.0f, hor = 3.14f, ver = 0.0f, speed = 0.5f;
 		
@@ -74,7 +77,23 @@ int main(int argc, char** argv)
 
 		Renderer renderer;
 
+		double frameLastSample = glfwGetTime();
+		int frameCounter = 0;
+
 		while (!glfwWindowShouldClose(window)) {
+			{
+				double frameSample = glfwGetTime();
+				frameCounter++;
+
+				if (frameSample - frameLastSample >= 1.0) {
+
+					glfwSetWindowTitle(window, std::to_string(frameCounter).c_str());
+
+					frameCounter = 0;
+					frameLastSample = frameSample;
+				}
+			}
+
 			glClearColor(0.0f, 0.1f, 0.3f, 1.0f);
 			renderer.clear();
 
@@ -101,11 +120,8 @@ int main(int argc, char** argv)
 
 				angle = angle + 1.0f > 360.0f ? 0.0f : angle + 1.0f;
 
-				glm::mat4 mox = glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(0.5f, 0.5f, 0.0f));
-
 				shader.bind();
-				shader.setUniformMat4f("u_mvp", proj * view * mox);
-
+				shader.setUniformMat4f("u_mvp", proj * view * glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(1.0f, 1.0f, 1.0f)));
 				model.draw(renderer, shader);
 			}
 
