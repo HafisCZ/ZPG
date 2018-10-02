@@ -5,16 +5,12 @@
 IndexBuffer::IndexBuffer(const void* data, unsigned int count) 
 	: m_count(count)
 {
-	// generate 1 buffer
 	glGenBuffers(1, &m_rendererId);
-	// bind buffer as element array buffer (index buffer)
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_rendererId);
-	// insert data from indice array into index buffers
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(unsigned int), data, GL_STATIC_DRAW);
 }
 
 IndexBuffer::~IndexBuffer() {
-	// delete buffer
 	glDeleteBuffers(1, &m_rendererId);
 }
 

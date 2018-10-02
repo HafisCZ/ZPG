@@ -28,6 +28,7 @@ public:
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
+		// MSAA 4x
 		glfwWindowHint(GLFW_SAMPLES, 4);
 
 		if (!(m_window = glfwCreateWindow(1200, 900, "", NULL, NULL))) {
@@ -42,15 +43,19 @@ public:
 		
 		}
 
+		// Blending - enable blending for transparent textures
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+		// Depth - enable w buffer
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LESS);
 
+		// Culling - remove unseen
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
 
+		// MSAA
 		glEnable(GL_MULTISAMPLE);
 
 		glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);

@@ -21,11 +21,9 @@ void Renderer::draw(const VertexArray & va, const IndexBuffer & ib, const Shader
 	va.bind();
 	ib.bind();
 
-	// draw triangles from index buffer (6 indices)
 	glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, nullptr);
 }
 
 void Renderer::clear() const {
-	// clear color buffer
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
