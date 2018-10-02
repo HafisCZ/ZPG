@@ -36,48 +36,48 @@ void Model::loadModel(const std::string& filepath, std::vector<ModelVertex>& ver
 
 	std::string temp;
 	float x, y, z;
-	unsigned int u, v, w;
+	unsigned int u;
 
 	while (fstream >> temp) {
-
-		if (temp == "v" || temp == "vn") {
+		if (temp.compare("v") == 0) {
 			fstream >> x >> y >> z;
-			(temp == "v" ? tempVertices : tempNormals).emplace_back(x, y, z);
-		}
-		else if (temp == "vt") {
+			tempVertices.emplace_back(x, y, z);
+		} else if (temp.compare("vn") == 0) {
+			fstream >> x >> y >> z;
+			tempNormals.emplace_back(x, y, z);
+		} else if (temp.compare("vt") == 0) {
 			fstream >> x >> y;
 			tempUVs.emplace_back(x, y);
-		}
-		else if (temp == "f") {
+		} else if (temp.compare("f") == 0) {
 			std::string vertex;
 			for (int i = 0; i < 3; i++) {
 				fstream >> vertex;
 
 				std::stringstream ss(std::regex_replace(vertex, std::regex("/"), " "));
-				ss >> u >> v >> w;
-
-				tempVertexIndices.push_back(u);
-				tempUVIndices.push_back(v);
-				tempNormalIndices.push_back(w);
+				ss >> u ? tempVertexIndices.push_back(u - 1) : void();
+				ss >> u ? tempUVIndices.push_back(u - 1) : void();
+				ss >> u ? tempNormalIndices.push_back(u - 1) : void();
 			}
 		}
-
 	}
 
-	vertices.resize(tempVertices.size());
+	vertices.reserve(tempVertices.size());
 	for (unsigned int i = 0; i < tempVertexIndices.size(); i++) {
-		glm::vec3 pos = tempVertices[tempVertexIndices[i] - 1];
-		glm::vec2 uv = tempUVs[tempUVIndices[i] - 1];
-		glm::vec3 nor = tempNormals[tempNormalIndices[i] - 1];
+		glm::vec3 pos = tempVertices[tempVertexIndices[i]];
+		glm::vec2 tex = tempUVIndices.size() > 0 ? tempUVs[tempUVIndices[i]] : glm::vec2(0, 0);
+		glm::vec3 nor = tempNormalIndices.size() > 0 ? tempNormals[tempNormalIndices[i]] : glm::vec3(0, 0, 0);
+		ModelVertex vertex = { pos.x, pos.y, pos.z, tex.x, tex.y };
 
-		vertices[tempVertexIndices[i] - 1] = {
-			pos.x, pos.y, pos.z, uv.x, uv.y, /* nor.x, nor.y, nor.z */
-		};
+		unsigned int loc = std::distance(vertices.begin(), std::find(vertices.begin(), vertices.end(), vertex));
+		if (loc < vertices.size()) {
+			indices.push_back(loc);
+		} else {
+			vertices.push_back(vertex);
+			indices.push_back(vertices.size() - 1);
+		}
 	}
 
-	for (unsigned int i = 0; i < tempVertexIndices.size(); i++) {
-		indices.push_back(tempVertexIndices[i] - 1);
-	}
+	vertices.shrink_to_fit();
 
 	std::stringstream ss;
 	ss << "[.OBJ Model Loader]";

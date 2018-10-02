@@ -79,15 +79,18 @@
     <ClInclude Include="VertexBufferLayout.h">
       <Filter>Source Files\Headers</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="resources\shaders\Basic.shader">
-      <Filter>Resource Files</Filter>
-    </None>
+    <ClInclude Include="Application.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="resources\textures\avatar.png">
       <Filter>Resource Files</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\shaders\default.shader">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

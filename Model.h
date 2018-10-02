@@ -6,6 +6,10 @@
 
 struct ModelVertex {
 	float x, y, z, u, v;
+
+	bool operator == (const ModelVertex& mv) const {
+		return x == mv.x && y == mv.y && z == mv.z && u == mv.u && v == mv.v;
+	}
 };
 
 class Model {

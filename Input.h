@@ -7,10 +7,6 @@ class Input {
 	private:
 		static std::unordered_map<int, bool> m_keymap, m_prvmap;
 	public:
-		static void setDefaults(GLFWwindow* window) {
-			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); 
-		}
-
 		static void keyboardCallback(GLFWwindow* window, int key, int code, int action, int mods) { m_keymap[key] = action; }
 		static void mouseCallback(GLFWwindow* window, int button, int action, int mods) { m_keymap[button] = action; }
 

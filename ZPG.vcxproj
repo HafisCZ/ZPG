@@ -131,6 +131,7 @@
     <ClCompile Include="VertexBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Application.h" />
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Model.h" />
@@ -143,7 +144,7 @@
     <ClInclude Include="VertexBufferLayout.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="resources\shaders\Basic.shader" />
+    <None Include="resources\shaders\default.shader" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="resources\textures\avatar.png" />
