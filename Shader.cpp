@@ -21,12 +21,16 @@ void Shader::bind() const {
 	glUseProgram(m_rendererId);
 }
 
-void Shader::unbind() const {
+void Shader::unbind() const  {
 	glUseProgram(0);
 }
 
 void Shader::setUniform4f(const std::string & name, float a, float b, float c, float d) {
 	glUniform4f(getUniformLocation(name), a, b, c, d);
+}
+
+void Shader::setUniform3f(const std::string & name, float a, float b, float c) {
+	glUniform3f(getUniformLocation(name), a, b, c);
 }
 
 void Shader::setUniform1i(const std::string& name, int a) {

@@ -132,6 +132,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Model.h" />
@@ -144,7 +145,7 @@
     <ClInclude Include="VertexBufferLayout.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="resources\shaders\default.shader" />
+    <None Include="resources\shaders\light.shader" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="resources\textures\avatar.png" />

@@ -82,6 +82,9 @@
     <ClInclude Include="Application.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Source Files\Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="resources\textures\avatar.png">
@@ -89,7 +92,7 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <None Include="resources\shaders\default.shader">
+    <None Include="resources\shaders\light.shader">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

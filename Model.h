@@ -5,10 +5,14 @@
 #include "Renderer.h"
 
 struct ModelVertex {
-	float x, y, z, u, v;
+	float x, y, z, u, v, o, p, q;
 
 	bool operator == (const ModelVertex& mv) const {
-		return x == mv.x && y == mv.y && z == mv.z && u == mv.u && v == mv.v;
+		return (
+			(x == mv.x && y == mv.y && z == mv.z) &&
+			(u == mv.u && v == mv.v) &&
+			(o == mv.o && p == mv.p && q == mv.q)
+		);
 	}
 };
 

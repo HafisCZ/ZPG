@@ -22,7 +22,8 @@ Model::Model(const std::string& modelPath) {
 	VertexBufferLayout vbl;
 	vbl.push<float>(3);
 	vbl.push<float>(2);
-
+	vbl.push<float>(3);
+		
 	m_vao->addBuffer(*m_vbo, vbl);
 }
 
@@ -76,7 +77,7 @@ void Model::loadModel(const std::string& filepath, std::vector<ModelVertex>& ver
 		glm::vec2 tex = tempUVIndices.size() > 0 ? tempUVs[tempUVIndices[i]] : glm::vec2(0, 0);
 		glm::vec3 nor = tempNormalIndices.size() > 0 ? tempNormals[tempNormalIndices[i]] : glm::vec3(0, 0, 0);
 		// Construct model vertex
-		ModelVertex vertex = { pos.x, pos.y, pos.z, tex.x, tex.y };
+		ModelVertex vertex = { pos.x, pos.y, pos.z, tex.x, tex.y, nor.x, nor.y, nor.z };
 
 		// Find location of vertex in vertex vector
 		unsigned int loc = std::distance(vertices.begin(), std::find(vertices.begin(), vertices.end(), vertex));

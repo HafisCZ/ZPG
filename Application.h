@@ -14,6 +14,7 @@
 #include "Input.h"
 #include "Model.h"
 #include "Texture.h"
+#include "Camera.h"
 
 class Application {
 private:
@@ -27,7 +28,6 @@ public:
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
 		// MSAA 4x
 		glfwWindowHint(GLFW_SAMPLES, 4);
 
@@ -39,23 +39,17 @@ public:
 		glfwMakeContextCurrent(m_window);
 		glfwSwapInterval(1);
 
-		if (glewInit() != GLEW_OK) {
-		
-		}
+		if (glewInit() != GLEW_OK) { }
 
-		// Blending - enable blending for transparent textures
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		// Depth - enable w buffer
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LESS);
 
-		// Culling - remove unseen
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
 
-		// MSAA
 		glEnable(GL_MULTISAMPLE);
 
 		glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -64,80 +58,60 @@ public:
 	}
 
 	void run() {
-		glm::mat4 proj = glm::perspective(glm::radians(45.0f), 1200.0f / 900.0f, 0.1f, 100.0f);
-		glm::vec3 pos = glm::vec3(0, 0, 0);
+		float angle = 0.0f;
 
-		float angle = 0.0f, hor = 3.14f, ver = 0.0f, speed = 0.5f;
-		double frameLastSample = glfwGetTime();
-		int frameCounter = 0;
-
-		Model model("resources/models/icos.obj");
-		Model model2("resources/models/cube.obj");
-
-		Shader shader("resources/shaders/default.shader");
+		Model model("resources/models/cube.obj");
+		Shader shader("resources/shaders/light.shader");
 		Texture texture("resources/textures/avatar.png");
 
 		shader.bind();
 		shader.setUniform1i("u_texture", 0);
-		shader.setUniform4f("u_color", 1.0f, 1.0f, 1.0f, 1.0f);
+		shader.setUniform3f("u_lightCoord", 0.0f, 0.0f, 0.0f);
+		shader.setUniform3f("u_lightColor", 1.0f, 1.0f, 1.0f);
+
+		Camera camera(m_window, 1200, 900);
+		glfwSetWindowUserPointer(m_window, &camera);
+		glfwSetCursorPosCallback(m_window, [](GLFWwindow* w, double x, double y) -> void {
+			((Camera*) glfwGetWindowUserPointer(w))->glfw_motion_callback(w, x, y);
+		});
 
 		Renderer renderer;
 
 		while (!glfwWindowShouldClose(m_window)) {
-			{
-				double frameSample = glfwGetTime();
-				frameCounter++;
+			renderer.sample();
+			glfwSetWindowTitle(m_window, std::to_string(renderer.getFps()).c_str());
 
-				if (frameSample - frameLastSample >= 1.0) {
-					glfwSetWindowTitle(m_window, std::to_string(frameCounter).c_str());
-					frameCounter = 0;
-					frameLastSample = frameSample;
-				}
-			}
-
-			glClearColor(0.0f, 0.1f, 0.3f, 1.0f);
 			renderer.clear();
 
 			texture.bind();
 
+			camera.glfw_key_callback();
+			camera.processViewMatrix();
+
 			{
-				double x, y;
-				glfwGetCursorPos(m_window, &x, &y);
-				glfwSetCursorPos(m_window, 1200 / 2, 900 / 2);
-
-				hor += speed / 500.0f * float(1200.0 / 2.0 - x);
-				ver += speed / 500.0f * float(900.0 / 2.0 - y);
-
-				glm::vec3 dir(cos(ver) * sin(hor), sin(ver), cos(ver) * cos(hor));
-				glm::vec3 right(sin(hor - 3.14f / 2.0f), 0, cos(hor - 3.14f / 2.0f));
-				glm::vec3 up = glm::cross(right, dir);
-
-				if (Input::isHeld(GLFW_KEY_W)) pos += dir * speed;
-				if (Input::isHeld(GLFW_KEY_S)) pos -= dir * speed;
-				if (Input::isHeld(GLFW_KEY_D)) pos += right * speed;
-				if (Input::isHeld(GLFW_KEY_A)) pos -= right * speed;
-
-				glm::mat4 view = glm::lookAt(pos, pos + dir, up);
-
-				angle = angle + 1.0f > 360.0f ? 0.0f : angle + 1.0f;
+				angle = angle + 1.0f > 360.0f ? 0.0f : angle + 0.1f;
 
 				shader.bind();
-				shader.setUniformMat4f("u_mvp", proj * view * glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(1.0f, 1.0f, 1.0f)));
+				glm::vec3 vp = camera.matPos();
+
+				shader.setUniform3f("u_viewCoord", vp.x, vp.y, vp.z);
+
+				glm::mat4 mod = glm::translate(glm::mat4(1.0f), glm::vec3(5.0f, 0.0f, 0.0f));
+				mod = mod * glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(0.0f, 1.0f, 0.0f));
+
+				shader.setUniformMat4f("u_m", mod);
+				shader.setUniformMat4f("u_v", camera.matView());
+				shader.setUniformMat4f("u_p", camera.matProj());
+
 				model.draw(renderer, shader);
 
-				shader.setUniformMat4f("u_mvp", proj * view * glm::rotate(glm::mat4(1.0f), glm::radians(2.0f * (angle)), glm::vec3(0.0f, 1.0f, 0.0f)) * glm::translate(glm::scale(glm::mat4(1.0f), glm::vec3(0.5, 0.5, 0.5)), glm::vec3(6.0f, 0.0f, 0.0f)));
-				model2.draw(renderer, shader);
-
-				shader.setUniformMat4f("u_mvp", proj * view * glm::rotate(glm::mat4(1.0f), glm::radians(2.0f * (angle + 135.0f)), glm::vec3(0.0f, 0.0f, 1.0f)) * glm::translate(glm::scale(glm::mat4(1.0f), glm::vec3(0.5, 0.5, 0.5)), glm::vec3(6.0f, 0.0f, 0.0f)));
-				model2.draw(renderer, shader);
-
-				shader.setUniformMat4f("u_mvp", proj * view * glm::rotate(glm::mat4(1.0f), glm::radians(2.0f * (angle + 225.0f)), glm::vec3(0.0f, 1.0f, 1.0f)) * glm::translate(glm::scale(glm::mat4(1.0f), glm::vec3(0.5, 0.5, 0.5)), glm::vec3(6.0f, 0.0f, 0.0f)));
-				model2.draw(renderer, shader);
+				shader.setUniformMat4f("u_m", glm::scale(glm::mat4(1.0f), glm::vec3(0.1f, 0.1f, 0.1f)));
+				model.draw(renderer, shader);
 			}
 
-			glfwSwapBuffers(m_window);
-
 			Input::update();
+
+			glfwSwapBuffers(m_window);
 			glfwPollEvents();
 		}
 
