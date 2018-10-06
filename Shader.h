@@ -24,7 +24,9 @@ class Shader {
 		void setUniform4f(const std::string& name, float a, float b, float c, float d);
 		void setUniform3f(const std::string& name, float a, float b, float c);
 		void setUniform1i(const std::string& name, int a);
+		void setUniform1f(const std::string& name, float a);
 		void setUniformMat4f(const std::string& name, const glm::mat4& matrix);
+		void setUniformVec3f(const std::string& name, glm::vec3 a);
 	private:
 		int getUniformLocation(const std::string& name);
 

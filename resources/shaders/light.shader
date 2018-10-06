@@ -25,35 +25,48 @@ void main()
 #shader fragment
 #version 330 core
 
+struct Material {
+	vec3 ambt;
+	vec3 diff;
+	vec3 spec;
+	
+	float shine;
+};
+
+struct Light {
+	vec3 post;
+	vec3 ambt;
+	vec3 diff;
+	vec3 spec;
+};
+
 layout(location = 0) out vec4 color;
 
 in vec2 v_texCoord;
 in vec3 v_normal;
 in vec3 v_fragCoord;
 
-uniform vec3 u_lightColor;
-uniform vec3 u_lightCoord;
-uniform vec3 u_viewCoord;
+uniform vec3 u_view;
+uniform Material u_material;
+uniform Light u_light;
 
 uniform sampler2D u_texture;
 
 void main() 
 {
-	float ambientIntensity = 0.1;
-	vec3 cambient = ambientIntensity * u_lightColor;
+	vec3 ambt = u_light.ambt * u_material.ambt;
 
-	vec4 ctexture = texture(u_texture, v_texCoord);
-	
 	vec3 norm = normalize(v_normal);
-	vec3 light = normalize(u_lightCoord - v_fragCoord);
-	float diff = max(dot(norm, light), 0.0);
-	vec3 cdiffuse = diff * u_lightColor;
+	vec3 lightVec = normalize(u_light.post - v_fragCoord);
 
-	float specIntensity = 0.5;
-	vec3 view = normalize(u_viewCoord - v_fragCoord);
-	vec3 viewReflect = reflect(-light, norm);
-	float spec = pow(max(dot(view, viewReflect), 0.0), 64);
-	vec3 cspecular = specIntensity * spec * u_lightColor;
+	float diff = max(dot(norm, lightVec), 0.0);
+	vec3 dffu = u_light.diff * (diff * u_material.diff);
 
-	color = vec4(cdiffuse + cambient + cspecular, 1.0) * ctexture;
+	vec3 viewVec = normalize(u_view - v_fragCoord);
+	vec3 reflVec = reflect(-lightVec, norm);
+
+	float spec = pow(max(dot(viewVec, reflVec), 0.0), u_material.shine);
+	vec3 spcr = u_light.spec * (spec * u_material.spec);
+
+	color = vec4(ambt + dffu + spcr, 1.0);
 }

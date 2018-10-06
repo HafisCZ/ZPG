@@ -27,7 +27,8 @@ Model::Model(const std::string& modelPath) {
 	m_vao->addBuffer(*m_vbo, vbl);
 }
 
-void Model::draw(Renderer renderer, Shader shader) {
+/* A typo was made here. Hours were spent. It was the reference that wasn't there. */
+void Model::draw(const Renderer& renderer, const Shader& shader) {
 	renderer.draw(*m_vao, *m_ibo, shader);
 }
 

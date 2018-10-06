@@ -24,7 +24,7 @@ class Model {
 	public:
 		Model(const std::string& modelPath);
 
-		void draw(Renderer renderer, Shader shader);
+		void draw(const Renderer& renderer, const Shader& shader);
 
 		static void loadModel(const std::string& filepath, std::vector<ModelVertex>& vertices, std::vector<unsigned int>& indices);
 };

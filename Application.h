@@ -52,6 +52,11 @@ public:
 
 		glEnable(GL_MULTISAMPLE);
 
+		glEnable(GL_DEBUG_OUTPUT);
+		glDebugMessageCallback([](unsigned int src, unsigned int type, unsigned int id, unsigned int sev, int len, const char* msg, const void* param) -> void {
+			fprintf(stderr, "[GL%s] TYPE (0x%x) SEVERITY (0x%x) { \n%s }\n", (type == GL_DEBUG_TYPE_ERROR ? " ERROR" : ""), type, sev, msg);
+		}, 0);
+
 		glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		glfwSetKeyCallback(m_window, Input::keyboardCallback);
 		glfwSetMouseButtonCallback(m_window, Input::mouseCallback);
@@ -62,12 +67,16 @@ public:
 
 		Model model("resources/models/cube.obj");
 		Shader shader("resources/shaders/light.shader");
+		Shader shader2("resources/shaders/test.shader");
 		Texture texture("resources/textures/avatar.png");
 
 		shader.bind();
 		shader.setUniform1i("u_texture", 0);
-		shader.setUniform3f("u_lightCoord", 0.0f, 0.0f, 0.0f);
-		shader.setUniform3f("u_lightColor", 1.0f, 1.0f, 1.0f);
+
+		shader.setUniform3f("u_material.ambt", 1.0f, 0.5f, 0.31f);
+		shader.setUniform3f("u_material.diff", 1.0f, 0.5f, 0.31f);
+		shader.setUniform3f("u_material.spec", 0.5f, 0.5f, 0.5f);
+		shader.setUniform1f("u_material.shine", 32.0f);
 
 		Camera camera(m_window, 1200, 900);
 		glfwSetWindowUserPointer(m_window, &camera);
@@ -92,21 +101,35 @@ public:
 				angle = angle + 1.0f > 360.0f ? 0.0f : angle + 0.1f;
 
 				shader.bind();
+
 				glm::vec3 vp = camera.matPos();
 
-				shader.setUniform3f("u_viewCoord", vp.x, vp.y, vp.z);
+				shader.setUniform3f("u_view", vp.x, vp.y, vp.z);
 
-				glm::mat4 mod = glm::translate(glm::mat4(1.0f), glm::vec3(5.0f, 0.0f, 0.0f));
-				mod = mod * glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(0.0f, 1.0f, 0.0f));
+				glm::vec3 color;
+				color.x = sin(glfwGetTime() * 2.0f);
+				color.y = sin(glfwGetTime() * 0.7f);
+				color.z = sin(glfwGetTime() * 1.3f);
+				glm::vec3 diff = color * glm::vec3(0.5f);
+				glm::vec3 ambt = diff * glm::vec3(0.2f);
+				shader.setUniformVec3f("u_light.ambt", ambt);
+				shader.setUniformVec3f("u_light.diff", diff);
+				shader.setUniform3f("u_light.spec", 1.0f, 1.0f, 1.0f);
+				shader.setUniform3f("u_light.post", 0.0f, 0.0f, 0.0f);
+
+				glm::mat4 mod = glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 0.0f, 4.0f));
+				mod = mod * glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(1.0f, 1.0f, 0.0f));
 
 				shader.setUniformMat4f("u_m", mod);
 				shader.setUniformMat4f("u_v", camera.matView());
 				shader.setUniformMat4f("u_p", camera.matProj());
+				model.draw(renderer, shader);				
 
-				model.draw(renderer, shader);
-
-				shader.setUniformMat4f("u_m", glm::scale(glm::mat4(1.0f), glm::vec3(0.1f, 0.1f, 0.1f)));
-				model.draw(renderer, shader);
+				shader2.bind();
+				shader2.setUniformMat4f("u_m", glm::scale(glm::mat4(1.0f), glm::vec3(0.1f, 0.1f, 0.1f)));
+				shader2.setUniformMat4f("u_v", camera.matView());
+				shader2.setUniformMat4f("u_p", camera.matProj());
+				model.draw(renderer, shader2);
 			}
 
 			Input::update();

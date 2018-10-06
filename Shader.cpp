@@ -33,8 +33,16 @@ void Shader::setUniform3f(const std::string & name, float a, float b, float c) {
 	glUniform3f(getUniformLocation(name), a, b, c);
 }
 
+void Shader::setUniformVec3f(const std::string& name, glm::vec3 a) {
+	glUniform3fv(getUniformLocation(name), 1, &a.x);
+}
+
 void Shader::setUniform1i(const std::string& name, int a) {
 	glUniform1i(getUniformLocation(name), a);
+}
+
+void Shader::setUniform1f(const std::string& name, float a) {
+	glUniform1f(getUniformLocation(name), a);
 }
 
 void Shader::setUniformMat4f(const std::string& name, const glm::mat4& matrix) {
@@ -51,7 +59,7 @@ int Shader::getUniformLocation(const std::string & name) {
 		std::cout << "[UNIFORM ERROR] " << name << std::endl;
 	}
 
-	m_uniformLocationCache[name] = location;
+	//m_uniformLocationCache[name] = location;
 	return location;
 }
 
@@ -105,7 +113,7 @@ unsigned int Shader::compileShader(unsigned int type, const std::string& source)
 		glGetShaderInfoLog(id, length, &length, message);
 		std::cout << "[Failed to compile " << (type == GL_VERTEX_SHADER ? "VERTEX" : "FRAGMENT") << " shader]" << std::endl;
 		std::cout << message << std::endl;
-
+		
 		glDeleteShader(id);
 
 		return 0;

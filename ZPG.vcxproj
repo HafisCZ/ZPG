@@ -146,6 +146,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\light.shader" />
+    <None Include="resources\shaders\test.shader" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="resources\textures\avatar.png" />
