@@ -87,16 +87,19 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="resources\textures\avatar.png">
+    <None Include="resources\shaders\object.shader">
       <Filter>Resource Files</Filter>
-    </Image>
-  </ItemGroup>
-  <ItemGroup>
+    </None>
     <None Include="resources\shaders\light.shader">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="resources\shaders\test.shader">
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\textures\spc.png">
       <Filter>Resource Files</Filter>
-    </None>
+    </Image>
+    <Image Include="resources\textures\tex.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

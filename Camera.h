@@ -100,4 +100,8 @@ class Camera {
 		glm::vec3 matPos() const {
 			return m_vpos;
 		}
+
+		glm::vec3 matDir() const {
+			return m_dir;
+		}
 };

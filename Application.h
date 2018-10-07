@@ -66,16 +66,16 @@ public:
 		float angle = 0.0f;
 
 		Model model("resources/models/cube.obj");
-		Shader shader("resources/shaders/light.shader");
-		Shader shader2("resources/shaders/test.shader");
-		Texture texture("resources/textures/avatar.png");
+
+		Shader shader("resources/shaders/object.shader");
+		Shader shader2("resources/shaders/light.shader");
+
+		Texture texture("resources/textures/tex.png");
+		Texture texture2("resources/textures/spc.png");
 
 		shader.bind();
-		shader.setUniform1i("u_texture", 0);
-
-		shader.setUniform3f("u_material.ambt", 1.0f, 0.5f, 0.31f);
-		shader.setUniform3f("u_material.diff", 1.0f, 0.5f, 0.31f);
-		shader.setUniform3f("u_material.spec", 0.5f, 0.5f, 0.5f);
+		shader.setUniform1i("u_material.smp2", 0);
+		shader.setUniform1i("u_material.spc2", 1);
 		shader.setUniform1f("u_material.shine", 32.0f);
 
 		Camera camera(m_window, 1200, 900);
@@ -93,6 +93,7 @@ public:
 			renderer.clear();
 
 			texture.bind();
+			texture2.bind(1);
 
 			camera.glfw_key_callback();
 			camera.processViewMatrix();
@@ -106,29 +107,45 @@ public:
 
 				shader.setUniform3f("u_view", vp.x, vp.y, vp.z);
 
-				glm::vec3 color;
-				color.x = sin(glfwGetTime() * 2.0f);
-				color.y = sin(glfwGetTime() * 0.7f);
-				color.z = sin(glfwGetTime() * 1.3f);
-				glm::vec3 diff = color * glm::vec3(0.5f);
-				glm::vec3 ambt = diff * glm::vec3(0.2f);
-				shader.setUniformVec3f("u_light.ambt", ambt);
-				shader.setUniformVec3f("u_light.diff", diff);
-				shader.setUniform3f("u_light.spec", 1.0f, 1.0f, 1.0f);
-				shader.setUniform3f("u_light.post", 0.0f, 0.0f, 0.0f);
+				// directional light
+				shader.setUniform3f("u_dlight.dir", -0.2f, -1.0f, -0.3f);
+				shader.setUniform3f("u_dlight.amb", 0.05f, 0.05f, 0.05f);
+				shader.setUniform3f("u_dlight.dif", 0.4f, 0.4f, 0.4f);
+				shader.setUniform3f("u_dlight.spc", 0.5f, 0.5f, 0.5f);
+
+				// point light
+				shader.setUniform3f("u_plight[0].pos", 0.7f, 0.2f, 2.0f);
+				shader.setUniform3f("u_plight[0].amb", 0.05f, 0.05f, 0.05f);
+				shader.setUniform3f("u_plight[0].dif", 0.8f, 0.8f, 0.8f);
+				shader.setUniform3f("u_plight[0].spc", 1.0f, 1.0f, 1.0f);
+				shader.setUniform1f("u_plight[0].kc", 1.0f);
+				shader.setUniform1f("u_plight[0].kl", 0.09f);
+				shader.setUniform1f("u_plight[0].kq", 0.032f);
+
+				// spot light
+				shader.setUniformVec3f("u_slight.pos", camera.matPos());
+				shader.setUniformVec3f("u_slight.dir", camera.matDir());
+				shader.setUniform3f("u_slight.amb", 0.0f, 0.0f, 0.0f);
+				shader.setUniform3f("u_slight.dif", 1.0f, 1.0f, 1.0f);
+				shader.setUniform3f("u_slight.spc", 1.0f, 1.0f, 1.0f);
+				shader.setUniform1f("u_slight.kc", 1.0f);
+				shader.setUniform1f("u_slight.kl", 0.09f);
+				shader.setUniform1f("u_slight.kq", 0.032f);
+				shader.setUniform1f("u_slight.cutoff1", glm::cos(glm::radians(12.0f)));
+				shader.setUniform1f("u_slight.cutoff2", glm::cos(glm::radians(15.0f)));
 
 				glm::mat4 mod = glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 0.0f, 4.0f));
 				mod = mod * glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(1.0f, 1.0f, 0.0f));
 
-				shader.setUniformMat4f("u_m", mod);
-				shader.setUniformMat4f("u_v", camera.matView());
-				shader.setUniformMat4f("u_p", camera.matProj());
+				shader.setUniformMat4f("u_mvp.mode", glm::scale(glm::mat4(1.0f), glm::vec3(0.5f, 0.5f, 0.5f)));
+				shader.setUniformMat4f("u_mvp.view", camera.matView());
+				shader.setUniformMat4f("u_mvp.proj", camera.matProj());
 				model.draw(renderer, shader);				
 
 				shader2.bind();
-				shader2.setUniformMat4f("u_m", glm::scale(glm::mat4(1.0f), glm::vec3(0.1f, 0.1f, 0.1f)));
-				shader2.setUniformMat4f("u_v", camera.matView());
-				shader2.setUniformMat4f("u_p", camera.matProj());
+				shader2.setUniformMat4f("u_mvp.mode", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(0.7f, 0.2f, 2.0f)), glm::vec3(0.1f, 0.1f, 0.1f)));
+				shader2.setUniformMat4f("u_mvp.view", camera.matView());
+				shader2.setUniformMat4f("u_mvp.proj", camera.matProj());
 				model.draw(renderer, shader2);
 			}
 

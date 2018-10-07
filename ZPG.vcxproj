@@ -145,11 +145,12 @@
     <ClInclude Include="VertexBufferLayout.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="resources\shaders\object.shader" />
     <None Include="resources\shaders\light.shader" />
-    <None Include="resources\shaders\test.shader" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="resources\textures\avatar.png" />
+    <Image Include="resources\textures\spc.png" />
+    <Image Include="resources\textures\tex.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
