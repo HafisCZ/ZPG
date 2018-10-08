@@ -2,16 +2,41 @@
 
 #include <glm/glm.hpp>
 
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
+#include "vendor/stb_image.h"
+
+#include <iostream>
+
 #include "Renderer.h"
 
-struct ModelVertex {
-	float x, y, z, u, v, o, p, q;
+struct Vertex {
+	struct Position {
+		float x, y, z;
+		bool operator == (const Position& position) const {	return (x == position.x) && (y == position.y) && (z == position.z); }
+	};
 
-	bool operator == (const ModelVertex& mv) const {
+	struct Normal {
+		float x, y, z;
+		bool operator == (const Normal& normal) const { return (x == normal.x) && (y == normal.y) && (z == normal.z); }
+	};
+
+	struct Texture {
+		float x, y;
+		bool operator == (const Texture& texture) const { return (x == texture.x) && (y == texture.y); }
+	};
+
+	Position position;
+	Normal normal;
+	Texture texture;
+
+	bool operator == (const Vertex& vertex) const {
 		return (
-			(x == mv.x && y == mv.y && z == mv.z) &&
-			(u == mv.u && v == mv.v) &&
-			(o == mv.o && p == mv.p && q == mv.q)
+			position == vertex.position &&
+			normal == vertex.normal &&
+			texture == vertex.texture
 		);
 	}
 };
@@ -26,5 +51,5 @@ class Model {
 
 		void draw(const Renderer& renderer, const Shader& shader);
 
-		static void loadModel(const std::string& filepath, std::vector<ModelVertex>& vertices, std::vector<unsigned int>& indices);
+		static void loadModel(const std::string& filepath, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices);
 };

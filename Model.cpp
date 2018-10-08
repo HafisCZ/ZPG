@@ -8,14 +8,14 @@
 
 Model::Model(const std::string& modelPath) {
 	// Temporary vectors for model loader
-	std::vector<ModelVertex> vertices;
+	std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;
 	// Load model and store vertex and index data
 	loadModel(modelPath, vertices, indices);
 
 	// Create buffers and fill them with model data
 	m_vao = std::make_unique<VertexArray>();
-	m_vbo = std::make_unique<VertexBuffer>(vertices.data(), vertices.size() * sizeof(ModelVertex));
+	m_vbo = std::make_unique<VertexBuffer>(vertices.data(), vertices.size() * sizeof(Vertex));
 	m_ibo = std::make_unique<IndexBuffer>(indices.data(), indices.size());
 
 	// Specify vertex buffer layout
@@ -32,7 +32,7 @@ void Model::draw(const Renderer& renderer, const Shader& shader) {
 	renderer.draw(*m_vao, *m_ibo, shader);
 }
 
-void Model::loadModel(const std::string& filepath, std::vector<ModelVertex>& vertices, std::vector<unsigned int>& indices) {
+void Model::loadModel(const std::string& filepath, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices) {
 	// Temporary vectors for model parser - vertexes
 	std::vector<glm::vec3> tempVertices, tempNormals;
 	std::vector<glm::vec2> tempUVs;
@@ -78,7 +78,7 @@ void Model::loadModel(const std::string& filepath, std::vector<ModelVertex>& ver
 		glm::vec2 tex = tempUVIndices.size() > 0 ? tempUVs[tempUVIndices[i]] : glm::vec2(0, 0);
 		glm::vec3 nor = tempNormalIndices.size() > 0 ? tempNormals[tempNormalIndices[i]] : glm::vec3(0, 0, 0);
 		// Construct model vertex
-		ModelVertex vertex = { pos.x, pos.y, pos.z, tex.x, tex.y, nor.x, nor.y, nor.z };
+		Vertex vertex = { pos.x, pos.y, pos.z, tex.x, tex.y, nor.x, nor.y, nor.z };
 
 		// Find location of vertex in vertex vector
 		unsigned int loc = std::distance(vertices.begin(), std::find(vertices.begin(), vertices.end(), vertex));

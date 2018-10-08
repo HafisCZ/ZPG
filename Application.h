@@ -63,8 +63,6 @@ public:
 	}
 
 	void run() {
-		float angle = 0.0f;
-
 		Model model("resources/models/cube.obj");
 
 		Shader shader("resources/shaders/object.shader");
@@ -99,13 +97,8 @@ public:
 			camera.processViewMatrix();
 
 			{
-				angle = angle + 1.0f > 360.0f ? 0.0f : angle + 0.1f;
-
 				shader.bind();
-
-				glm::vec3 vp = camera.matPos();
-
-				shader.setUniform3f("u_view", vp.x, vp.y, vp.z);
+				shader.setUniformVec3f("u_view", camera.vecPos());
 
 				// directional light
 				shader.setUniform3f("u_dlight.dir", -0.2f, -1.0f, -0.3f);
@@ -123,8 +116,8 @@ public:
 				shader.setUniform1f("u_plight[0].kq", 0.032f);
 
 				// spot light
-				shader.setUniformVec3f("u_slight.pos", camera.matPos());
-				shader.setUniformVec3f("u_slight.dir", camera.matDir());
+				shader.setUniformVec3f("u_slight.pos", camera.vecPos());
+				shader.setUniformVec3f("u_slight.dir", camera.vecDir());
 				shader.setUniform3f("u_slight.amb", 0.0f, 0.0f, 0.0f);
 				shader.setUniform3f("u_slight.dif", 1.0f, 1.0f, 1.0f);
 				shader.setUniform3f("u_slight.spc", 1.0f, 1.0f, 1.0f);
@@ -134,13 +127,17 @@ public:
 				shader.setUniform1f("u_slight.cutoff1", glm::cos(glm::radians(12.0f)));
 				shader.setUniform1f("u_slight.cutoff2", glm::cos(glm::radians(15.0f)));
 
-				glm::mat4 mod = glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 0.0f, 4.0f));
-				mod = mod * glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(1.0f, 1.0f, 0.0f));
 
 				shader.setUniformMat4f("u_mvp.mode", glm::scale(glm::mat4(1.0f), glm::vec3(0.5f, 0.5f, 0.5f)));
 				shader.setUniformMat4f("u_mvp.view", camera.matView());
 				shader.setUniformMat4f("u_mvp.proj", camera.matProj());
-				model.draw(renderer, shader);				
+				model.draw(renderer, shader);
+
+				shader.setUniformMat4f("u_mvp.mode", glm::scale(glm::translate(glm::rotate(glm::mat4(1.0f), glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f)), glm::vec3(1.5f, 0.0f, 0.0f)), glm::vec3(0.5f, 0.5f, 0.5f)));
+				model.draw(renderer, shader);
+
+				shader.setUniformMat4f("u_mvp.mode", glm::scale(glm::translate(glm::rotate(glm::mat4(1.0f), glm::radians(10.0f), glm::vec3(0.0f, 1.0f, 0.0f)), glm::vec3(1.0f, 1.0f, -0.5f)), glm::vec3(0.5f, 0.5f, 0.5f)));
+				model.draw(renderer, shader);
 
 				shader2.bind();
 				shader2.setUniformMat4f("u_mvp.mode", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(0.7f, 0.2f, 2.0f)), glm::vec3(0.1f, 0.1f, 0.1f)));

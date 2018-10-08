@@ -97,11 +97,11 @@ class Camera {
 			return m_view;
 		}
 
-		glm::vec3 matPos() const {
+		glm::vec3 vecPos() const {
 			return m_vpos;
 		}
 
-		glm::vec3 matDir() const {
+		glm::vec3 vecDir() const {
 			return m_dir;
 		}
 };
