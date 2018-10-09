@@ -82,6 +82,23 @@ public:
 			((Camera*) glfwGetWindowUserPointer(w))->glfw_motion_callback(w, x, y);
 		});
 
+		UniformBufferLayout ubl;
+		ubl.push<MatrixVP>();
+		ubl.push<DirectionalLight>();
+
+		UniformBuffer ubo(ubl);
+		ubo.bindUniform(shader, "shader_matrix", 0);
+		ubo.bindUniform(shader, "dlight", 1);
+		ubo.bindUniform(shader2, "shader_matrix", 0);
+
+		DirectionalLight dl = {
+			{ -0.2f, -1.0f, -0.3f, 1.0f },
+			{ 0.05f, 0.05f, 0.05f, 1.0f },
+			{ 0.4f, 0.4f, 0.4f, 1.0f },
+			{ 0.5f, 0.5f, 0.5f, 1.0f }
+		};
+		ubo.setUniform(1, &dl);
+
 		Renderer renderer;
 
 		while (!glfwWindowShouldClose(m_window)) {
@@ -96,15 +113,14 @@ public:
 			camera.glfw_key_callback();
 			camera.processViewMatrix();
 
+			ubo.bind();
+
+			MatrixVP tt = { camera.matView(), camera.matProj() };
+			ubo.setUniform(0, &tt);
+
 			{
 				shader.bind();
 				shader.setUniformVec3f("u_view", camera.vecPos());
-
-				// directional light
-				shader.setUniform3f("u_dlight.dir", -0.2f, -1.0f, -0.3f);
-				shader.setUniform3f("u_dlight.amb", 0.05f, 0.05f, 0.05f);
-				shader.setUniform3f("u_dlight.dif", 0.4f, 0.4f, 0.4f);
-				shader.setUniform3f("u_dlight.spc", 0.5f, 0.5f, 0.5f);
 
 				// point light
 				shader.setUniform3f("u_plight[0].pos", 0.7f, 0.2f, 2.0f);
@@ -128,21 +144,17 @@ public:
 				shader.setUniform1f("u_slight.cutoff2", glm::cos(glm::radians(15.0f)));
 
 
-				shader.setUniformMat4f("u_mvp.mode", glm::scale(glm::mat4(1.0f), glm::vec3(0.5f, 0.5f, 0.5f)));
-				shader.setUniformMat4f("u_mvp.view", camera.matView());
-				shader.setUniformMat4f("u_mvp.proj", camera.matProj());
+				shader.setUniformMat4f("mode", glm::scale(glm::mat4(1.0f), glm::vec3(0.5f, 0.5f, 0.5f)));
 				model.draw(renderer, shader);
 
-				shader.setUniformMat4f("u_mvp.mode", glm::scale(glm::translate(glm::rotate(glm::mat4(1.0f), glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f)), glm::vec3(1.5f, 0.0f, 0.0f)), glm::vec3(0.5f, 0.5f, 0.5f)));
+				shader.setUniformMat4f("mode", glm::scale(glm::translate(glm::rotate(glm::mat4(1.0f), glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f)), glm::vec3(1.5f, 0.0f, 0.0f)), glm::vec3(0.5f, 0.5f, 0.5f)));
 				model.draw(renderer, shader);
 
-				shader.setUniformMat4f("u_mvp.mode", glm::scale(glm::translate(glm::rotate(glm::mat4(1.0f), glm::radians(10.0f), glm::vec3(0.0f, 1.0f, 0.0f)), glm::vec3(1.0f, 1.0f, -0.5f)), glm::vec3(0.5f, 0.5f, 0.5f)));
+				shader.setUniformMat4f("mode", glm::scale(glm::translate(glm::rotate(glm::mat4(1.0f), glm::radians(10.0f), glm::vec3(0.0f, 1.0f, 0.0f)), glm::vec3(1.0f, 1.0f, -0.5f)), glm::vec3(0.5f, 0.5f, 0.5f)));
 				model.draw(renderer, shader);
 
 				shader2.bind();
-				shader2.setUniformMat4f("u_mvp.mode", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(0.7f, 0.2f, 2.0f)), glm::vec3(0.1f, 0.1f, 0.1f)));
-				shader2.setUniformMat4f("u_mvp.view", camera.matView());
-				shader2.setUniformMat4f("u_mvp.proj", camera.matProj());
+				shader2.setUniformMat4f("mode", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(0.7f, 0.2f, 2.0f)), glm::vec3(0.1f, 0.1f, 0.1f)));
 				model.draw(renderer, shader2);
 			}
 

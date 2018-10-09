@@ -48,6 +48,6 @@ class VertexBufferLayout {
 			m_stride += VertexBufferElement::GetSizeOfType(GL_UNSIGNED_BYTE) * count;
 		}
 
-		inline const std::vector<VertexBufferElement> getElements() const { return m_elements; }
+		inline const std::vector<VertexBufferElement>& getElements() const { return m_elements; }
 		inline unsigned int getStride() const { return m_stride; }
 };

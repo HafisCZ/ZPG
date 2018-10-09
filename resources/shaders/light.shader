@@ -1,19 +1,18 @@
 #shader vertex 
 #version 330 core
 
-struct MVP {
-	mat4 mode;
+layout(std140) uniform shader_matrix{
 	mat4 view;
 	mat4 proj;
 };
 
-layout(location = 0) in vec4 position;
+uniform mat4 mode;
 
-uniform MVP u_mvp;
+layout(location = 0) in vec4 position;
 
 void main()
 {
-	gl_Position = u_mvp.proj * u_mvp.view * u_mvp.mode * position;
+	gl_Position = proj * view * mode * position;
 }
 
 #shader fragment

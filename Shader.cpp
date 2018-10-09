@@ -6,8 +6,6 @@
 #include <string>
 #include <sstream>
 
-#include "Renderer.h"
-
 Shader::Shader(const std::string & filepath) : m_rendererId(0) {
 	ShaderProgramSource source = parseShader(filepath);
 	m_rendererId = createShader(source.VertexSource, source.FragmentSource);

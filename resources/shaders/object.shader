@@ -1,27 +1,28 @@
 #shader vertex 
 #version 330 core
 
-struct MVP {
-	mat4 mode, view, proj;
-};
-
 layout(location = 0) in vec4 xyzw;
 layout(location = 1) in vec2 uv;
 layout(location = 2) in vec3 nmo;
+
+layout(std140) uniform shader_matrix {
+	mat4 view;
+	mat4 proj;
+};
+
+uniform mat4 mode;
 
 out vec2 v_texture;
 out vec3 v_normal;
 out vec3 v_fragment;
 
-uniform MVP u_mvp;
-
 void main()
 {
-	gl_Position = u_mvp.proj * u_mvp.view * u_mvp.mode * xyzw;
+	gl_Position = proj * view * mode * xyzw;
 
 	v_texture = uv;
-	v_normal = mat3(transpose(inverse(u_mvp.mode))) * nmo;
-	v_fragment = vec3(u_mvp.mode * xyzw);
+	v_normal = mat3(transpose(inverse(mode))) * nmo;
+	v_fragment = vec3(mode * xyzw);
 }
 
 #shader fragment
@@ -33,7 +34,7 @@ struct Material {
 };
 
 struct DLight {
-	vec3 dir, amb, dif, spc;
+	vec4 dir, amb, dif, spc;
 };
 
 struct PLight {
@@ -48,6 +49,10 @@ struct SLight {
 
 layout(location = 0) out vec4 color;
 
+layout(std140) uniform dlight {
+	DLight u_dlight;
+};
+
 in vec3 v_normal;
 in vec3 v_fragment;
 in vec2 v_texture;
@@ -55,7 +60,6 @@ in vec2 v_texture;
 uniform vec3 u_view;
 uniform Material u_material;
 
-uniform DLight u_dlight;
 uniform PLight u_plight[1];
 uniform SLight u_slight;
 
@@ -79,15 +83,15 @@ void main()
 }
 
 vec3 getDLight(DLight l, vec3 normal, vec3 view) {
-	vec3 direction = normalize(-l.dir);
+	vec3 direction = normalize(-vec3(l.dir));
 	float diff = max(dot(normal, direction), 0.0);
 
 	vec3 reflection = reflect(-direction, normal);
 	float spec = pow(max(dot(view, reflection), 0.0), u_material.shine);
 
-	vec3 ambient = l.amb * vec3(texture(u_material.smp2, v_texture));
-	vec3 diffuse = l.dif * diff * vec3(texture(u_material.smp2, v_texture));
-	vec3 specular = l.spc * spec * vec3(texture(u_material.spc2, v_texture));
+	vec3 ambient = vec3(l.amb) * vec3(texture(u_material.smp2, v_texture));
+	vec3 diffuse = vec3(l.dif) * diff * vec3(texture(u_material.smp2, v_texture));
+	vec3 specular = vec3(l.spc) * spec * vec3(texture(u_material.spc2, v_texture));
 
 	return (ambient + diffuse + specular);
 }
