@@ -1,15 +1,20 @@
 #pragma once
 
-#include "Renderer.h"
+#include <GL/glew.h>
+
+#include <string>
 
 class Texture {
 	private:
-		unsigned int m_rendererId;
-		std::string m_filePath;
-		unsigned char* m_localBuffer;
-		int m_width, m_height, m_bpp;
+		unsigned int m_handle;
+
+		int m_width;
+		int m_height;
+		int m_bpp;
+
 	public:
-		Texture(const std::string& filepath);
+		Texture(const std::string& filepath, unsigned int mode = GL_CLAMP_TO_EDGE);
+
 		~Texture();
 
 		void bind(unsigned int slot = 0) const;

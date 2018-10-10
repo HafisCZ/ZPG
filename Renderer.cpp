@@ -1,13 +1,7 @@
-#include "renderer.h"
+#include "Renderer.h"
 
-#include <iostream>
-
-void Renderer::draw(const VertexArray & va, const IndexBuffer & ib, const Shader & shader) const {
-	shader.bind();
-	va.bind();
-	ib.bind();
-
-	glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, nullptr);
+void Renderer::clear() const {
+	clear(0.0f, 0.0f, 0.0f);
 }
 
 void Renderer::clear(float r, float g, float b) const {
@@ -15,21 +9,10 @@ void Renderer::clear(float r, float g, float b) const {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void Renderer::clear() const {
-	clear(0.0f, 0.0f, 0.0f);
-}
+void Renderer::draw(const VertexArray& va, const IndexBuffer& ib, const Program& program) const {
+	program.bind();
+	va.bind();
+	ib.bind();
 
-void Renderer::sample() {
-	double sample = glfwGetTime();
-	m_fcnt++;
-
-	if (sample - m_flst >= 1.0) {
-		m_ffps = m_fcnt;
-		m_fcnt = 0;
-		m_flst = sample;
-	}
-}
-
-int Renderer::getFps() const {
-	return m_ffps;
+	glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, nullptr);
 }

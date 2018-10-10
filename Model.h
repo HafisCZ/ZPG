@@ -1,10 +1,9 @@
 #pragma once
 
-#include <glm/glm.hpp>
-
-#include <iostream>
+#include <memory>
 
 #include "Renderer.h"
+#include "Program.h"
 
 struct Vertex {
 	struct Position {
@@ -40,10 +39,11 @@ class Model {
 		std::unique_ptr<VertexBuffer> m_vbo;
 		std::unique_ptr<VertexArray> m_vao;
 		std::unique_ptr<IndexBuffer> m_ibo;
+
 	public:
 		Model(const std::string& modelPath);
 
-		void draw(const Renderer& renderer, const Shader& shader);
+		void draw(const Renderer& renderer, const Program& program);
 
 		static void loadModel(const std::string& filepath, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices);
 };

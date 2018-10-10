@@ -23,29 +23,32 @@
     <ClCompile Include="vendor\stb_image.cpp">
       <Filter>Source Files\Vendor</Filter>
     </ClCompile>
-    <ClCompile Include="Model.cpp">
-      <Filter>Source Files\Sources</Filter>
+    <ClCompile Include="Source.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="IndexBuffer.cpp">
-      <Filter>Source Files\Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderer.cpp">
-      <Filter>Source Files\Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Shader.cpp">
+    <ClCompile Include="UniformBuffer.cpp">
       <Filter>Source Files\Sources</Filter>
     </ClCompile>
     <ClCompile Include="Texture.cpp">
       <Filter>Source Files\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="VertexArray.cpp">
+    <ClCompile Include="Program.cpp">
       <Filter>Source Files\Sources</Filter>
     </ClCompile>
     <ClCompile Include="VertexBuffer.cpp">
       <Filter>Source Files\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="Source.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="IndexBuffer.cpp">
+      <Filter>Source Files\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="VertexArray.cpp">
+      <Filter>Source Files\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer.cpp">
+      <Filter>Source Files\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Source Files\Sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -62,9 +65,6 @@
       <Filter>Source Files\Headers</Filter>
     </ClInclude>
     <ClInclude Include="Renderer.h">
-      <Filter>Source Files\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Shader.h">
       <Filter>Source Files\Headers</Filter>
     </ClInclude>
     <ClInclude Include="Texture.h">
@@ -85,14 +85,18 @@
     <ClInclude Include="Camera.h">
       <Filter>Source Files\Headers</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="resources\shaders\object.shader">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="resources\shaders\light.shader">
-      <Filter>Resource Files</Filter>
-    </None>
+    <ClInclude Include="gtype.h">
+      <Filter>Source Files\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="UniformBuffer.h">
+      <Filter>Source Files\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="UniformBufferLayout.h">
+      <Filter>Source Files\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Program.h">
+      <Filter>Source Files\Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="resources\textures\spc.png">
@@ -101,5 +105,19 @@
     <Image Include="resources\textures\tex.png">
       <Filter>Resource Files</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\shaders\object.fragment">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\shaders\object.vertex">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\shaders\default.fragment">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\shaders\default.vertex">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
