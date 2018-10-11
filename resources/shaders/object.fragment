@@ -25,10 +25,12 @@ layout(std140) uniform dlight {
 };
 
 layout(std140) uniform slight {
+	int u_scount;
 	SLight u_slight;
 };
 
 layout(std140) uniform plight {
+    int u_pcount;
 	PLight u_plight[10];
 };
 
@@ -36,7 +38,6 @@ in vec3 v_normal;
 in vec3 v_fragment;
 in vec2 v_texture;
 
-uniform int u_pcount;
 uniform vec3 u_view;
 uniform Material u_material;
 
@@ -55,7 +56,9 @@ void main()
 		result += getPLight(u_plight[i], normal, view, v_fragment);
 	}
 
-	result += getSLight(u_slight, normal, view, v_fragment);
+	if (u_scount > 0) {
+		result += getSLight(u_slight, normal, view, v_fragment);
+	}
 
 	color = vec4(result, 1.0);
 }

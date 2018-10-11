@@ -5,13 +5,13 @@
 
 #include <memory>
 
-#include "gtype.h"
-
 #include "Input.h"
 #include "Camera.h"
 #include "Model.h"
-#include "Texture.h"
+#include "TextureCache.h"
 #include "UniformBuffer.h"
+
+#include "gtype.h"
 
 class Application {
 	private:
@@ -80,19 +80,26 @@ class Application {
 			Texture tex("resources/textures/tex.png");
 			Texture spc("resources/textures/spc.png");
 			Texture flr("resources/textures/flr.png", GL_REPEAT);
-			Texture spd("resources/textures/spc0.png", GL_REPEAT);
+			Texture spd("resources/textures/spd.png", GL_REPEAT);
+			TextureCache tco;
 
-			Camera camera(m_window, 1200, 900);
+			Camera camera(1200, 900, 60);
 			glfwSetWindowUserPointer(m_window, &camera);
 			glfwSetCursorPosCallback(m_window, [](GLFWwindow* w, double x, double y) -> void {
-				((Camera*) glfwGetWindowUserPointer(w))->glfw_motion_callback(w, x, y);
+				((Camera*)glfwGetWindowUserPointer(w))->setCursor(float(x), float(y));
 			});
 		
 			UniformBufferLayout layout;
-			layout.push<mat4_t>();
-			layout.push<light_dir_t>();
+			layout.pack<mat4_t>();
+			layout.pack<light_dir_t>();
+
+			layout.push<int>();
 			layout.push<light_spt_t>();
-			layout.push<light_ptr_t>();
+			layout.pack();
+
+			layout.push<int>();
+			layout.push<light_ptr_t>(2);
+			layout.pack();
 
 			UniformBuffer ubo(layout);
 			program.bindUniformBlock("shader_matrix", 0);
@@ -105,21 +112,24 @@ class Application {
 			light_dir_t dl = {
 				{  0.0f, -1.0f, 0.0f },
 				{  0.05f, 0.05f, 0.05f },
-				{   0.4f,  0.4f,  0.4f },
-				{   0.5f,  0.5f,  0.5f }
+				{   0.04f,  0.04f,  0.04f },
+				{   0.05f,  0.05f,  0.05f }
 			};
 			ubo.setUniformBlock(1, &dl);
 
 			light_spt_t sl = {
-				{ camera.vecPos() },
-				{ camera.vecDir() },
+				{ camera.getPosition() },
+				{ camera.getDirection() },
 				{ 0.0f, 0.0f, 0.0f },
 				{ 1.0f, 1.0f, 1.0f },
 				{ 1.0f, 1.0f, 1.0f },
 				{ 1.0f, 0.09f, 0.021f },
 				{ glm::cos(glm::radians(12.0f)), glm::cos(glm::radians(15.0f)) }
 			};
-			ubo.setUniformBlock(2, &sl);
+			ubo.setUniformBlock(2, 1, &sl);
+
+			int sc = 0;
+			ubo.setUniformBlock(2, 0, &sc);
 
 			light_ptr_t pl = {
 				{ 0.7f, 0.2f, 2.0f },
@@ -128,37 +138,70 @@ class Application {
 				{ 1.0f, 1.0f, 1.0f },
 				{ 1.0f, 0.09f, 0.032f }
 			};
-			ubo.setUniformBlock(3, &pl);
+			ubo.setUniformBlock(3, 1, &pl);
 
-			program.bind();
-			program.uniform1i("u_pcount", 1);
+			pl = {
+				{ -0.7f, 0.2f, -2.0f },
+				{ 0.05f, 0.05f, 0.05f },
+				{ 0.8f, 0.8f, 0.8f },
+				{ 1.0f, 1.0f, 1.0f },
+				{ 1.0f, 0.09f, 0.032f }
+			};
+			ubo.setUniformBlock(3, 2, &pl);
+
+			int pc = 2;
+			ubo.setUniformBlock(3, 0, &pc);
 
 			Renderer renderer;
 
 			while (!glfwWindowShouldClose(m_window)) {
+
+				if (Input::isHeld(GLFW_KEY_A)) camera.setPosition(LEFT, 0.2f);
+				if (Input::isHeld(GLFW_KEY_D)) camera.setPosition(RIGHT, 0.2f);
+				if (Input::isHeld(GLFW_KEY_W)) camera.setPosition(FORWARDS, 0.2f);
+				if (Input::isHeld(GLFW_KEY_S)) camera.setPosition(BACKWARDS, 0.2f);
+				if (Input::isHeld(GLFW_KEY_SPACE)) camera.setPosition(UP, 0.2f);
+				if (Input::isHeld(GLFW_KEY_C)) camera.setPosition(DOWN, 0.2f);
+
+				if (Input::isPressed(GLFW_KEY_KP_SUBTRACT)) camera.setFov(45.0f);
+				if (Input::isPressed(GLFW_KEY_KP_ADD)) camera.setFov(60.0f);
+
+				if (Input::isPressed(GLFW_KEY_KP_0)) {
+					pc++;
+					if (pc > 2) pc = 0;
+
+					ubo.setUniformBlock(3, 0, &pc);
+				}
+
+				if (Input::isPressed(GLFW_KEY_KP_1)) {
+					sc++;
+					if (sc > 1) sc = 0;
+
+					ubo.setUniformBlock(2, 0, &sc);
+				}
+				
+				Input::pollEvents();
+
 				renderer.clear();
 			
-				tex.bind();
-				spc.bind(1);
-				flr.bind(2);
-				spd.bind(3);
-
-				camera.glfw_key_callback();
-				camera.processViewMatrix();
+				tco.bind(tex, 0);
+				tco.bind(spc, 1);
+				tco.bind(flr, 2);
+				tco.bind(spd, 3);
 
 				ubo.bind();
 
-				mat4_t mt = { camera.matProj() * camera.matView() };
+				mat4_t mt = { camera.get() };
 				ubo.setUniformBlock(0, &mt);
 
-				sl.pos = camera.vecPos();
-				sl.dir = camera.vecDir();
-				ubo.setUniformBlock(2, &sl);
+				sl.pos = camera.getPosition();
+				sl.dir = camera.getDirection();
+				ubo.setUniformBlock(2, 1, &sl);
 			
 				{
 					program.bind();
 
-					program.uniform3vec("u_view", camera.vecPos());
+					program.uniform3vec("u_view", camera.getPosition());
 
 					program.uniform1i("u_material.smp2", 0);
 					program.uniform1i("u_material.spc2", 1);
@@ -167,17 +210,18 @@ class Application {
 					model.draw(renderer, program);
 
 					program.uniform1i("u_material.smp2", 2);
-					program.uniform1i("u_material.spc2", 2);
+					program.uniform1i("u_material.spc2", 3);
 					program.uniform4mat("mode", glm::mat4(1.0f));
 
 					floor.draw(renderer, program);
-
+					
 					program2.bind();
-					program.uniform4mat("mode", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(0.7f, 0.2f, 2.0f)), glm::vec3(0.05f, 0.05f, 0.05f)));
+					program2.uniform4mat("mode", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(0.7f, 0.2f, 2.0f)), glm::vec3(0.05f, 0.05f, 0.05f)));
+					model.draw(renderer, program2);
+
+					program2.uniform4mat("mode", glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(-0.7f, 0.2f, -2.0f)), glm::vec3(0.05f, 0.05f, 0.05f)));
 					model.draw(renderer, program2);
 				}
-
-				Input::update();
 
 				glfwSwapBuffers(m_window);
 				glfwPollEvents();

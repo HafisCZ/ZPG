@@ -13,6 +13,12 @@ struct alignas(16) gvec2_t {
 	float x, y;
 };
 
+struct alignas(16) gint_t {
+	int x;
+
+	gint_t(const int& x) : x(x) { }
+};
+
 struct light_dir_t {
 	gvec3_t dir, amb, dif, spc;
 };

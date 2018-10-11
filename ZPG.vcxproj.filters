@@ -50,6 +50,9 @@
     <ClCompile Include="Model.cpp">
       <Filter>Source Files\Sources</Filter>
     </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files\Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="vendor\stb_image.h">
@@ -95,6 +98,9 @@
       <Filter>Source Files\Headers</Filter>
     </ClInclude>
     <ClInclude Include="Program.h">
+      <Filter>Source Files\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureCache.h">
       <Filter>Source Files\Headers</Filter>
     </ClInclude>
   </ItemGroup>

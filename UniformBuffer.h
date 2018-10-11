@@ -12,6 +12,7 @@ class UniformBuffer {
 		~UniformBuffer();
 
 		void setUniformBlock(unsigned int index, const void* a);
+		void setUniformBlock(unsigned int index, unsigned int position, const void* a);
 
 		void bind() const;
 		void unbind() const;

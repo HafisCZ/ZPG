@@ -15,7 +15,11 @@ UniformBuffer::~UniformBuffer() {
 }
 
 void UniformBuffer::setUniformBlock(unsigned int index, const void* a) {
-	glBufferSubData(GL_UNIFORM_BUFFER, m_layout.getElements()[index].stride, m_layout.getElements()[index].size, a);
+	glBufferSubData(GL_UNIFORM_BUFFER, m_layout.getElements()[index].blockStride(), m_layout.getElements()[index].blockSize(), a);
+}
+
+void UniformBuffer::setUniformBlock(unsigned int index, unsigned int position, const void* a) {
+	glBufferSubData(GL_UNIFORM_BUFFER, m_layout.getElements()[index].blockStride(position), m_layout.getElements()[index].itemSize(position), a);
 }
 
 void UniformBuffer::bind() const {
