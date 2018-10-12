@@ -18,6 +18,15 @@
     <Filter Include="Source Files\Sources">
       <UniqueIdentifier>{2fbdc465-1b5f-43a7-b10c-2520dafa0cf8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Object shaders">
+      <UniqueIdentifier>{9a9c9cff-e5c0-4840-8f12-acedd954ff95}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shadow shaders">
+      <UniqueIdentifier>{4c3d92b4-e4d9-4129-b6e0-b6941e40f811}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Textures">
+      <UniqueIdentifier>{aaca78b8-f4e4-420a-861d-683afb067b22}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="vendor\stb_image.cpp">
@@ -51,6 +60,12 @@
       <Filter>Source Files\Sources</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
+      <Filter>Source Files\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Buffer.cpp">
+      <Filter>Source Files\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Framebuffer.cpp">
       <Filter>Source Files\Sources</Filter>
     </ClCompile>
   </ItemGroup>
@@ -100,30 +115,54 @@
     <ClInclude Include="Program.h">
       <Filter>Source Files\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="TextureCache.h">
+    <ClInclude Include="Buffer.h">
+      <Filter>Source Files\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Framebuffer.h">
       <Filter>Source Files\Headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="resources\textures\spc.png">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\Textures</Filter>
     </Image>
     <Image Include="resources\textures\tex.png">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
+    <Image Include="resources\textures\flr.png">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
+    <Image Include="resources\textures\spd.png">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
+    <Image Include="resources\textures\tile.png">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
+    <Image Include="resources\textures\tile_spc.png">
+      <Filter>Resource Files\Textures</Filter>
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <None Include="resources\shaders\object.fragment">
-      <Filter>Resource Files</Filter>
+    <None Include="resources\shaders\shadow.vert">
+      <Filter>Resource Files\Shadow shaders</Filter>
     </None>
-    <None Include="resources\shaders\object.vertex">
-      <Filter>Resource Files</Filter>
+    <None Include="resources\shaders\shadow.frag">
+      <Filter>Resource Files\Shadow shaders</Filter>
     </None>
-    <None Include="resources\shaders\default.fragment">
-      <Filter>Resource Files</Filter>
+    <None Include="resources\shaders\shadow.geom">
+      <Filter>Resource Files\Shadow shaders</Filter>
     </None>
-    <None Include="resources\shaders\default.vertex">
-      <Filter>Resource Files</Filter>
+    <None Include="resources\shaders\default.frag">
+      <Filter>Resource Files\Object shaders</Filter>
+    </None>
+    <None Include="resources\shaders\default.vert">
+      <Filter>Resource Files\Object shaders</Filter>
+    </None>
+    <None Include="resources\shaders\object.frag">
+      <Filter>Resource Files\Object shaders</Filter>
+    </None>
+    <None Include="resources\shaders\object.vert">
+      <Filter>Resource Files\Object shaders</Filter>
     </None>
   </ItemGroup>
 </Project>

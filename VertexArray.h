@@ -5,15 +5,15 @@
 #include "VertexBuffer.h"
 #include "VertexBufferLayout.h"
 
-class VertexArray {
+class VertexArray : Buffer {
 	private:
 		unsigned int m_handle;
 	public:
 		VertexArray();
 		~VertexArray();
 
-		void addBuffer(const VertexBuffer& vb, const VertexBufferLayout& layout);
+		void addBuffer(VertexBuffer& vb, const VertexBufferLayout& layout);
 
-		void bind() const;
-		void unbind() const;
+		void bind();
+		void unbind();
 };

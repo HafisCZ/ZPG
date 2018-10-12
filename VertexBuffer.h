@@ -2,7 +2,9 @@
 
 #include <GL/glew.h>
 
-class VertexBuffer {
+#include "Buffer.h"
+
+class VertexBuffer : Buffer {
 	private:
 		unsigned int m_handle;
 
@@ -10,6 +12,6 @@ class VertexBuffer {
 		VertexBuffer(const void* data, unsigned int size);
 		~VertexBuffer();
 
-		void bind() const;
-		void unbind() const;
+		void bind();
+		void unbind();
 };

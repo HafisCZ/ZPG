@@ -17,7 +17,7 @@ class Input {
 			m_keymap[button] = action; 
 		}
 
-		static void pollEvents() { 
+		static void invalidate() { 
 			for (auto& key : m_keymap) { 
 				m_prvmap[key.first] = key.second;
 			} 

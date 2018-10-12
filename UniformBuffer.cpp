@@ -1,6 +1,6 @@
 #include "UniformBuffer.h"
 
-UniformBuffer::UniformBuffer(const UniformBufferLayout& layout) : m_layout(layout) {
+UniformBuffer::UniformBuffer(const UniformBufferLayout& layout) : m_layout(layout), Buffer(GL_UNIFORM_BUFFER) {
 	glGenBuffers(1, &m_handle);
 	glBindBuffer(GL_UNIFORM_BUFFER, m_handle);
 	glBufferData(GL_UNIFORM_BUFFER, layout.getSize(), nullptr, GL_DYNAMIC_DRAW);
@@ -14,18 +14,13 @@ UniformBuffer::~UniformBuffer() {
 	glDeleteBuffers(1, &m_handle);
 }
 
-void UniformBuffer::setUniformBlock(unsigned int index, const void* a) {
-	glBufferSubData(GL_UNIFORM_BUFFER, m_layout.getElements()[index].blockStride(), m_layout.getElements()[index].blockSize(), a);
+void UniformBuffer::bind() {
+	if (setAsBound(true)) {
+		glBindBuffer(GL_UNIFORM_BUFFER, m_handle);
+	}
 }
 
-void UniformBuffer::setUniformBlock(unsigned int index, unsigned int position, const void* a) {
-	glBufferSubData(GL_UNIFORM_BUFFER, m_layout.getElements()[index].blockStride(position), m_layout.getElements()[index].itemSize(position), a);
-}
-
-void UniformBuffer::bind() const {
-	glBindBuffer(GL_UNIFORM_BUFFER, m_handle);
-}
-
-void UniformBuffer::unbind() const {
+void UniformBuffer::unbind() {
+	setAsBound(false);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }

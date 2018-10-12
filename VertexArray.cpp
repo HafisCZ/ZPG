@@ -1,6 +1,6 @@
 #include "VertexArray.h"
 
-VertexArray::VertexArray() {
+VertexArray::VertexArray() : Buffer(GL_VERTEX_ARRAY) {
 	glGenVertexArrays(1, &m_handle);
 	glBindVertexArray(m_handle);
 }
@@ -9,7 +9,7 @@ VertexArray::~VertexArray() {
 	glDeleteVertexArrays(1, &m_handle);
 }
 
-void VertexArray::addBuffer(const VertexBuffer & vb, const VertexBufferLayout & layout) {
+void VertexArray::addBuffer(VertexBuffer & vb, const VertexBufferLayout & layout) {
 	bind();
 	vb.bind();
 
@@ -26,10 +26,13 @@ void VertexArray::addBuffer(const VertexBuffer & vb, const VertexBufferLayout & 
 	}
 }
 
-void VertexArray::bind() const {
-	glBindVertexArray(m_handle);
+void VertexArray::bind() {
+	if (setAsBound(true)) {
+		glBindVertexArray(m_handle);
+	}
 }
 
-void VertexArray::unbind() const {
+void VertexArray::unbind() {
+	setAsBound(false);
 	glBindVertexArray(0);
 }

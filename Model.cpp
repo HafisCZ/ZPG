@@ -4,6 +4,8 @@
 #include <fstream>
 #include <sstream>
 
+#include <iostream>
+
 Model::Model(const std::string& modelPath) {
 	std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;
@@ -79,4 +81,6 @@ void Model::loadModel(const std::string& filepath, std::vector<Vertex>& vertices
 	}
 
 	vertices.shrink_to_fit();
+
+	std::cout << "[OBJ] VER: " << vertices.size() << " IND: " << indices.size() << std::endl;
 }

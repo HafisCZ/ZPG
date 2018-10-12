@@ -17,11 +17,16 @@ class Program {
 
 	public:
 		Program();
+
+		Program(const std::string& vertex, const std::string& fragment);
+		Program(const std::string& vertex, const std::string& fragment, const std::string& geometry);
+
 		~Program();
 
 		void bindUniformBlock(const std::string& name, unsigned int index);
 
 		void setShader(unsigned int type, const std::string& filepath);
+		void compile();
 
 		void uniform3f(const std::string& name, float a, float b, float c);
 		void uniform1i(const std::string& name, int a);
@@ -31,6 +36,7 @@ class Program {
 
 		void bind() const;
 		void unbind() const;
+
 	private:
 		unsigned int compileShader(unsigned int type, const std::string& filepath);
 		unsigned int getShader(unsigned int type, const std::string& filepath);

@@ -12,5 +12,5 @@ class Renderer {
 		void clear() const;
 		void clear(float r, float g, float b) const;
 
-		void draw(const VertexArray& va, const IndexBuffer& ib, const Program& program) const;
+		void draw(VertexArray& va, IndexBuffer& ib, const Program& program) const;
 };

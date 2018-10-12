@@ -1,5 +1,7 @@
 #include "Texture.h"
 
+#include <unordered_map>
+
 #include "vendor/stb_image.h"
 
 Texture::Texture(const std::string& filepath, unsigned int mode) {
@@ -16,17 +18,44 @@ Texture::Texture(const std::string& filepath, unsigned int mode) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, mode);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, mode);
+
+	static unsigned int id = 1;
+	m_id = id++;
+	setSlot(0);
 }
 
 Texture::~Texture() {
 	glDeleteTextures(1, &m_handle);
 }
 
-void Texture::bind(unsigned int slot) const {
-	glActiveTexture(GL_TEXTURE0 + slot);
-	glBindTexture(GL_TEXTURE_2D, m_handle);
+void Texture::bind(unsigned int slot) {
+	if (slot == 0) {
+		return;
+	}
+
+	if (setSlot(slot)) {
+		glActiveTexture(GL_TEXTURE0 + slot);
+		glBindTexture(GL_TEXTURE_2D, m_handle);
+	}
 }
 
-void Texture::unbind() const {
+void Texture::unbind() {
+	setSlot(-1);
 	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+bool Texture::setSlot(unsigned int slot) {
+	static std::unordered_map<unsigned int, unsigned int> binds;
+
+	if (slot >= 0) {
+		unsigned int sid;
+		if ((sid = binds[slot]) != m_id) {
+			binds[slot] = m_id;
+			return true;
+		}
+	} else {
+		binds[slot] = 0;
+	}
+
+	return false;
 }

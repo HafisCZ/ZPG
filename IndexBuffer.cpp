@@ -1,7 +1,7 @@
 #include "IndexBuffer.h"
 
 IndexBuffer::IndexBuffer(const void* data, unsigned int count)
-	: m_count(count)
+	: m_count(count), Buffer(GL_ELEMENT_ARRAY_BUFFER)
 {
 	glGenBuffers(1, &m_handle);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_handle);
@@ -12,10 +12,13 @@ IndexBuffer::~IndexBuffer() {
 	glDeleteBuffers(1, &m_handle);
 }
 
-void IndexBuffer::bind() const {
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_handle);
+void IndexBuffer::bind() {
+	if (setAsBound(true)) {
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_handle);
+	}
 }
 
-void IndexBuffer::unbind() const {
+void IndexBuffer::unbind() {
+	setAsBound(false);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }

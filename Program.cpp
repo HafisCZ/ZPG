@@ -8,6 +8,21 @@ Program::Program() {
 	m_handle = glCreateProgram();
 }
 
+Program::Program(const std::string& vertex, const std::string& fragment, const std::string& geometry = "") : Program() {
+	setShader(GL_VERTEX_SHADER, vertex);
+	setShader(GL_FRAGMENT_SHADER, fragment);
+	setShader(GL_GEOMETRY_SHADER, geometry);
+
+	compile();
+}
+
+Program::Program(const std::string& vertex, const std::string& fragment) : Program() {
+	setShader(GL_VERTEX_SHADER, vertex);
+	setShader(GL_FRAGMENT_SHADER, fragment);
+
+	compile();
+}
+
 Program::~Program() {
 	glDeleteProgram(m_handle);
 }
@@ -86,17 +101,19 @@ void Program::setShader(unsigned int type, const std::string& filepath) {
 	unsigned int handle = getShader(type, filepath);
 
 	m_linkedShaders[type] = handle;
-	glAttachShader(m_handle, handle);
+}
 
+void Program::compile() {
 	if (
 		m_linkedShaders.find(GL_VERTEX_SHADER) != m_linkedShaders.end() &&
 		m_linkedShaders.find(GL_FRAGMENT_SHADER) != m_linkedShaders.end()
-		) {
+	) {
+		for (const auto& shader : m_linkedShaders) {
+			glAttachShader(m_handle, shader.second);
+		}
+
 		glLinkProgram(m_handle);
 		glValidateProgram(m_handle);
-
-		m_uniformLocationCache.clear();
-
 		glUseProgram(m_handle);
 	}
 }

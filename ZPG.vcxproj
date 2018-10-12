@@ -120,7 +120,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Buffer.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Framebuffer.cpp" />
     <ClCompile Include="IndexBuffer.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Program.cpp" />
@@ -134,7 +136,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
+    <ClInclude Include="Buffer.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Framebuffer.h" />
     <ClInclude Include="gtype.h" />
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="Input.h" />
@@ -142,7 +146,6 @@
     <ClInclude Include="Program.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Texture.h" />
-    <ClInclude Include="TextureCache.h" />
     <ClInclude Include="UniformBuffer.h" />
     <ClInclude Include="UniformBufferLayout.h" />
     <ClInclude Include="vendor\stb_image.h" />
@@ -151,14 +154,21 @@
     <ClInclude Include="VertexBufferLayout.h" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="resources\textures\flr.png" />
     <Image Include="resources\textures\spc.png" />
+    <Image Include="resources\textures\spd.png" />
     <Image Include="resources\textures\tex.png" />
+    <Image Include="resources\textures\tile.png" />
+    <Image Include="resources\textures\tile_spc.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="resources\shaders\default.fragment" />
-    <None Include="resources\shaders\default.vertex" />
-    <None Include="resources\shaders\object.fragment" />
-    <None Include="resources\shaders\object.vertex" />
+    <None Include="resources\shaders\default.frag" />
+    <None Include="resources\shaders\default.vert" />
+    <None Include="resources\shaders\object.frag" />
+    <None Include="resources\shaders\object.vert" />
+    <None Include="resources\shaders\shadow.frag" />
+    <None Include="resources\shaders\shadow.geom" />
+    <None Include="resources\shaders\shadow.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
