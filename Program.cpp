@@ -6,6 +6,8 @@
 
 Program::Program() {
 	m_handle = glCreateProgram();
+
+	std::cout << "[PROGRAM]" << std::endl;
 }
 
 Program::Program(const std::string& vertex, const std::string& fragment, const std::string& geometry = "") : Program() {
@@ -150,6 +152,12 @@ void Program::uniform4mat(const std::string& name, const glm::mat4& matrix) {
 
 void Program::uniform3vec(const std::string& name, glm::vec3 a) {
 	glUniform3fv(getUniformLocation(name), 1, &a.x);
+}
+
+void Program::uniform4mat(const std::string& name, const std::vector<glm::mat4>& data) {
+	for (unsigned int i = 0; i < data.size(); i++) {
+		uniform4mat(name + '[' + std::to_string(i) + ']', data[i]);
+	}
 }
 
 std::unordered_map<std::string, unsigned int> Program::m_shaderHandleCache;

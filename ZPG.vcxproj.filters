@@ -9,15 +9,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Source Files\Vendor">
-      <UniqueIdentifier>{0fdf4172-63b9-4ac8-9a4f-54c42e450064}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Headers">
-      <UniqueIdentifier>{5855d2bb-2e03-4559-ab43-28e47dfc251b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Sources">
-      <UniqueIdentifier>{2fbdc465-1b5f-43a7-b10c-2520dafa0cf8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Resource Files\Object shaders">
       <UniqueIdentifier>{9a9c9cff-e5c0-4840-8f12-acedd954ff95}</UniqueIdentifier>
     </Filter>
@@ -27,99 +18,141 @@
     <Filter Include="Resource Files\Textures">
       <UniqueIdentifier>{aaca78b8-f4e4-420a-861d-683afb067b22}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Engine">
+      <UniqueIdentifier>{fd67eeef-7359-4906-aeec-a45f542b7659}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Headers">
+      <UniqueIdentifier>{d3b479cd-fce9-4ea1-abb0-e037ab36f15f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Sources">
+      <UniqueIdentifier>{fa583eb6-f956-4b77-9cda-dccffd721842}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\World">
+      <UniqueIdentifier>{9a33f4b7-f190-460e-a393-b68102af6ae1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\World\Headers">
+      <UniqueIdentifier>{176b82a5-4cb8-4448-8e58-bf01f140387b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\World\Sources">
+      <UniqueIdentifier>{a8c95ac8-b65a-4b35-bc8e-805ff44b4b19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Utils">
+      <UniqueIdentifier>{e0f8913e-65b1-421e-bdff-a413999434a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Vendor">
+      <UniqueIdentifier>{0fdf4172-63b9-4ac8-9a4f-54c42e450064}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="vendor\stb_image.cpp">
-      <Filter>Source Files\Vendor</Filter>
+      <Filter>Source Files\Engine\Vendor</Filter>
     </ClCompile>
     <ClCompile Include="Source.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="UniformBuffer.cpp">
-      <Filter>Source Files\Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Texture.cpp">
-      <Filter>Source Files\Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Program.cpp">
-      <Filter>Source Files\Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="VertexBuffer.cpp">
-      <Filter>Source Files\Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="IndexBuffer.cpp">
-      <Filter>Source Files\Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="VertexArray.cpp">
-      <Filter>Source Files\Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderer.cpp">
-      <Filter>Source Files\Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Model.cpp">
-      <Filter>Source Files\Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Camera.cpp">
-      <Filter>Source Files\Sources</Filter>
-    </ClCompile>
     <ClCompile Include="Buffer.cpp">
-      <Filter>Source Files\Sources</Filter>
+      <Filter>Source Files\Engine\Sources</Filter>
     </ClCompile>
     <ClCompile Include="Framebuffer.cpp">
-      <Filter>Source Files\Sources</Filter>
+      <Filter>Source Files\Engine\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="IndexBuffer.cpp">
+      <Filter>Source Files\Engine\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Source Files\Engine\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Program.cpp">
+      <Filter>Source Files\Engine\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Source Files\Engine\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="UniformBuffer.cpp">
+      <Filter>Source Files\Engine\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="VertexBuffer.cpp">
+      <Filter>Source Files\Engine\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="VertexArray.cpp">
+      <Filter>Source Files\Engine\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files\World\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer.cpp">
+      <Filter>Source Files\Engine\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="WorldObject.cpp">
+      <Filter>Source Files\World\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="LightEmitter.cpp">
+      <Filter>Source Files\World\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Source Files\World\Sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="vendor\stb_image.h">
-      <Filter>Source Files\Vendor</Filter>
-    </ClInclude>
-    <ClInclude Include="Input.h">
-      <Filter>Source Files\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Model.h">
-      <Filter>Source Files\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="IndexBuffer.h">
-      <Filter>Source Files\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderer.h">
-      <Filter>Source Files\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Texture.h">
-      <Filter>Source Files\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="VertexArray.h">
-      <Filter>Source Files\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="VertexBuffer.h">
-      <Filter>Source Files\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="VertexBufferLayout.h">
-      <Filter>Source Files\Headers</Filter>
+      <Filter>Source Files\Engine\Vendor</Filter>
     </ClInclude>
     <ClInclude Include="Application.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>Source Files\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="gtype.h">
-      <Filter>Source Files\Headers</Filter>
+    <ClInclude Include="VertexBufferLayout.h">
+      <Filter>Source Files\Engine\Headers</Filter>
     </ClInclude>
     <ClInclude Include="UniformBuffer.h">
-      <Filter>Source Files\Headers</Filter>
+      <Filter>Source Files\Engine\Headers</Filter>
     </ClInclude>
     <ClInclude Include="UniformBufferLayout.h">
-      <Filter>Source Files\Headers</Filter>
+      <Filter>Source Files\Engine\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexArray.h">
+      <Filter>Source Files\Engine\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexBuffer.h">
+      <Filter>Source Files\Engine\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Source Files\Engine\Headers</Filter>
     </ClInclude>
     <ClInclude Include="Program.h">
-      <Filter>Source Files\Headers</Filter>
+      <Filter>Source Files\Engine\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="Buffer.h">
-      <Filter>Source Files\Headers</Filter>
+    <ClInclude Include="Model.h">
+      <Filter>Source Files\Engine\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="IndexBuffer.h">
+      <Filter>Source Files\Engine\Headers</Filter>
     </ClInclude>
     <ClInclude Include="Framebuffer.h">
-      <Filter>Source Files\Headers</Filter>
+      <Filter>Source Files\Engine\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Buffer.h">
+      <Filter>Source Files\Engine\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="gtype.h">
+      <Filter>Source Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.h">
+      <Filter>Source Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer.h">
+      <Filter>Source Files\Engine\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Source Files\World\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Source Files\World\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="WorldObject.h">
+      <Filter>Source Files\World\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="LightEmitter.h">
+      <Filter>Source Files\World\Headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

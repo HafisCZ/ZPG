@@ -22,9 +22,11 @@ Model::Model(const std::string& modelPath) {
 	vbl.push<float>(3);
 
 	m_vao->addBuffer(*m_vbo, vbl);
+
+	std::cout << "[MODEL]" << std::endl;
 }
 
-void Model::draw(const Renderer& renderer, const Program& program) {
+void Model::render(const Renderer& renderer, const Program& program) {
 	renderer.draw(*m_vao, *m_ibo, program);
 }
 
@@ -69,7 +71,7 @@ void Model::loadModel(const std::string& filepath, std::vector<Vertex>& vertices
 		glm::vec2 tex = tempUVIndices.size() > 0 ? tempUVs[tempUVIndices[i]] : glm::vec2(0, 0);
 		glm::vec3 nor = tempNormalIndices.size() > 0 ? tempNormals[tempNormalIndices[i]] : glm::vec3(0, 0, 0);
 
-		Vertex vertex = { pos.x, pos.y, pos.z, tex.x, tex.y, nor.x, nor.y, nor.z };
+		Vertex vertex = { pos, tex, nor };
 
 		unsigned int loc = std::distance(vertices.begin(), std::find(vertices.begin(), vertices.end(), vertex));
 		if (loc < vertices.size()) {

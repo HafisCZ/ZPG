@@ -1,6 +1,7 @@
 #include "Texture.h"
 
 #include <unordered_map>
+#include <iostream>
 
 #include "vendor/stb_image.h"
 
@@ -22,6 +23,8 @@ Texture::Texture(const std::string& filepath, unsigned int mode) {
 	static unsigned int id = 1;
 	m_id = id++;
 	setSlot(0);
+
+	std::cout << "[TEXTURE] ID: " << m_id << std::endl;
 }
 
 Texture::~Texture() {

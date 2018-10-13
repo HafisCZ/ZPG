@@ -34,6 +34,8 @@ class Program {
 		void uniform4mat(const std::string& name, const glm::mat4& matrix);
 		void uniform3vec(const std::string& name, glm::vec3 a);
 
+		void uniform4mat(const std::string& name, const std::vector<glm::mat4>& data);
+
 		void bind() const;
 		void unbind() const;
 

@@ -19,19 +19,10 @@ struct alignas(16) gint_t {
 	gint_t(const int& x) : x(x) { }
 };
 
-struct light_dir_t {
-	gvec3_t dir, amb, dif, spc;
-};
-
 struct light_ptr_t {
 	gvec3_t pos, amb, dif, spc, clq;
 };
 
-struct light_spt_t {
-	gvec3_t pos, dir, amb, dif, spc, clq;
-	gvec2_t cc;
-};
-
-struct mat4_t {
+struct gmat4_t {
 	glm::mat4 mat;
 };

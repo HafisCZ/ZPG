@@ -1,5 +1,7 @@
 #include "Framebuffer.h"
 
+#include <iostream>
+
 Framebuffer::Framebuffer(FramebufferTexture tex, unsigned int width, unsigned int height)
 	: m_width(width), m_height(height), m_type(tex)
 {
@@ -25,6 +27,8 @@ Framebuffer::Framebuffer(FramebufferTexture tex, unsigned int width, unsigned in
 
 	glDrawBuffer(GL_NONE);
 	glReadBuffer(GL_NONE);
+
+	std::cout << "[FRAMEBUFFER]" <<std::endl;
 }
 
 void Framebuffer::begin() const {

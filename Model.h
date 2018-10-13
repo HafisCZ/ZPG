@@ -6,24 +6,9 @@
 #include "Program.h"
 
 struct Vertex {
-	struct Position {
-		float x, y, z;
-		bool operator == (const Position& position) const {	return (x == position.x) && (y == position.y) && (z == position.z); }
-	};
-
-	struct Normal {
-		float x, y, z;
-		bool operator == (const Normal& normal) const { return (x == normal.x) && (y == normal.y) && (z == normal.z); }
-	};
-
-	struct Texture {
-		float x, y;
-		bool operator == (const Texture& texture) const { return (x == texture.x) && (y == texture.y); }
-	};
-
-	Position position;
-	Normal normal;
-	Texture texture;
+	glm::vec3 position;
+	glm::vec2 texture;
+	glm::vec3 normal;
 
 	bool operator == (const Vertex& vertex) const {
 		return (
@@ -43,7 +28,7 @@ class Model {
 	public:
 		Model(const std::string& modelPath);
 
-		void draw(const Renderer& renderer, const Program& program);
+		void render(const Renderer& renderer, const Program& program);
 
 		static void loadModel(const std::string& filepath, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices);
 };
