@@ -83,13 +83,19 @@
     <ClCompile Include="Renderer.cpp">
       <Filter>Source Files\Engine\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="WorldObject.cpp">
-      <Filter>Source Files\World\Sources</Filter>
-    </ClCompile>
     <ClCompile Include="LightEmitter.cpp">
       <Filter>Source Files\World\Sources</Filter>
     </ClCompile>
     <ClCompile Include="Scene.cpp">
+      <Filter>Source Files\World\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="YGenerator.cpp">
+      <Filter>Source Files\Engine\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Object.cpp">
+      <Filter>Source Files\World\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="TerrainGenerator.cpp">
       <Filter>Source Files\World\Sources</Filter>
     </ClCompile>
   </ItemGroup>
@@ -148,11 +154,21 @@
     <ClInclude Include="Scene.h">
       <Filter>Source Files\World\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="WorldObject.h">
-      <Filter>Source Files\World\Headers</Filter>
-    </ClInclude>
     <ClInclude Include="LightEmitter.h">
       <Filter>Source Files\World\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="TerrainGenerator.h">
+      <Filter>Source Files\World\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="YGenerator.h">
+      <Filter>Source Files\Engine\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="modely\suzi_smooth.h" />
+    <ClInclude Include="Object.h">
+      <Filter>Source Files\World\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjModel.h">
+      <Filter>Source Files\Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -162,16 +178,16 @@
     <Image Include="resources\textures\tex.png">
       <Filter>Resource Files\Textures</Filter>
     </Image>
-    <Image Include="resources\textures\flr.png">
-      <Filter>Resource Files\Textures</Filter>
-    </Image>
-    <Image Include="resources\textures\spd.png">
-      <Filter>Resource Files\Textures</Filter>
-    </Image>
     <Image Include="resources\textures\tile.png">
       <Filter>Resource Files\Textures</Filter>
     </Image>
     <Image Include="resources\textures\tile_spc.png">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
+    <Image Include="resources\textures\grass.png">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
+    <Image Include="resources\textures\grass_spc.png">
       <Filter>Resource Files\Textures</Filter>
     </Image>
   </ItemGroup>

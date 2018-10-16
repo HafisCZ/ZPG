@@ -8,7 +8,10 @@ layout(std140) uniform data_matrix {
 
 uniform mat4 u_model;
 
+out vec3 v_position;
+
 void main()
 {
 	gl_Position = vp * u_model * vec4(xyz, 1.0);
+	v_position = xyz;
 }

@@ -4,7 +4,7 @@ Scene::Scene() : m_framebuffer(TEXTURE_3D, 1024, 1024) {
 
 }
 
-void Scene::render(Renderer& renderer) {
+void Scene::draw(Renderer& renderer) {
 	m_framebuffer.begin();
 	glDisable(GL_CULL_FACE);
 
@@ -27,15 +27,19 @@ void Scene::render(Renderer& renderer) {
 		shadow_program.uniform3vec("u_smap", position);
 		shadow_program.uniform1f("u_smaf", 25.0f);
 
-		for (WorldObject*& obj : m_objects) {
-			obj->renderWith(renderer, shadow_program);
+		for (Object*& obj : m_objects) {
+			obj->drawWith(renderer, shadow_program);
 		}
 	}
 
 	glEnable(GL_CULL_FACE);
 	m_framebuffer.end(1200, 900);
 
-	for (WorldObject*& obj : m_objects) {
-		obj->render(renderer);
+	for (Object*& obj : m_objects) {
+		obj->draw(renderer);
+	}
+
+	if (m_terrain) {
+		m_terrain->draw(renderer);
 	}
 }

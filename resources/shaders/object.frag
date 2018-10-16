@@ -50,7 +50,7 @@ float processShadow(vec3 position)
 	float current = length(len);
 
 	float shadow = 0.0;
-	float bias = 0.05;
+	float bias = 0.15;
 	
 	float dist = length(u_view - vert.position);
 	float disk = (1.0 + (dist / 25.0)) / 25.0;

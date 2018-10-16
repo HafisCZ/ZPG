@@ -14,8 +14,8 @@ class Buffer {
 
 		bool setAsBound(bool bind);
 
-		inline const unsigned int& getType() const { return m_type; }
-		inline const unsigned int& getId() const { return m_id; }
+		inline const unsigned int getType() const { return m_type; }
+		inline const unsigned int getId() const { return m_id; }
 
 		inline static std::string getTypeName(unsigned int type) {
 			switch (type) {

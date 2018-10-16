@@ -7,10 +7,9 @@
 #include "Program.h"
 
 class Renderer {
-	private:
 	public:
 		void clear() const;
-		void clear(float r, float g, float b) const;
 
 		void draw(VertexArray& va, IndexBuffer& ib, const Program& program) const;
+		void draw(VertexArray& va, std::size_t count, const Program& program) const;
 };

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "WorldObject.h"
+#include "Object.h"
 #include "gtype.h"
 
 class LightEmitter {
@@ -13,12 +13,12 @@ class LightEmitter {
 		glm::vec3 m_specular;
 		glm::vec3 m_cql;
 
-		WorldObject *m_boundwo;
+		Object *m_boundwo;
 
 	public:
 		LightEmitter(glm::vec3 amb, glm::vec3 dif, glm::vec3 spc, glm::vec3 cql);
 
-		inline void attachObject(WorldObject& wo) { m_boundwo = &wo; }
+		inline void attachObject(Object& wo) { m_boundwo = &wo; }
 		inline void detachObject() { m_boundwo = nullptr; }
 
 		inline void setPosition(glm::vec3 position) { m_position = position; }

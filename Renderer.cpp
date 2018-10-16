@@ -1,11 +1,7 @@
 #include "Renderer.h"
 
 void Renderer::clear() const {
-	clear(0.0f, 0.0f, 0.0f);
-}
-
-void Renderer::clear(float r, float g, float b) const {
-	glClearColor(r, g, b, 1.0f);
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
@@ -15,4 +11,11 @@ void Renderer::draw(VertexArray& va, IndexBuffer& ib, const Program& program) co
 	ib.bind();
 
 	glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, nullptr);
+}
+
+void Renderer::draw(VertexArray& va, std::size_t count, const Program& program) const {
+	program.bind();
+	va.bind();
+	
+	glDrawArrays(GL_TRIANGLES, 0, count);
 }

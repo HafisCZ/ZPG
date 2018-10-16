@@ -6,8 +6,6 @@
 
 Program::Program() {
 	m_handle = glCreateProgram();
-
-	std::cout << "[PROGRAM]" << std::endl;
 }
 
 Program::Program(const std::string& vertex, const std::string& fragment, const std::string& geometry = "") : Program() {

@@ -24,6 +24,4 @@ Buffer::Buffer(unsigned int type) : m_type(type) {
 
 	m_id = id++;
 	setAsBound(true);
-
-	std::cout << "[" << getTypeName(type) << "] ID: " << m_id << std::endl;
 }

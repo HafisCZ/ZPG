@@ -76,10 +76,10 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)libraries\glew\include;$(ProjectDir)libraries\glm;$(ProjectDir)libraries\assimp\include;$(ProjectDir)libraries\glfw\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)libraries\glew\include;$(ProjectDir)libraries\glm;$(ProjectDir)libraries\glfw\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(ProjectDir)libraries\glew\lib\Release\Win32;$(ProjectDir)libraries\assimp\lib\Debug;$(ProjectDir)libraries\glfw\lib-vc2015;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)libraries\glew\lib\Release\Win32;$(ProjectDir)libraries\glfw\lib-vc2015;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>opengl32.lib;glu32.lib;glew32.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -127,15 +127,17 @@
     <ClCompile Include="LightEmitter.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Scene.cpp" />
-    <ClCompile Include="WorldObject.cpp" />
+    <ClCompile Include="Object.cpp" />
     <ClCompile Include="Program.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Source.cpp" />
+    <ClCompile Include="TerrainGenerator.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="UniformBuffer.cpp" />
     <ClCompile Include="vendor\stb_image.cpp" />
     <ClCompile Include="VertexArray.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
+    <ClCompile Include="YGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -147,7 +149,10 @@
     <ClInclude Include="Input.h" />
     <ClInclude Include="LightEmitter.h" />
     <ClInclude Include="Model.h" />
-    <ClInclude Include="WorldObject.h" />
+    <ClInclude Include="modely\suzi_smooth.h" />
+    <ClInclude Include="ObjModel.h" />
+    <ClInclude Include="TerrainGenerator.h" />
+    <ClInclude Include="Object.h" />
     <ClInclude Include="Program.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Scene.h" />
@@ -158,11 +163,12 @@
     <ClInclude Include="VertexArray.h" />
     <ClInclude Include="VertexBuffer.h" />
     <ClInclude Include="VertexBufferLayout.h" />
+    <ClInclude Include="YGenerator.h" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="resources\textures\flr.png" />
+    <Image Include="resources\textures\grass.png" />
+    <Image Include="resources\textures\grass_spc.png" />
     <Image Include="resources\textures\spc.png" />
-    <Image Include="resources\textures\spd.png" />
     <Image Include="resources\textures\tex.png" />
     <Image Include="resources\textures\tile.png" />
     <Image Include="resources\textures\tile_spc.png" />

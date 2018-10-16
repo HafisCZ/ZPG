@@ -1,23 +1,25 @@
 #pragma once
 
-#include <memory>
+#include <sstream>
+#include <fstream>
+#include <regex>
+#include <functional>
+
+#include <iostream>
 
 #include "Renderer.h"
-#include "Program.h"
 
 struct Vertex {
 	glm::vec3 position;
-	glm::vec2 texture;
 	glm::vec3 normal;
+	glm::vec2 texture;
 
 	bool operator == (const Vertex& vertex) const {
-		return (
-			position == vertex.position &&
-			normal == vertex.normal &&
-			texture == vertex.texture
-		);
+		return ( position == vertex.position && normal == vertex.normal &&	texture == vertex.texture );
 	}
 };
+
+using Indice = unsigned int;
 
 class Model {
 	private:
@@ -25,10 +27,28 @@ class Model {
 		std::unique_ptr<VertexArray> m_vao;
 		std::unique_ptr<IndexBuffer> m_ibo;
 
+		std::size_t m_vertex_count;
+
 	public:
-		Model(const std::string& modelPath);
+		template <typename T, typename ... Args, typename ... Trgs> Model(T loader(std::unique_ptr<VertexBuffer>&, std::unique_ptr<IndexBuffer>&, std::size_t& vc, Args ...), Trgs ... args) {
+			m_vao = std::make_unique<VertexArray>();
 
-		void render(const Renderer& renderer, const Program& program);
+			std::function<T(std::unique_ptr<VertexBuffer>&, std::unique_ptr<IndexBuffer>&, std::size_t&, Args ...)> internal(loader);
+			internal(m_vbo, m_ibo, m_vertex_count, args ...);
 
-		static void loadModel(const std::string& filepath, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices);
+			VertexBufferLayout vbl;
+			vbl.push<float>(3);
+			vbl.push<float>(3);
+			vbl.push<float>(2);
+
+			m_vao->addBuffer(*m_vbo, vbl);
+		}
+
+		void draw(const Renderer& renderer, const Program& program);
+};
+
+class ModelLoader {
+	public:
+		static void loadFromFile(std::unique_ptr<VertexBuffer>& vbo, std::unique_ptr<IndexBuffer>& ibo, std::size_t& vc, const std::string& filepath);
+		static void loadFromArray(std::unique_ptr<VertexBuffer>& vbo, std::unique_ptr<IndexBuffer>& ibo, std::size_t& vc, Vertex* vertices, std::size_t size);
 };
