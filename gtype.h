@@ -26,3 +26,14 @@ struct light_ptr_t {
 struct gmat4_t {
 	glm::mat4 mat;
 };
+
+struct pnt_t {
+	glm::vec3 pos, nor;
+	glm::vec2 tex;
+};
+
+struct pnttb_t {
+	glm::vec3 pos, nor;
+	glm::vec2 tex;
+	glm::vec3 tan, bta;
+};

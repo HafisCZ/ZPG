@@ -1,6 +1,6 @@
 #include "UniformBuffer.h"
 
-UniformBuffer::UniformBuffer(const UniformBufferLayout& layout) : m_layout(layout), Buffer(GL_UNIFORM_BUFFER) {
+UniformBuffer::UniformBuffer(const UniformBufferLayout& layout) : m_layout(layout) {
 	glGenBuffers(1, &m_handle);
 	glBindBuffer(GL_UNIFORM_BUFFER, m_handle);
 	glBufferData(GL_UNIFORM_BUFFER, layout.getSize(), nullptr, GL_DYNAMIC_DRAW);
@@ -15,12 +15,9 @@ UniformBuffer::~UniformBuffer() {
 }
 
 void UniformBuffer::bind() {
-	if (setAsBound(true)) {
-		glBindBuffer(GL_UNIFORM_BUFFER, m_handle);
-	}
+	glBindBuffer(GL_UNIFORM_BUFFER, m_handle);
 }
 
 void UniformBuffer::unbind() {
-	setAsBound(false);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }

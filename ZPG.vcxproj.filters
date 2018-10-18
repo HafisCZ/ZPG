@@ -42,6 +42,15 @@
     <Filter Include="Source Files\Engine\Vendor">
       <UniqueIdentifier>{0fdf4172-63b9-4ac8-9a4f-54c42e450064}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Models">
+      <UniqueIdentifier>{876995fb-efff-473d-a6cb-13898a487cea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Models\Headers">
+      <UniqueIdentifier>{564e6561-2f77-40d1-9c62-4d27923966a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Models\Sources">
+      <UniqueIdentifier>{a6d6da21-d1b2-442b-a0fd-4655d31dfa6b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="vendor\stb_image.cpp">
@@ -50,16 +59,10 @@
     <ClCompile Include="Source.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Buffer.cpp">
-      <Filter>Source Files\Engine\Sources</Filter>
-    </ClCompile>
     <ClCompile Include="Framebuffer.cpp">
       <Filter>Source Files\Engine\Sources</Filter>
     </ClCompile>
     <ClCompile Include="IndexBuffer.cpp">
-      <Filter>Source Files\Engine\Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Model.cpp">
       <Filter>Source Files\Engine\Sources</Filter>
     </ClCompile>
     <ClCompile Include="Program.cpp">
@@ -98,8 +101,11 @@
     <ClCompile Include="YGenerator.cpp">
       <Filter>Source Files\World\Sources</Filter>
     </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Source Files\Models\Sources</Filter>
+    </ClCompile>
     <ClCompile Include="Mesh.cpp">
-      <Filter>Source Files\Engine\Sources</Filter>
+      <Filter>Source Files\Models\Sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -130,16 +136,10 @@
     <ClInclude Include="Program.h">
       <Filter>Source Files\Engine\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="Model.h">
-      <Filter>Source Files\Engine\Headers</Filter>
-    </ClInclude>
     <ClInclude Include="IndexBuffer.h">
       <Filter>Source Files\Engine\Headers</Filter>
     </ClInclude>
     <ClInclude Include="Framebuffer.h">
-      <Filter>Source Files\Engine\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Buffer.h">
       <Filter>Source Files\Engine\Headers</Filter>
     </ClInclude>
     <ClInclude Include="gtype.h">
@@ -163,7 +163,6 @@
     <ClInclude Include="TerrainGenerator.h">
       <Filter>Source Files\World\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="modely\suzi_smooth.h" />
     <ClInclude Include="Object.h">
       <Filter>Source Files\World\Headers</Filter>
     </ClInclude>
@@ -171,7 +170,10 @@
       <Filter>Source Files\World\Headers</Filter>
     </ClInclude>
     <ClInclude Include="Mesh.h">
-      <Filter>Source Files\Engine\Headers</Filter>
+      <Filter>Source Files\Models\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>Source Files\Models\Headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -214,12 +216,6 @@
       <Filter>Resource Files\Object shaders</Filter>
     </None>
     <None Include="resources\shaders\object.vert">
-      <Filter>Resource Files\Object shaders</Filter>
-    </None>
-    <None Include="resources\shaders\default_textured.frag">
-      <Filter>Resource Files\Object shaders</Filter>
-    </None>
-    <None Include="resources\shaders\default_textured.vert">
       <Filter>Resource Files\Object shaders</Filter>
     </None>
   </ItemGroup>

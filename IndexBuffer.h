@@ -2,9 +2,7 @@
 
 #include <GL/glew.h>
 
-#include "Buffer.h"
-
-class IndexBuffer : Buffer {
+class IndexBuffer {
 	private:
 		unsigned int m_handle;
 		unsigned int m_count;

@@ -2,9 +2,7 @@
 
 #include "UniformBufferLayout.h"
 
-#include "Buffer.h"
-
-class UniformBuffer : Buffer {
+class UniformBuffer {
 	private:
 		unsigned int m_handle;
 		UniformBufferLayout m_layout;

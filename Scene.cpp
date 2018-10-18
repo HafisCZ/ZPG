@@ -1,8 +1,6 @@
 #include "Scene.h"
 
-Scene::Scene() : m_framebuffer(TEXTURE_3D, 1024, 1024) {
-
-}
+Scene::Scene() : m_framebuffer(TEXTURE_3D, 1024, 1024) { }
 
 void Scene::draw(Renderer& renderer) {
 	m_framebuffer.begin();
@@ -34,12 +32,8 @@ void Scene::draw(Renderer& renderer) {
 
 	glEnable(GL_CULL_FACE);
 	m_framebuffer.end(1200, 900);
-
-	for (Object*& obj : m_objects) {
+	
+	for (Object* obj : m_objects) {
 		obj->draw(renderer);
-	}
-
-	if (m_terrain) {
-		m_terrain->draw(renderer);
 	}
 }

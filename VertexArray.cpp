@@ -1,6 +1,6 @@
 #include "VertexArray.h"
 
-VertexArray::VertexArray() : Buffer(GL_VERTEX_ARRAY) {
+VertexArray::VertexArray() {
 	glGenVertexArrays(1, &m_handle);
 	glBindVertexArray(m_handle);
 }
@@ -27,12 +27,9 @@ void VertexArray::addBuffer(VertexBuffer & vb, const VertexBufferLayout & layout
 }
 
 void VertexArray::bind() {
-	if (setAsBound(true)) {
-		glBindVertexArray(m_handle);
-	}
+	glBindVertexArray(m_handle);
 }
 
 void VertexArray::unbind() {
-	setAsBound(false);
 	glBindVertexArray(0);
 }

@@ -2,9 +2,7 @@
 
 #include <GL/glew.h>
 
-#include "Buffer.h"
-
-class VertexBuffer : Buffer {
+class VertexBuffer {
 	private:
 		unsigned int m_handle;
 

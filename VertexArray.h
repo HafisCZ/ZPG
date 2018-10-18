@@ -5,7 +5,7 @@
 #include "VertexBuffer.h"
 #include "VertexBufferLayout.h"
 
-class VertexArray : Buffer {
+class VertexArray {
 	private:
 		unsigned int m_handle;
 	public:

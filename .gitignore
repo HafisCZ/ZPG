@@ -1,5 +1,6 @@
 .vs/**
 Debug/**
+Release/**
 libraries/glew/**
 libraries/glfw/**
 libraries/glm/**

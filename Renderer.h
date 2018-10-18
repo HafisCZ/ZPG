@@ -6,6 +6,7 @@
 #include "IndexBuffer.h"
 #include "Program.h"
 #include "Texture.h"
+#include "gtype.h"
 
 class Renderer {
 	public:
@@ -13,6 +14,4 @@ class Renderer {
 
 		void draw(VertexArray& va, IndexBuffer& ib, const Program& program) const;
 		void draw(VertexArray& va, std::size_t count, const Program& program) const;
-
-		void bindTexture(int id, unsigned int slot) const { Texture::repo(id).bind(slot); }
 };

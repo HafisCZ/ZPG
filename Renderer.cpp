@@ -1,7 +1,7 @@
 #include "Renderer.h"
 
 void Renderer::clear() const {
-	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
@@ -16,6 +16,6 @@ void Renderer::draw(VertexArray& va, IndexBuffer& ib, const Program& program) co
 void Renderer::draw(VertexArray& va, std::size_t count, const Program& program) const {
 	program.bind();
 	va.bind();
-	
+
 	glDrawArrays(GL_TRIANGLES, 0, count);
 }

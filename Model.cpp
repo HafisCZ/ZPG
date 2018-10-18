@@ -1,15 +1,15 @@
 #include "Model.h"
 
-void Model::draw(const Renderer& renderer, Program& program) {
+void Model::draw(const Renderer& renderer, Program& program, bool no_uniforms) {
 	for (auto& mesh : m_meshes) {
-		mesh.draw(renderer, program);
+		mesh.draw(renderer, program, no_uniforms);
 	}
 }
 
 void Model::assimp(std::vector<Mesh>& meshes, const std::string& filepath) {
 	Assimp::Importer importer;
 
-	const aiScene* scene = importer.ReadFile(filepath.c_str(), aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+	const aiScene* scene = importer.ReadFile(filepath.c_str(), aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_GenSmoothNormals);
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) return;
 
 	_assimp_process_node(meshes, scene->mRootNode, scene, filepath.substr(0, filepath.find_last_of('/')));
@@ -27,7 +27,7 @@ void Model::_assimp_process_node(std::vector<Mesh>& meshes, aiNode* node, const 
 Mesh Model::_assimp_process_mesh(aiMesh* mesh, const aiScene* scene, const std::string& dir) {
 	std::vector<pnttb_t> vertices;
 	std::vector<unsigned int> indices;
-	std::vector<TextureData> textures;
+	std::unordered_map<TextureType, std::shared_ptr<Texture>> textures;
 
 	for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
 		vertices.push_back({
@@ -47,28 +47,19 @@ Mesh Model::_assimp_process_mesh(aiMesh* mesh, const aiScene* scene, const std::
 	}
 
 	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-	_assimp_load_texture(textures, material, DIFFUSE, dir);
-	_assimp_load_texture(textures, material, SPECULAR, dir);
-	_assimp_load_texture(textures, material, NORMAL, dir);
-	_assimp_load_texture(textures, material, HEIGHT, dir);
+	_assimp_load_texture(textures, material, aiTextureType_DIFFUSE, dir);
+	_assimp_load_texture(textures, material, aiTextureType_SPECULAR, dir);
+	_assimp_load_texture(textures, material, aiTextureType_HEIGHT, dir);
+	_assimp_load_texture(textures, material, aiTextureType_AMBIENT, dir);
 
 	return Mesh(Mesh::assimp, vertices, indices, textures);
 }
 
-aiTextureType Model::_assimp_texture_type(TextureType type) {
-	switch (type) {
-		case DIFFUSE: return aiTextureType_DIFFUSE;
-		case SPECULAR: return aiTextureType_SPECULAR;
-		case NORMAL: return aiTextureType_HEIGHT;
-		case HEIGHT: return aiTextureType_AMBIENT;
-		default: return aiTextureType_DIFFUSE;
-	}
-}
-
-void Model::_assimp_load_texture(std::vector<TextureData>& textures, aiMaterial* mat, TextureType type, const std::string& dir) {
-	for (unsigned int i = 0; i < mat->GetTextureCount(_assimp_texture_type(type)); i++) {
+void Model::_assimp_load_texture(std::unordered_map<TextureType, std::shared_ptr<Texture>>& textures, aiMaterial* mat, aiTextureType type, const std::string& dir) {
+	for (unsigned int i = 0; i < mat->GetTextureCount(type); i++) {
 		aiString str;
-		mat->GetTexture(_assimp_texture_type(type), i, &str);
-		textures.push_back({ type, Texture::preload(dir + '/' + std::string(str.C_Str()), GL_REPEAT) });
+		mat->GetTexture(type, i, &str);
+
+		textures[type == aiTextureType_DIFFUSE ? DIFFUSE_MAP : (type == aiTextureType_SPECULAR ? SPECULAR_MAP : (type == aiTextureType_HEIGHT ? NORMAL_MAP : HEIGHT_MAP))] = Texture::load(dir + '/' + std::string(str.C_Str()), GL_REPEAT);
 	}
 }
