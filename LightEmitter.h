@@ -3,7 +3,7 @@
 #include "Object.h"
 #include "gtype.h"
 
-class LightEmitter {
+class Light {
 	private:
 		unsigned int m_id;
 
@@ -16,7 +16,7 @@ class LightEmitter {
 		Object *m_boundwo;
 
 	public:
-		LightEmitter(glm::vec3 amb, glm::vec3 dif, glm::vec3 spc, glm::vec3 cql);
+		Light(glm::vec3 amb, glm::vec3 dif, glm::vec3 spc, glm::vec3 cql);
 
 		inline void attachObject(Object& wo) { m_boundwo = &wo; }
 		inline void detachObject() { m_boundwo = nullptr; }

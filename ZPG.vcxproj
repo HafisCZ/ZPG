@@ -76,11 +76,11 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)libraries\glew\include;$(ProjectDir)libraries\glm;$(ProjectDir)libraries\glfw\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)libraries\glew\include;$(ProjectDir)libraries\glm;$(ProjectDir)libraries\glfw\include;$(ProjectDir)libraries\assimp\include;$(ProjectDir)libraries\assimp\build\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(ProjectDir)libraries\glew\lib\Release\Win32;$(ProjectDir)libraries\glfw\lib-vc2015;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glu32.lib;glew32.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)libraries\glew\lib\Release\Win32;$(ProjectDir)libraries\glfw\lib-vc2015;$(ProjectDir)libraries\assimp\build\code\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;glu32.lib;glew32.lib;glfw3.lib;assimp-vc140-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -125,6 +125,7 @@
     <ClCompile Include="Framebuffer.cpp" />
     <ClCompile Include="IndexBuffer.cpp" />
     <ClCompile Include="LightEmitter.cpp" />
+    <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Object.cpp" />
@@ -148,9 +149,9 @@
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="LightEmitter.h" />
+    <ClInclude Include="Mesh.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="modely\suzi_smooth.h" />
-    <ClInclude Include="ObjModel.h" />
     <ClInclude Include="TerrainGenerator.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="Program.h" />
@@ -176,6 +177,8 @@
   <ItemGroup>
     <None Include="resources\shaders\default.frag" />
     <None Include="resources\shaders\default.vert" />
+    <None Include="resources\shaders\default_textured.frag" />
+    <None Include="resources\shaders\default_textured.vert" />
     <None Include="resources\shaders\object.frag" />
     <None Include="resources\shaders\object.vert" />
     <None Include="resources\shaders\shadow.frag" />

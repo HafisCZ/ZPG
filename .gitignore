@@ -3,3 +3,4 @@ Debug/**
 libraries/glew/**
 libraries/glfw/**
 libraries/glm/**
+libraries/assimp/**

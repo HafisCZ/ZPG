@@ -14,7 +14,7 @@ void Scene::draw(Renderer& renderer) {
 
 		glm::vec3 position = m_emitters[i]->getPosition();
 
-		static std::vector<glm::mat4> shadow_faces(6);
+		static glm::mat4 shadow_faces[6];
 		shadow_faces[0] = shadow_perspective * glm::lookAt(position, position + glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f));
 		shadow_faces[1] = shadow_perspective * glm::lookAt(position, position + glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f));
 		shadow_faces[2] = shadow_perspective * glm::lookAt(position, position + glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
@@ -23,12 +23,12 @@ void Scene::draw(Renderer& renderer) {
 		shadow_faces[5] = shadow_perspective * glm::lookAt(position, position + glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, -1.0f, 0.0f));
 
 		shadow_program.bind();
-		shadow_program.uniform4mat("u_smat", shadow_faces);
-		shadow_program.uniform3vec("u_smap", position);
-		shadow_program.uniform1f("u_smaf", 25.0f);
+		shadow_program.setUniform("u_smat", shadow_faces, 6);
+		shadow_program.setUniform("u_smap", position);
+		shadow_program.setUniform("u_smaf", 25.0f);
 
 		for (Object*& obj : m_objects) {
-			obj->drawWith(renderer, shadow_program);
+			obj->draw(renderer, shadow_program);
 		}
 	}
 

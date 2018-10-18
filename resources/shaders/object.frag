@@ -8,7 +8,6 @@ in VS_OUT {
 	vec2 texture;
 } vert;
 
-struct Material { sampler2D diff, spec; };
 struct Shadow { samplerCube map; };
 struct Light { vec3 pos, amb, dif, spc, clq; };
 
@@ -20,8 +19,10 @@ layout (std140) uniform data_light {
 	Light u_light;
 };
 
-uniform Material u_material;
 uniform Shadow u_shadow;
+
+uniform sampler2D texture_diffuse1;
+uniform sampler2D texture_specular1;
 
 vec3 processLight(Light l, vec3 normal, vec3 view, vec3 fragment);
 float processShadow(vec3 position);
@@ -66,18 +67,21 @@ float processShadow(vec3 position)
 
 vec3 processLight(Light l, vec3 normal, vec3 view, vec3 fragment) 
 {
-	vec3 direction = normalize(l.pos - fragment);
-	float diff = max(dot(normal, direction), 0.0);
+	vec3 dtex = vec3(texture(texture_diffuse1, vert.texture));
+	vec3 stex = vec3(texture(texture_specular1, vert.texture));
 
-	vec3 halfway = normalize(direction + view);
-	float spec = pow(max(dot(normal, halfway), 0.0), 32.0);
+	vec3 lf_dir = normalize(l.pos - fragment);
+	float diff_intensity = max(dot(normal, lf_dir), 0.0);
 
-	float distance = length(l.pos - fragment);
-	float attenuation = 1.0 / (l.clq.x + l.clq.y * distance + l.clq.z * distance * distance);
+	vec3 halfway = normalize(lf_dir + view);
+	float spec_intesity = pow(max(dot(normal, halfway), 0.0), 32.0);
 
-	vec3 ambient = attenuation * l.amb * vec3(texture(u_material.diff, vert.texture));
-	vec3 diffuse = attenuation * l.dif * diff * vec3(texture(u_material.diff, vert.texture));
-	vec3 speculr = attenuation * l.spc * spec * vec3(texture(u_material.spec, vert.texture));
+	float dist = length(l.pos - fragment);
+	float attenuation = 1.0 / (l.clq.x + l.clq.y * dist + l.clq.z * dist * dist);
 
-	return (ambient + (diffuse + speculr) * (1.0 - processShadow(l.pos)));
+	vec3 ambient = attenuation * l.amb * dtex;
+	vec3 diffuse = attenuation * l.dif * diff_intensity * dtex;
+	vec3 speculr = attenuation * l.spc * spec_intesity * stex;
+
+	return (ambient + (diffuse + speculr));// * (1.0 - processShadow(l.pos)));
 }

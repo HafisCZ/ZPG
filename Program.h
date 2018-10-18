@@ -14,10 +14,27 @@ class Program {
 		std::unordered_map<unsigned int, unsigned int> m_linkedShaders;
 
 		static std::unordered_map<std::string, unsigned int> m_shaderHandleCache;
+		
+		void _setFun(int loc) { assert(false); }
+
+		void _setFun(int loc, float a) { glUniform1f(loc, a); }
+		void _setFun(int loc, float a, float b) { glUniform2f(loc, a, b); }
+		void _setFun(int loc, float a, float b, float c) { glUniform3f(loc, a, b, c); }
+		void _setFun(int loc, float a, float b, float c, float d) { glUniform4f(loc, a, b, c, d); }
+
+		void _setFun(int loc, const glm::vec2& a) { glUniform2fv(loc, 1, &a[0]); }
+		void _setFun(int loc, const glm::vec3& a) { glUniform3fv(loc, 1, &a[0]); }
+		void _setFun(int loc, const glm::vec4& a) { glUniform4fv(loc, 1, &a[0]); }
+
+		void _setFun(int loc, bool a) { glUniform1i(loc, a); }
+		void _setFun(int loc, int a) { glUniform1i(loc, a); };
+		void _setFun(int loc, unsigned int a) { glUniform1i(loc, a); }
+
+		void _setFun(int loc, glm::mat4 a) { glUniformMatrix4fv(loc, 1, GL_FALSE, &a[0][0]); }
+		void _setFun(int loc, glm::mat4* a, unsigned int count) { glUniformMatrix4fv(loc, count, GL_FALSE, (float *) a); }
 
 	public:
 		Program();
-
 		Program(const std::string& vertex, const std::string& fragment);
 		Program(const std::string& vertex, const std::string& fragment, const std::string& geometry);
 
@@ -28,13 +45,7 @@ class Program {
 		void setShader(unsigned int type, const std::string& filepath);
 		void compile();
 
-		void uniform3f(const std::string& name, float a, float b, float c);
-		void uniform1i(const std::string& name, int a);
-		void uniform1f(const std::string& name, float a);
-		void uniform4mat(const std::string& name, const glm::mat4& matrix);
-		void uniform3vec(const std::string& name, glm::vec3 a);
-
-		void uniform4mat(const std::string& name, const std::vector<glm::mat4>& data);
+		template <typename ... Args> void setUniform(const std::string& name, Args ... args) { _setFun(getUniformLocation(name), args ...);	}
 
 		void bind() const;
 		void unbind() const;

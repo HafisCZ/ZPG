@@ -27,8 +27,6 @@ Framebuffer::Framebuffer(FramebufferTexture tex, unsigned int width, unsigned in
 
 	glDrawBuffer(GL_NONE);
 	glReadBuffer(GL_NONE);
-
-	std::cout << "[FRAMEBUFFER]" <<std::endl;
 }
 
 void Framebuffer::begin() const {

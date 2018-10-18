@@ -132,30 +132,4 @@ int Program::getUniformLocation(const std::string& name) {
 	return location;
 }
 
-void Program::uniform3f(const std::string& name, float a, float b, float c) {
-	glUniform3f(getUniformLocation(name), a, b, c);
-}
-
-void Program::uniform1i(const std::string& name, int a) {
-	glUniform1i(getUniformLocation(name), a);
-}
-
-void Program::uniform1f(const std::string& name, float a) {
-	glUniform1f(getUniformLocation(name), a);
-}
-
-void Program::uniform4mat(const std::string& name, const glm::mat4& matrix) {
-	glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, &matrix[0][0]);
-}
-
-void Program::uniform3vec(const std::string& name, glm::vec3 a) {
-	glUniform3fv(getUniformLocation(name), 1, &a.x);
-}
-
-void Program::uniform4mat(const std::string& name, const std::vector<glm::mat4>& data) {
-	for (unsigned int i = 0; i < data.size(); i++) {
-		uniform4mat(name + '[' + std::to_string(i) + ']', data[i]);
-	}
-}
-
 std::unordered_map<std::string, unsigned int> Program::m_shaderHandleCache;

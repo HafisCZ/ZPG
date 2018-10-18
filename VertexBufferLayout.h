@@ -50,4 +50,35 @@ class VertexBufferLayout {
 
 		inline const std::vector<VertexBufferElement>& getElements() const { return m_elements; }
 		inline unsigned int getStride() const { return m_stride; }
+
+		static VertexBufferLayout DEFAULT_PNTTB() {
+			VertexBufferLayout vbl;
+
+			vbl.push<float>(3);
+			vbl.push<float>(3);
+			vbl.push<float>(2);
+			vbl.push<float>(3);
+			vbl.push<float>(3);
+
+			return vbl;
+		}
+
+		static VertexBufferLayout DEFAULT_PNT() {
+			VertexBufferLayout vbl;
+
+			vbl.push<float>(3);
+			vbl.push<float>(3);
+			vbl.push<float>(2);
+
+			return vbl;
+		}
+
+		static VertexBufferLayout DEFAULT_PN() {
+			VertexBufferLayout vbl;
+
+			vbl.push<float>(3);
+			vbl.push<float>(3);
+
+			return vbl;
+		}
 };

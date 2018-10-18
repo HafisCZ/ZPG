@@ -1,85 +1,74 @@
 #include "Model.h"
 
-void Model::draw(const Renderer& renderer, const Program& program) {
-	if (m_ibo) {
-		renderer.draw(*m_vao, *m_ibo, program);
-	}
-	else {
-		renderer.draw(*m_vao, m_vertex_count, program);
+void Model::draw(const Renderer& renderer, Program& program) {
+	for (auto& mesh : m_meshes) {
+		mesh.draw(renderer, program);
 	}
 }
 
-void ModelLoader::loadFromFile(std::unique_ptr<VertexBuffer>& vbo, std::unique_ptr<IndexBuffer>& ibo, std::size_t& vc, const std::string& filepath) {
-	std::vector<glm::vec3> tempVertices, tempNormals;
-	std::vector<glm::vec2> tempUVs;
+void Model::assimp(std::vector<Mesh>& meshes, const std::string& filepath) {
+	Assimp::Importer importer;
 
-	std::vector<unsigned int> tempVertexIndices, tempUVIndices, tempNormalIndices;
+	const aiScene* scene = importer.ReadFile(filepath.c_str(), aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) return;
 
-	std::ifstream fstream(filepath);
-
-	std::string temp;
-	float x, y, z;
-	unsigned int u;
-
-	while (fstream >> temp) {
-		if (temp.compare("v") == 0) {
-			fstream >> x >> y >> z;
-			tempVertices.emplace_back(x, y, z);
-		}
-		else if (temp.compare("vn") == 0) {
-			fstream >> x >> y >> z;
-			tempNormals.emplace_back(x, y, z);
-		}
-		else if (temp.compare("vt") == 0) {
-			fstream >> x >> y;
-			tempUVs.emplace_back(x, y);
-		}
-		else if (temp.compare("f") == 0) {
-			std::string vertex;
-			for (int i = 0; i < 3; i++) {
-				fstream >> vertex;
-
-				std::stringstream ss(std::regex_replace(vertex, std::regex("/"), " "));
-				ss >> u ? tempVertexIndices.push_back(u - 1) : void();
-				ss >> u ? tempUVIndices.push_back(u - 1) : void();
-				ss >> u ? tempNormalIndices.push_back(u - 1) : void();
-			}
-		}
-	}
-
-	std::vector<Vertex> vertices;
-	vertices.reserve(tempVertices.size());
-
-	std::vector<Indice> indices;
-	indices.reserve(tempVertices.size());
-
-	for (unsigned int i = 0; i < tempVertexIndices.size(); i++) {
-		Vertex vertex = {
-			tempVertices[tempVertexIndices[i]],
-			tempNormalIndices.size() > 0 ? tempNormals[tempNormalIndices[i]] : glm::vec3(0, 0, 0),
-			tempUVIndices.size() > 0 ? tempUVs[tempUVIndices[i]] : glm::vec2(0, 0),
-		};
-
-		unsigned int loc = std::distance(vertices.begin(), std::find(vertices.begin(), vertices.end(), vertex));
-		if (loc < vertices.size()) {
-			indices.push_back(loc);
-		}
-		else {
-			vertices.push_back(vertex);
-			indices.push_back(vertices.size() - 1);
-		}
-	}
-
-	vertices.shrink_to_fit();
-	indices.shrink_to_fit();
-
-	vc = vertices.size();
-	vbo = std::make_unique<VertexBuffer>(vertices.data(), vertices.size() * sizeof(Vertex));
-	ibo = std::make_unique<IndexBuffer>(indices.data(), indices.size());
+	_assimp_process_node(meshes, scene->mRootNode, scene, filepath.substr(0, filepath.find_last_of('/')));
 }
 
-void ModelLoader::loadFromArray(std::unique_ptr<VertexBuffer>& vbo, std::unique_ptr<IndexBuffer>& ibo, std::size_t& vc, Vertex* vertices, std::size_t size) {
-	vc = size;
-	vbo = std::make_unique<VertexBuffer>(vertices, size * sizeof(Vertex));
-	ibo = nullptr;
+void Model::_assimp_process_node(std::vector<Mesh>& meshes, aiNode* node, const aiScene* scene, const std::string& dir) {
+	for (unsigned int i = 0; i < node->mNumMeshes; i++) {
+		meshes.push_back(_assimp_process_mesh(scene->mMeshes[node->mMeshes[i]], scene, dir));
+	}
+	for (unsigned int i = 0; i < node->mNumChildren; i++) {
+		_assimp_process_node(meshes, node->mChildren[i], scene, dir);
+	}
+}
+
+Mesh Model::_assimp_process_mesh(aiMesh* mesh, const aiScene* scene, const std::string& dir) {
+	std::vector<pnttb_t> vertices;
+	std::vector<unsigned int> indices;
+	std::vector<TextureData> textures;
+
+	for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
+		vertices.push_back({
+			glm::vec3(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z),
+			glm::vec3(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z),
+			mesh->mTextureCoords[0] ? glm::vec2(mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y) : glm::vec2(0.0f),
+			mesh->mTangents ? glm::vec3(mesh->mTangents[i].x, mesh->mTangents[i].y, mesh->mTangents[i].z) : glm::vec3(0.0f),
+			mesh->mBitangents ? glm::vec3(mesh->mBitangents[i].x, mesh->mBitangents[i].y, mesh->mBitangents[i].z) : glm::vec3(0.0f)
+			});
+	}
+
+	for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
+		aiFace face = mesh->mFaces[i];
+		for (unsigned int j = 0; j < face.mNumIndices; j++) {
+			indices.push_back(face.mIndices[j]);
+		}
+	}
+
+	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+	_assimp_load_texture(textures, material, DIFFUSE, dir);
+	_assimp_load_texture(textures, material, SPECULAR, dir);
+	_assimp_load_texture(textures, material, NORMAL, dir);
+	_assimp_load_texture(textures, material, HEIGHT, dir);
+
+	return Mesh(Mesh::assimp, vertices, indices, textures);
+}
+
+aiTextureType Model::_assimp_texture_type(TextureType type) {
+	switch (type) {
+		case DIFFUSE: return aiTextureType_DIFFUSE;
+		case SPECULAR: return aiTextureType_SPECULAR;
+		case NORMAL: return aiTextureType_HEIGHT;
+		case HEIGHT: return aiTextureType_AMBIENT;
+		default: return aiTextureType_DIFFUSE;
+	}
+}
+
+void Model::_assimp_load_texture(std::vector<TextureData>& textures, aiMaterial* mat, TextureType type, const std::string& dir) {
+	for (unsigned int i = 0; i < mat->GetTextureCount(_assimp_texture_type(type)); i++) {
+		aiString str;
+		mat->GetTexture(_assimp_texture_type(type), i, &str);
+		textures.push_back({ type, Texture::preload(dir + '/' + std::string(str.C_Str()), GL_REPEAT) });
+	}
 }

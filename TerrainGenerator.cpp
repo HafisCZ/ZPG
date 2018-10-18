@@ -2,11 +2,11 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-TerrainMesh::TerrainMesh(Program& program) : m_program(&program) {
-	m_model = std::make_unique<Model>(generateData);
+TerrainMesh::TerrainMesh(Program& program, std::function<void(std::unique_ptr<VertexArray>&, std::unique_ptr<VertexBuffer>&, std::unique_ptr<IndexBuffer>&, std::vector<TextureData>&, std::size_t&)> generator) : m_program(&program) {
+	m_model = std::make_unique<Model>(Model::generator<>, generateData);
 }
 
-void TerrainMesh::generateData(std::unique_ptr<VertexBuffer>& vbo, std::unique_ptr<IndexBuffer>& ibo, std::size_t& vc) {
+void TerrainMesh::generateData(std::unique_ptr<VertexArray>& vao, std::unique_ptr<VertexBuffer>& vbo, std::unique_ptr<IndexBuffer>& ibo, std::vector<TextureData>& txt, std::size_t& vc) {
 	YGenerator generator(10.0f);
 
 	std::vector<Vertex> vertices;
@@ -56,15 +56,17 @@ void TerrainMesh::generateData(std::unique_ptr<VertexBuffer>& vbo, std::unique_p
 	indices.shrink_to_fit();
 
 	vc = vertices.size();
+	vao = std::make_unique<VertexArray>();
 	vbo = std::make_unique<VertexBuffer>(vertices.data(), vertices.size() * sizeof(Vertex));
 	ibo = std::make_unique<IndexBuffer>(indices.data(), indices.size());
+	vao->addBuffer(*vbo, VertexBufferLayout::DEFAULT_PNT());
 }
 
 void TerrainMesh::draw(const Renderer& renderer) {
 	m_program->bind();
 
 	glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(-5.0f));
-	m_program->uniform4mat("u_model", model);
+	m_program->setUniform("u_model", model);
 
 	m_model->draw(renderer, *m_program);
 }

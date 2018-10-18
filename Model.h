@@ -1,54 +1,32 @@
 #pragma once
 
-#include <sstream>
-#include <fstream>
-#include <regex>
-#include <functional>
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
-#include <iostream>
-
-#include "Renderer.h"
-
-struct Vertex {
-	glm::vec3 position;
-	glm::vec3 normal;
-	glm::vec2 texture;
-
-	bool operator == (const Vertex& vertex) const {
-		return ( position == vertex.position && normal == vertex.normal &&	texture == vertex.texture );
-	}
-};
-
-using Indice = unsigned int;
+#include "Mesh.h"
 
 class Model {
 	private:
-		std::unique_ptr<VertexBuffer> m_vbo;
-		std::unique_ptr<VertexArray> m_vao;
-		std::unique_ptr<IndexBuffer> m_ibo;
-
-		std::size_t m_vertex_count;
+		std::vector<Mesh> m_meshes;
 
 	public:
-		template <typename T, typename ... Args, typename ... Trgs> Model(T loader(std::unique_ptr<VertexBuffer>&, std::unique_ptr<IndexBuffer>&, std::size_t& vc, Args ...), Trgs ... args) {
-			m_vao = std::make_unique<VertexArray>();
-
-			std::function<T(std::unique_ptr<VertexBuffer>&, std::unique_ptr<IndexBuffer>&, std::size_t&, Args ...)> internal(loader);
-			internal(m_vbo, m_ibo, m_vertex_count, args ...);
-
-			VertexBufferLayout vbl;
-			vbl.push<float>(3);
-			vbl.push<float>(3);
-			vbl.push<float>(2);
-
-			m_vao->addBuffer(*m_vbo, vbl);
+		template <typename T, typename ... Args, typename ... Trgs> Model(T loader(std::vector<Mesh>&, Args ...), Trgs ... args) {
+			std::function<T(std::vector<Mesh>&, Args ...)> internal(loader);
+			internal(m_meshes, args ...);
 		}
 
-		void draw(const Renderer& renderer, const Program& program);
-};
+		void draw(const Renderer& renderer, Program& program);
 
-class ModelLoader {
-	public:
-		static void loadFromFile(std::unique_ptr<VertexBuffer>& vbo, std::unique_ptr<IndexBuffer>& ibo, std::size_t& vc, const std::string& filepath);
-		static void loadFromArray(std::unique_ptr<VertexBuffer>& vbo, std::unique_ptr<IndexBuffer>& ibo, std::size_t& vc, Vertex* vertices, std::size_t size);
+		static void assimp(std::vector<Mesh>& meshes, const std::string& filepath);
+
+		template<typename T = void, typename ... Args> static void generator(std::vector<Mesh>& meshes, T gen(std::unique_ptr<VertexArray>&, std::unique_ptr<VertexBuffer>&, std::unique_ptr<IndexBuffer>&, std::vector<TextureData>&, std::size_t&, Args ...)) {
+			meshes.emplace_back(gen);
+		}
+
+	private:
+		static void _assimp_process_node(std::vector<Mesh>& meshes, aiNode* node, const aiScene* scene, const std::string& dir);
+		static Mesh _assimp_process_mesh(aiMesh* mesh, const aiScene* scene, const std::string& dir);
+		static aiTextureType _assimp_texture_type(TextureType type);
+		static void _assimp_load_texture(std::vector<TextureData>& textures, aiMaterial* mat, TextureType type, const std::string& dir);
 };
