@@ -31,7 +31,6 @@ class Program {
 		void _setFun(int loc, unsigned int a) { glUniform1i(loc, a); }
 
 		void _setFun(int loc, glm::mat4 a) { glUniformMatrix4fv(loc, 1, GL_FALSE, &a[0][0]); }
-		void _setFun(int loc, glm::mat4* a, unsigned int count) { glUniformMatrix4fv(loc, count, GL_FALSE, (float *) a); }
 
 	public:
 		Program();

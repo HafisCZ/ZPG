@@ -1,7 +1,7 @@
 #include "Texture.h"
 
 #include <unordered_map>
-
+#include <iostream>
 #include "vendor/stb_image.h"
 
 std::shared_ptr<Texture> Texture::load(const std::string& filepath, unsigned int mode) {
@@ -25,7 +25,6 @@ Texture::Texture(const std::string& filepath, unsigned int mode) {
 	glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, buffer);
 
 	glGenerateMipmap(GL_TEXTURE_2D);
-
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, mode);
@@ -37,15 +36,15 @@ Texture::Texture(const std::string& filepath, unsigned int mode) {
 }
 
 Texture::~Texture() {
-	glDeleteTextures(1, &m_handle); 
+	glDeleteTextures(1, &m_handle);
 }
 
-void Texture::bind(unsigned int slot) {
+void Texture::bind(unsigned int slot) const {
 
 	glActiveTexture(GL_TEXTURE0 + slot);
 	glBindTexture(GL_TEXTURE_2D, m_handle);
 }
 
-void Texture::unbind() {
+void Texture::unbind() const {
 	glBindTexture(GL_TEXTURE_2D, 0);
 }

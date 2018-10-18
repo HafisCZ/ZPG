@@ -20,9 +20,8 @@ class Model {
 
 		static void assimp(std::vector<Mesh>& meshes, const std::string& filepath);
 
-		static void generator(std::vector<Mesh>& meshes, void gen(std::unique_ptr<VertexArray>&, std::unique_ptr<VertexBuffer>&, std::unique_ptr<IndexBuffer>&, std::unordered_map<TextureType, std::shared_ptr<Texture>>&, unsigned int&)) {
-			meshes.emplace_back(gen); 
-		}
+		static void _assimp(std::unique_ptr<VertexArray>& vao, std::unique_ptr<VertexBuffer>& vbo, std::unique_ptr<IndexBuffer>& ibo, std::unordered_map<TextureType, std::shared_ptr<Texture>>& txt, unsigned int& vc, std::vector<pnttb_t>& vertices, std::vector<unsigned int>& indices, std::unordered_map<TextureType, std::shared_ptr<Texture>>& textures);
+		static void _generator(std::vector<Mesh>& meshes, Mesh::_mesh_gen_fun_ptr_empty);
 
 	private:
 		static void _assimp_process_node(std::vector<Mesh>& meshes, aiNode* node, const aiScene* scene, const std::string& dir);

@@ -1,13 +1,14 @@
 #include "Scene.h"
 
-Scene::Scene() : m_framebuffer(TEXTURE_3D, 1024, 1024) { }
+Scene::Scene() : m_framebuffer(1024) { }
 
 void Scene::draw(Renderer& renderer) {
+	static Program shadow_program("resources/shaders/shadow.vert", "resources/shaders/shadow.frag", "resources/shaders/shadow.geom");
+
 	m_framebuffer.begin();
 	glDisable(GL_CULL_FACE);
 
 	for (unsigned int i = 0; i < 1; i++) {
-		static Program shadow_program("resources/shaders/shadow.vert", "resources/shaders/shadow.frag", "resources/shaders/shadow.geom");
 		static glm::mat4 shadow_perspective = glm::perspective(glm::radians(90.0f), 1.0f, 1.0f, 25.0f);
 
 		glm::vec3 position = m_emitters[i]->getPosition();
@@ -21,7 +22,10 @@ void Scene::draw(Renderer& renderer) {
 		shadow_faces[5] = shadow_perspective * glm::lookAt(position, position + glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, -1.0f, 0.0f));
 
 		shadow_program.bind();
-		shadow_program.setUniform("u_smat", shadow_faces, 6);
+		for (unsigned int j = 0; j < 6; j++) {
+			shadow_program.setUniform("u_smat[" + std::to_string(i) + "]", shadow_faces[i]);
+		}
+
 		shadow_program.setUniform("u_smap", position);
 		shadow_program.setUniform("u_smaf", 25.0f);
 

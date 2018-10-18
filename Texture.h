@@ -15,6 +15,6 @@ class Texture {
 
 		static std::shared_ptr<Texture> load(const std::string& filepath, unsigned int mode = GL_CLAMP_TO_EDGE);
 
-		void bind(unsigned int slot = 0);
-		void unbind();
+		void bind(unsigned int slot = 0) const;
+		void unbind() const;
 };

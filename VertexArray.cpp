@@ -9,7 +9,7 @@ VertexArray::~VertexArray() {
 	glDeleteVertexArrays(1, &m_handle);
 }
 
-void VertexArray::addBuffer(VertexBuffer & vb, const VertexBufferLayout & layout) {
+void VertexArray::addBuffer(const VertexBuffer& vb, const VertexBufferLayout& layout) {
 	bind();
 	vb.bind();
 
@@ -26,10 +26,10 @@ void VertexArray::addBuffer(VertexBuffer & vb, const VertexBufferLayout & layout
 	}
 }
 
-void VertexArray::bind() {
+void VertexArray::bind() const {
 	glBindVertexArray(m_handle);
 }
 
-void VertexArray::unbind() {
+void VertexArray::unbind() const {
 	glBindVertexArray(0);
 }

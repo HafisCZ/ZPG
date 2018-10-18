@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 
 #include <memory>
+#include <iostream>
 
 #include "Input.h"
 #include "Camera.h"
@@ -59,6 +60,8 @@ class Application {
 			Program prog_def("resources/shaders/default.vert", "resources/shaders/default.frag");
 
 			Model nanosuit(Model::assimp, "resources/models/nanosuit/nanosuit.obj");
+			Model corvette(Model::assimp, "resources/models/corvette/Corvette-F3.obj");
+
 			Model cube(Model::assimp, "resources/models/cube.obj");
 
 			Camera camera(1200.0f, 900.0f, 60.0f);

@@ -22,16 +22,22 @@ void Mesh::draw(const Renderer& renderer, Program& program, bool no_uniforms) {
 		if (has_specular) {
 			program.setUniform("texture_specular", 9);
 			m_txt[SPECULAR_MAP]->bind(9);
+		} else {
+			program.setUniform("texture_specular", 8);
 		}
 
 		if (has_normal) {
 			program.setUniform("texture_normal", 10);
 			m_txt[NORMAL_MAP]->bind(10);
+		} else {
+			program.setUniform("texture_normal", 8);
 		}
 
 		if (has_height) {
 			program.setUniform("texture_height", 11);
 			m_txt[HEIGHT_MAP]->bind(11);
+		} else {
+			program.setUniform("texture_height", 8);
 		}
 	}
 
@@ -40,17 +46,4 @@ void Mesh::draw(const Renderer& renderer, Program& program, bool no_uniforms) {
 	} else {
 		renderer.draw(*m_vao, m_vertex_count, program);
 	}
-}
-
-void Mesh::assimp(
-	std::unique_ptr<VertexArray>& vao, std::unique_ptr<VertexBuffer>& vbo, std::unique_ptr<IndexBuffer>& ibo, std::unordered_map<TextureType, std::shared_ptr<Texture>>& txt, unsigned int& vc,
-	std::vector<pnttb_t>& vertices, std::vector<unsigned int>& indices, std::unordered_map<TextureType, std::shared_ptr<Texture>>& textures)
-{
-	vc = vertices.size();
-	vao = std::make_unique<VertexArray>();
-	vbo = std::make_unique<VertexBuffer>(vertices.data(), vertices.size() * sizeof(pnttb_t));
-	ibo = std::make_unique<IndexBuffer>(indices.data(), indices.size());
-	vao->addBuffer(*vbo, VertexBufferLayout::DEFAULT_PNTTB());
-
-	txt = std::move(textures);
 }

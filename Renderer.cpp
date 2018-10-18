@@ -5,7 +5,7 @@ void Renderer::clear() const {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void Renderer::draw(VertexArray& va, IndexBuffer& ib, const Program& program) const {
+void Renderer::draw(const VertexArray& va, const IndexBuffer& ib, const Program& program) const {
 	program.bind();
 	va.bind();
 	ib.bind();
@@ -13,7 +13,7 @@ void Renderer::draw(VertexArray& va, IndexBuffer& ib, const Program& program) co
 	glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, nullptr);
 }
 
-void Renderer::draw(VertexArray& va, std::size_t count, const Program& program) const {
+void Renderer::draw(const VertexArray& va, std::size_t count, const Program& program) const {
 	program.bind();
 	va.bind();
 

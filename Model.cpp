@@ -15,6 +15,23 @@ void Model::assimp(std::vector<Mesh>& meshes, const std::string& filepath) {
 	_assimp_process_node(meshes, scene->mRootNode, scene, filepath.substr(0, filepath.find_last_of('/')));
 }
 
+void Model::_assimp(
+	std::unique_ptr<VertexArray>& vao, std::unique_ptr<VertexBuffer>& vbo, std::unique_ptr<IndexBuffer>& ibo, std::unordered_map<TextureType, std::shared_ptr<Texture>>& txt, unsigned int& vc,
+	std::vector<pnttb_t>& vertices, std::vector<unsigned int>& indices, std::unordered_map<TextureType, std::shared_ptr<Texture>>& textures) 
+{
+	vc = vertices.size();
+	vao = std::make_unique<VertexArray>();
+	vbo = std::make_unique<VertexBuffer>(vertices.data(), vertices.size() * sizeof(pnttb_t));
+	ibo = std::make_unique<IndexBuffer>(indices.data(), indices.size());
+	vao->addBuffer(*vbo, VertexBufferLayout::DEFAULT_PNTTB());
+
+	txt = std::move(textures);
+}
+
+void Model::_generator(std::vector<Mesh>& meshes, Mesh::_mesh_gen_fun_ptr_empty gen) {
+	meshes.emplace_back(gen);
+}
+
 void Model::_assimp_process_node(std::vector<Mesh>& meshes, aiNode* node, const aiScene* scene, const std::string& dir) {
 	for (unsigned int i = 0; i < node->mNumMeshes; i++) {
 		meshes.push_back(_assimp_process_mesh(scene->mMeshes[node->mMeshes[i]], scene, dir));
@@ -52,7 +69,7 @@ Mesh Model::_assimp_process_mesh(aiMesh* mesh, const aiScene* scene, const std::
 	_assimp_load_texture(textures, material, aiTextureType_HEIGHT, dir);
 	_assimp_load_texture(textures, material, aiTextureType_AMBIENT, dir);
 
-	return Mesh(Mesh::assimp, vertices, indices, textures);
+	return Mesh(_assimp, vertices, indices, textures);
 }
 
 void Model::_assimp_load_texture(std::unordered_map<TextureType, std::shared_ptr<Texture>>& textures, aiMaterial* mat, aiTextureType type, const std::string& dir) {

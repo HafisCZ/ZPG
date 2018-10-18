@@ -14,7 +14,7 @@ class Scene {
 		std::vector<Object*> m_objects;
 		std::vector<Light*> m_emitters;
 
-		Framebuffer m_framebuffer;
+		Framebuffer3D m_framebuffer;
 
 	public:
 		Scene();
