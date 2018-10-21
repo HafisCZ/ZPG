@@ -1,5 +1,10 @@
 #include "Mesh.h"
 
+
+
+
+
+/*
 void Mesh::draw(const Renderer& renderer, Program& program, bool no_uniforms) {
 	if (!no_uniforms) {
 		program.bind();
@@ -46,4 +51,4 @@ void Mesh::draw(const Renderer& renderer, Program& program, bool no_uniforms) {
 	} else {
 		renderer.draw(*m_vao, m_vertex_count, program);
 	}
-}
+}*/

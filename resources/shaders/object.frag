@@ -4,6 +4,7 @@ layout (location = 0) out vec4 color;
 
 struct Light { vec3 pos, amb, dif, spc, clq; };
 in VS_OUT {
+	vec3 nmo;
 	vec3 pos;
 	vec2 tex;
 	vec3 tlp;
@@ -59,8 +60,8 @@ vec3 process_lightning() {
 	vec2 uv = vert.tex;
 
 	vec3 diffuse_color = texture_diffuse_enable ? texture(texture_diffuse, uv).rgb : vec3(1.0);
-	vec3 specular_color = texture_specular_enable ? texture(texture_specular, uv).rgb : vec3(1.0);
-	vec3 normal = texture_normal_enable ? normalize(texture(texture_normal, uv).rgb * 2.0 - 1.0) : vec3(0.0);
+	vec3 specular_color = texture_specular_enable ? texture(texture_specular, uv).rgb : vec3(0.0);
+	vec3 normal = texture_normal_enable ? normalize(texture(texture_normal, uv).rgb * 2.0 - 1.0) : vert.nmo;
 
 	vec3 light_direction = normalize(vert.tlp - vert.tfp);
 	float diffuse_intensity = max(dot(light_direction, normal), 0.0);

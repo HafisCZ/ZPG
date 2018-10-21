@@ -1,34 +1,34 @@
 #pragma once
 
-#include <functional>
+#include "VertexArray.h"
+#include "IndexBuffer.h"
+#include "Material.h"
 
-#include "Renderer.h"
-
-enum TextureType {
-	DIFFUSE_MAP, 
-	SPECULAR_MAP, 
-	NORMAL_MAP, 
-	HEIGHT_MAP
+struct MeshDetails {
+	unsigned int vertex_count;
+	unsigned int indice_count;
 };
 
 class Mesh {
 	private:
-		std::unique_ptr<VertexBuffer> m_vbo;
 		std::unique_ptr<VertexArray> m_vao;
+		std::unique_ptr<VertexBuffer> m_vbo;
 		std::unique_ptr<IndexBuffer> m_ibo;
-		std::unordered_map<TextureType, std::shared_ptr<Texture>> m_txt;
+		
+		std::vector<Material> m_materials;
 
-		unsigned int m_vertex_count;
+		MeshDetails m_details;
 
 	public:
-		template <typename T, typename ... Args> using _mesh_gen_fun = std::function<T(std::unique_ptr<VertexArray>&, std::unique_ptr<VertexBuffer>&, std::unique_ptr<IndexBuffer>&, std::unordered_map<TextureType, std::shared_ptr<Texture>>&, unsigned int&, Args ...)>;
-		template <typename ... Args> using _mesh_gen_fun_ptr = void(std::unique_ptr<VertexArray>&, std::unique_ptr<VertexBuffer>&, std::unique_ptr<IndexBuffer>&, std::unordered_map<TextureType, std::shared_ptr<Texture>>&, unsigned int&, Args ...);
-		using _mesh_gen_fun_ptr_empty = _mesh_gen_fun_ptr<>;
+		Mesh(std::unique_ptr<VertexArray>& vao, std::unique_ptr<VertexBuffer>& vbo, MeshDetails details) : m_vao(std::move(vao)), m_vbo(std::move(vbo)), m_details(details) {}
+		Mesh(std::unique_ptr<VertexArray>& vao, std::unique_ptr<VertexBuffer>& vbo, std::unique_ptr<IndexBuffer>& ibo, MeshDetails details) : m_vao(std::move(vao)), m_vbo(std::move(vbo)), m_ibo(std::move(ibo)), m_details(details) { }
 
-		template <typename ... Args, typename ... Trgs> Mesh(_mesh_gen_fun_ptr<Args ...> loader, Trgs ... args) {
-			_mesh_gen_fun<void, Args ... >internal(loader);
-			internal(m_vao, m_vbo, m_ibo, m_txt, m_vertex_count, args ...);
-		}
+		inline const std::unique_ptr<VertexArray>& getVAO() const { return m_vao; }
+		inline const std::unique_ptr<VertexBuffer>& getVBO() const { return m_vbo; }
+		inline const std::unique_ptr<IndexBuffer>& getIBO() const { return m_ibo; }
 
-		void draw(const Renderer& renderer, Program& program, bool no_uniforms = false);
+		inline bool hasIBO() const { return m_ibo != nullptr; }
+
+		inline const std::vector<Material>& getMaterials() const { return m_materials; }
+		inline const MeshDetails getDetails() const { return m_details; }
 };

@@ -1,7 +1,8 @@
 #pragma once
 
-#include "Object.h"
-#include "gtype.h"
+#include <glm/glm.hpp>
+
+struct light_ptr_t;
 
 class Light {
 	private:
@@ -13,13 +14,8 @@ class Light {
 		glm::vec3 m_specular;
 		glm::vec3 m_cql;
 
-		Object *m_boundwo;
-
 	public:
 		Light(glm::vec3 amb, glm::vec3 dif, glm::vec3 spc, glm::vec3 cql);
-
-		inline void attachObject(Object& wo) { m_boundwo = &wo; }
-		inline void detachObject() { m_boundwo = nullptr; }
 
 		inline void setPosition(glm::vec3 position) { m_position = position; }
 
@@ -31,7 +27,11 @@ class Light {
 		inline void setLinear(float l) { m_cql.y = l; }
 		inline void setQuadratic(float q) { m_cql.z = q; }
 
-		inline glm::vec3 getPosition() const { return m_boundwo ? m_boundwo->getPosition() : m_position; }
+		inline glm::vec3 getColor() const { return m_ambient; }
+		inline float getLinear() const { return m_cql.y; }
+		inline float getQuadratic() const { return m_cql.z; }
+
+		inline glm::vec3 getPosition() const { return m_position; }
 
 		light_ptr_t pack() const;
 };

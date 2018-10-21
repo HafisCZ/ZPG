@@ -23,6 +23,7 @@ uniform mat4 u_model;
 uniform mat4 u_inver;
 
 out VS_OUT {
+	vec3 nmo;
 	vec3 pos;
 	vec2 tex;
 	vec3 tlp;
@@ -45,6 +46,8 @@ void main()
 	t = normalize(t - dot(t, n) * n);
 	vec3 b = cross(n, t);
 	mat3 tbn = transpose(mat3(t, b, n));
+
+	frag.nmo = tbn * nmo;
 
 	frag.tlp = tbn * light.pos;
 	frag.tvp = tbn * view;

@@ -8,10 +8,7 @@
 
 #include "Input.h"
 #include "Camera.h"
-#include "UniformBuffer.h"
-#include "Model.h"
-#include "Texture.h"
-#include "Scene.h"
+#include "Renderer.h"
 
 class Application {
 	private:
@@ -43,7 +40,7 @@ class Application {
 			glEnable(GL_DEBUG_OUTPUT);
 
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-			glDepthFunc(GL_LESS);
+			glDepthFunc(GL_LEQUAL);
 			glCullFace(GL_BACK);
 
 			glDebugMessageCallback([](unsigned int src, unsigned int type, unsigned int id, unsigned int sev, int len, const char* msg, const void* param) -> void {
@@ -59,42 +56,41 @@ class Application {
 			Program prog_obj("resources/shaders/object.vert", "resources/shaders/object.frag");
 			Program prog_def("resources/shaders/default.vert", "resources/shaders/default.frag");
 
-			Model nanosuit(Model::assimp, "resources/models/nanosuit/nanosuit.obj");
-			Model corvette(Model::assimp, "resources/models/corvette/Corvette-F3.obj");
+			Model nanosuit = Model::load("resources/models/nanosuit/nanosuit.obj");
+			Model kusanagi = Model::load("resources/models/ghost/ghost.obj");
+			Model cube = Model::load("resources/models/cube.obj");
 
-			Model cube(Model::assimp, "resources/models/cube.obj");
+			std::shared_ptr<Texture> skybox = std::make_shared<Texture>(std::vector<std::string>{
+				"resources/textures/skybox/ss_ft.tga", "resources/textures/skybox/ss_bk.tga",
+				"resources/textures/skybox/ss_up.tga", "resources/textures/skybox/ss_dn.tga",
+				"resources/textures/skybox/ss_rt.tga", "resources/textures/skybox/ss_lf.tga"
+			});
 
 			Camera camera(1200.0f, 900.0f, 60.0f);
 			glfwSetWindowUserPointer(m_window, &camera);
 			glfwSetCursorPosCallback(m_window, [](GLFWwindow* w, double x, double y) -> void { ((Camera*)glfwGetWindowUserPointer(w))->setCursor(float(x), float(y)); });
 
-			UniformBufferLayout layout;
-			layout.pack<gmat4_t>();
-			layout.pack<light_ptr_t>();
-			layout.pack<gvec3_t>();
+			Object object0(nanosuit, prog_obj);
+			Object object1(kusanagi, prog_obj);
+			Object object2(cube, prog_def);
 
-			UniformBuffer ubo(layout);
-			prog_obj.bindUniformBlock("data_matrix", 0);
-			prog_obj.bindUniformBlock("data_light", 1);
-			prog_obj.bindUniformBlock("data_view", 2);
-			prog_def.bindUniformBlock("data_matrix", 0);
+			object0.setModelTransformation(glm::scale(glm::mat4(1.0f), glm::vec3(0.5f)));
+			object0.setPosition({ -5.0f, 0.0f, 0.0f });
+
+			object1.setModelTransformation(glm::scale(glm::mat4(1.0f), glm::vec3(1.0f)));
+			object1.setPosition({ 5.0f, 0.0f, 0.0f });
+
+			object2.setModelTransformation(glm::scale(glm::mat4(1.0f), glm::vec3(0.1f)));
+			object2.setPosition({ 0.0f, 0.0f, 0.0f });
+
+			Light light0(glm::vec3(0.2f), glm::vec3(0.8f), glm::vec3(1.0f), { 1.0f, 0.007f, 0.0002f });
 
 			Scene scene;
-
-			Object o1(nanosuit, prog_obj);
-			o1.setTransformation(glm::scale(glm::mat4(1.0f), glm::vec3(0.3f)));
-
-			Object o3(cube, prog_def);
-			o3.setShadow(false);
-			o3.setTransformation(glm::scale(glm::mat4(1.0f), glm::vec3(0.1f)));
-
-			Light l1(glm::vec3(0.1f), glm::vec3(0.8f), glm::vec3(1.0f), { 1.0f, 0.007f, 0.0002f });
-			l1.setPosition({ 5.0f, 5.0f, 0.0f });
-			l1.attachObject(o3);
-
-			scene.addEmitter(l1);
-			scene.addObject(o1); 
-			scene.addObject(o3);	
+			scene.addObject(object0, FORWARD);
+			scene.addObject(object1, FORWARD);
+			scene.addObject(object2, FORWARD);
+			scene.addLight(light0);
+			scene.setSkybox(skybox);
 
 			Renderer renderer;
 
@@ -112,25 +108,10 @@ class Application {
 					if (Input::isHeld(GLFW_KEY_SPACE)) camera.setPosition(UP, 0.2f);
 					if (Input::isHeld(GLFW_KEY_C)) camera.setPosition(DOWN, 0.2f);
 
-					if (Input::isHeld(GLFW_KEY_KP_ADD)) o3.setPosition(o3.getPosition() + glm::vec3(0.0f, 0.1f, 0.0f));
-					if (Input::isHeld(GLFW_KEY_KP_SUBTRACT)) o3.setPosition(o3.getPosition() - glm::vec3(0.0f, 0.1f, 0.0f));
-
-					if (Input::isHeld(GLFW_KEY_KP_4)) o3.setPosition(o3.getPosition() + glm::vec3(0.1f, 0.0f, 0.0f));
-					if (Input::isHeld(GLFW_KEY_KP_6)) o3.setPosition(o3.getPosition() - glm::vec3(0.1f, 0.0f, 0.0f));
-					if (Input::isHeld(GLFW_KEY_KP_8)) o3.setPosition(o3.getPosition() + glm::vec3(0.0f, 0.0f, 0.1f));
-					if (Input::isHeld(GLFW_KEY_KP_2)) o3.setPosition(o3.getPosition() - glm::vec3(0.0f, 0.0f, 0.1f));
-
 					Input::invalidate();
 				}
 
-				ubo.bind();
-				ubo.setUniformBlock(0, camera.get());
-				ubo.setUniformBlock(1, l1.pack());
-				ubo.setUniformBlock(2, camera.getPosition());
-
-				l1.setPosition(camera.getPosition());
-
-				scene.draw(renderer);
+				renderer.draw(scene);
 
 				glfwSwapBuffers(m_window);
 				glfwPollEvents();

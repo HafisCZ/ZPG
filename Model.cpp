@@ -1,82 +1,74 @@
 #include "Model.h"
 
-void Model::draw(const Renderer& renderer, Program& program, bool no_uniforms) {
-	for (auto& mesh : m_meshes) {
-		mesh.draw(renderer, program, no_uniforms);
-	}
-}
+#include <glm/glm.hpp>
 
-void Model::assimp(std::vector<Mesh>& meshes, const std::string& filepath) {
+#include "gtype.h"
+
+Model Model::load(const std::string& filepath) {
+	std::vector<Mesh> meshes;
+
 	Assimp::Importer importer;
 
 	const aiScene* scene = importer.ReadFile(filepath.c_str(), aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_GenSmoothNormals);
-	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) return;
-
-	_assimp_process_node(meshes, scene->mRootNode, scene, filepath.substr(0, filepath.find_last_of('/')));
-}
-
-void Model::_assimp(
-	std::unique_ptr<VertexArray>& vao, std::unique_ptr<VertexBuffer>& vbo, std::unique_ptr<IndexBuffer>& ibo, std::unordered_map<TextureType, std::shared_ptr<Texture>>& txt, unsigned int& vc,
-	std::vector<pnttb_t>& vertices, std::vector<unsigned int>& indices, std::unordered_map<TextureType, std::shared_ptr<Texture>>& textures) 
-{
-	vc = vertices.size();
-	vao = std::make_unique<VertexArray>();
-	vbo = std::make_unique<VertexBuffer>(vertices.data(), vertices.size() * sizeof(pnttb_t));
-	ibo = std::make_unique<IndexBuffer>(indices.data(), indices.size());
-	vao->addBuffer(*vbo, VertexBufferLayout::DEFAULT_PNTTB());
-
-	txt = std::move(textures);
-}
-
-void Model::_generator(std::vector<Mesh>& meshes, Mesh::_mesh_gen_fun_ptr_empty gen) {
-	meshes.emplace_back(gen);
-}
-
-void Model::_assimp_process_node(std::vector<Mesh>& meshes, aiNode* node, const aiScene* scene, const std::string& dir) {
-	for (unsigned int i = 0; i < node->mNumMeshes; i++) {
-		meshes.push_back(_assimp_process_mesh(scene->mMeshes[node->mMeshes[i]], scene, dir));
-	}
-	for (unsigned int i = 0; i < node->mNumChildren; i++) {
-		_assimp_process_node(meshes, node->mChildren[i], scene, dir);
-	}
-}
-
-Mesh Model::_assimp_process_mesh(aiMesh* mesh, const aiScene* scene, const std::string& dir) {
-	std::vector<pnttb_t> vertices;
-	std::vector<unsigned int> indices;
-	std::unordered_map<TextureType, std::shared_ptr<Texture>> textures;
-
-	for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
-		vertices.push_back({
-			glm::vec3(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z),
-			glm::vec3(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z),
-			mesh->mTextureCoords[0] ? glm::vec2(mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y) : glm::vec2(0.0f),
-			mesh->mTangents ? glm::vec3(mesh->mTangents[i].x, mesh->mTangents[i].y, mesh->mTangents[i].z) : glm::vec3(0.0f),
-			mesh->mBitangents ? glm::vec3(mesh->mBitangents[i].x, mesh->mBitangents[i].y, mesh->mBitangents[i].z) : glm::vec3(0.0f)
-			});
+	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
+		return std::move(Model(meshes));
 	}
 
-	for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
-		aiFace face = mesh->mFaces[i];
-		for (unsigned int j = 0; j < face.mNumIndices; j++) {
-			indices.push_back(face.mIndices[j]);
+	std::string directory = filepath.substr(0, filepath.find_last_of('/'));
+
+	const static std::function<glm::vec3(const aiVector3D&)> convert = [](const aiVector3D& value) -> glm::vec3 { return glm::vec3(value.x, value.y, value.z); };
+
+	const static std::function<void(aiMesh*)> process_mesh = [&meshes, &directory, &scene](aiMesh* mesh) {
+		std::vector<pnttb_t> vertices;
+		std::vector<unsigned int> indices;
+		std::vector<Material> materials;
+
+		for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
+			vertices.push_back({
+				convert(mesh->mVertices[i]),
+				mesh->mNormals ? convert(mesh->mNormals[i]) : glm::vec3(0.0f),
+				mesh->mTextureCoords[0] ? glm::vec2(mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y) : glm::vec2(0.0f),
+				mesh->mTangents ? convert(mesh->mTangents[i]) : glm::vec3(0.0f),
+				mesh->mBitangents ? convert(mesh->mBitangents[i]) : glm::vec3(0.0f)
+				});
 		}
-	}
 
-	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-	_assimp_load_texture(textures, material, aiTextureType_DIFFUSE, dir);
-	_assimp_load_texture(textures, material, aiTextureType_SPECULAR, dir);
-	_assimp_load_texture(textures, material, aiTextureType_HEIGHT, dir);
-	_assimp_load_texture(textures, material, aiTextureType_AMBIENT, dir);
+		for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
+			aiFace face = mesh->mFaces[i];
+			for (unsigned int j = 0; j < face.mNumIndices; j++) {
+				indices.push_back(face.mIndices[j]);
+			}
+		}
 
-	return Mesh(_assimp, vertices, indices, textures);
-}
+		aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
-void Model::_assimp_load_texture(std::unordered_map<TextureType, std::shared_ptr<Texture>>& textures, aiMaterial* mat, aiTextureType type, const std::string& dir) {
-	for (unsigned int i = 0; i < mat->GetTextureCount(type); i++) {
-		aiString str;
-		mat->GetTexture(type, i, &str);
+		const static std::function<void(aiTextureType)> process_material = [&directory, &materials, &material](aiTextureType type) {
+			for (unsigned int i = 0; i < material->GetTextureCount(type); i++) {
+				aiString str;
+				material->GetTexture(type, i, &str);
 
-		textures[type == aiTextureType_DIFFUSE ? DIFFUSE_MAP : (type == aiTextureType_SPECULAR ? SPECULAR_MAP : (type == aiTextureType_HEIGHT ? NORMAL_MAP : HEIGHT_MAP))] = Texture::load(dir + '/' + std::string(str.C_Str()), GL_REPEAT);
-	}
+				MapType mattype;
+				if (type == aiTextureType_DIFFUSE) mattype = DIFFUSE_MAP;
+				else if (type == aiTextureType_SPECULAR) mattype = SPECULAR_MAP;
+				else if (type == aiTextureType_HEIGHT) mattype = BUMP_NORMAL_MAP;
+				else if (type == aiTextureType_AMBIENT) mattype = HEIGHT_MAP;
+			
+				materials.emplace_back(mattype, directory + '/' + std::string(str.C_Str()));
+			}
+		};
+
+		process_material(aiTextureType_DIFFUSE);
+		process_material(aiTextureType_SPECULAR);
+		process_material(aiTextureType_HEIGHT);
+		process_material(aiTextureType_AMBIENT);
+	};
+
+	const static std::function<void(aiNode*)> process_node = [&meshes, &directory, &scene](aiNode* node) {
+		for (unsigned int i = 0; i < node->mNumMeshes; i++) process_mesh(scene->mMeshes[node->mMeshes[i]]);
+		for (unsigned int i = 0; i < node->mNumChildren; i++) process_node(node->mChildren[i]);
+	};
+
+	process_node(scene->mRootNode);
+
+	return std::move(Model(meshes));
 }

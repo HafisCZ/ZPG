@@ -81,4 +81,21 @@ class VertexBufferLayout {
 
 			return vbl;
 		}
+
+		static VertexBufferLayout DEFAULT_PT() {
+			VertexBufferLayout vbl;
+
+			vbl.push<float>(3);
+			vbl.push<float>(2);
+
+			return vbl;
+		}
+
+		static VertexBufferLayout DEFAULT_P() {
+			VertexBufferLayout vbl;
+
+			vbl.push<float>(3);
+
+			return vbl;
+		}
 };

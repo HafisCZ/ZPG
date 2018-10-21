@@ -1,30 +1,29 @@
 #pragma once
 
+#include <glm/gtc/matrix_transform.hpp>
+
+#include "Program.h"
 #include "Model.h"
 
 class Object {
 	private:
 		glm::vec3 m_position;
-		glm::mat4 m_transformation;
+		glm::mat4 m_model_matrix;
 
 		Program* m_program;
 		Model* m_model;
 
-		bool m_shadow;
-
 	public:
-		Object(Model& model, Program& program);
+		Object(Model& model, Program& program) : m_model(&model), m_program(&program), m_position(0.0f), m_model_matrix(1.0f) {}
 
-		inline void setPosition(glm::vec3 position) { m_position = position; }
-		inline void addPosition(glm::vec3 mod) { m_position += mod; }
-		inline void setTransformation(glm::mat4 transformation) { m_transformation = transformation; }
-		inline void setShadow(bool shadow) { m_shadow = shadow; }
-		inline void setModel(Model& model) { m_model = &model; }
-		inline void setProgram(Program& program) { m_program = &program; }
+		void setPosition(glm::vec3 position) { m_position = position; }
+		void setModelTransformation(glm::mat4 transformation) { m_model_matrix = transformation; }
 
-		inline glm::vec3 getPosition() const { return m_position; }
-		inline glm::mat4 getTransformation() const { return m_transformation; }
+		inline const glm::vec3 getPosition() const { return m_position; }
+		inline const glm::mat4 getModelTransformation() const { return m_model_matrix; }
 
-		void draw(Renderer& renderer);
-		void draw(Renderer& renderer, Program& program);
+		inline const glm::mat4 getModelMatrix() const { return glm::translate(m_model_matrix, m_position); }
+
+		inline const Model* getModel() const { return m_model; }
+		inline const Program* getProgram() const { return m_program; }
 };
