@@ -19,6 +19,8 @@ uniform mat4 u_inver;
 out VS_OUT {
 	vec3 nmo;
 	vec3 pos;
+	vec3 view;
+	vec3 nor;
 	vec2 tex;
 	vec3 tlp;
 	vec3 tvp;
@@ -32,6 +34,8 @@ void main()
 	
 	frag.pos = vec3(u_model * vec4(xyz, 1.0));
 	frag.tex = uv;
+
+	frag.nor = mat3(u_inver) * nmo;
 
 	mat3 normal_mat = mat3(u_inver);
 
@@ -48,4 +52,6 @@ void main()
 	frag.tfp = tbn * frag.pos;
 
 	frag.light = u_light;
+
+	frag.view = view;
 }

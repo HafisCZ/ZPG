@@ -23,6 +23,7 @@ class Object {
 		inline glm::mat4 getModelTransformation() { return m_model_matrix; }
 		
 		inline glm::mat4 getModelMatrix() { return glm::translate(m_model_matrix, m_position); }
+		inline glm::vec3 getBaseColor() { return glm::vec3(0.8f); }
 
 		inline Model* getModel() { return m_model; }
 		inline Program* getProgram() { return m_program; }

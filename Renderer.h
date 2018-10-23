@@ -94,16 +94,23 @@ class Renderer {
 				obj->getProgram()->setUniform("texture_shadow", 0);
 		
 				for (auto& mesh : obj->getModel()->getMeshes()) {
+					bool has_diffuse = mesh->getMaterials().count(DIFFUSE_MAP) > 0;
 					bool has_specular = mesh->getMaterials().count(SPECULAR_MAP) > 0;
 					bool has_normal = mesh->getMaterials().count(BUMP_NORMAL_MAP) > 0;
 					bool has_height = mesh->getMaterials().count(HEIGHT_MAP) > 0;
 
+					obj->getProgram()->setUniform("texture_diffuse_enable", has_diffuse);
 					obj->getProgram()->setUniform("texture_specular_enable", has_specular);
 					obj->getProgram()->setUniform("texture_normal_enable", has_normal);
 					obj->getProgram()->setUniform("texture_height_enable", has_height);
 
-					obj->getProgram()->setUniform("texture_diffuse", 8);
-					mesh->getMaterials()[DIFFUSE_MAP]->bind(8);
+					if (has_diffuse) {
+						obj->getProgram()->setUniform("texture_diffuse", 8);
+						mesh->getMaterials()[DIFFUSE_MAP]->bind(8);
+					} else {
+						obj->getProgram()->setUniform("texture_diffuse", 8);
+						obj->getProgram()->setUniform("u_color", obj->getBaseColor());
+					}
 
 					if (has_specular) {
 						obj->getProgram()->setUniform("texture_specular", 9);

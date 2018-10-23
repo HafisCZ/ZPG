@@ -10,6 +10,8 @@
 #include "Camera.h"
 #include "Renderer.h"
 
+#include "resources/sphere.h"
+
 class Application {
 	private:
 		GLFWwindow* m_window;
@@ -58,7 +60,8 @@ class Application {
 
 			Model nanosuit = Model::load("resources/models/nanosuit/nanosuit.obj");
 			Model kusanagi = Model::load("resources/models/ghost/ghost.obj");
-			//Model cube = Model::load("resources/models/cube.obj");
+			
+			Model sphere((void*) VERTICES, 2880, VertexBufferLayout::DEFAULT_PN());
 
 			Camera camera(1200.0f, 900.0f, 60.0f);
 			glfwSetWindowUserPointer(m_window, &camera);
@@ -66,7 +69,10 @@ class Application {
 
 			Object object0(nanosuit, prog_obj);
 			Object object1(kusanagi, prog_obj);
-			//Object object2(cube, prog_def);
+			Object object2(sphere, prog_obj);
+			Object object3(sphere, prog_obj);
+			Object object4(sphere, prog_obj);
+			Object object5(sphere, prog_obj);
 
 			object0.setModelTransformation(glm::scale(glm::mat4(1.0f), glm::vec3(0.5f)));
 			object0.setPosition({ -5.0f, 0.0f, 0.0f });
@@ -74,15 +80,21 @@ class Application {
 			object1.setModelTransformation(glm::scale(glm::mat4(1.0f), glm::vec3(1.0f)));
 			object1.setPosition({ 5.0f, 0.0f, 0.0f });
 
-			//object2.setModelTransformation(glm::scale(glm::mat4(1.0f), glm::vec3(0.1f)));
-			//object2.setPosition({ 0.0f, 0.0f, 0.0f });
-
+			object2.setPosition({ 0.0f, 5.0f, -5.0f });
+			object3.setPosition({ 0.0f, 5.0f, 5.0 });
+			object4.setPosition({ -5.0f, 5.0f, 0.0f });
+			object5.setPosition({ 5.0f, 5.0f, 0.0f });
+			
 			Light light0(glm::vec3(0.2f), glm::vec3(0.8f), glm::vec3(1.0f), { 0.007f, 0.0002f });
+			light0.setPosition({ 0.0f, 5.0f, 0.0f });
 
 			Scene scene(camera);
 			scene.addObject(object0, FORWARD);
 			scene.addObject(object1, FORWARD);
-			//scene.addObject(object2, FORWARD);
+			scene.addObject(object2, FORWARD);
+			scene.addObject(object3, FORWARD);
+			scene.addObject(object4, FORWARD);
+			scene.addObject(object5, FORWARD);
 			scene.addLight(light0);
 			scene.setSkybox({
 				"resources/textures/skybox/ss_ft.tga", "resources/textures/skybox/ss_bk.tga",

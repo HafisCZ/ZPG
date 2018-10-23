@@ -172,6 +172,7 @@
     <ClInclude Include="Object.h">
       <Filter>Source Files\Scene\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="resources\sphere.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="resources\textures\spc.png">
