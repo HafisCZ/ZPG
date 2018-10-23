@@ -12,10 +12,8 @@ void Scene::addLight(Light& light) {
 	m_lights.emplace_back(&light);
 }
 
-void Scene::setSkybox(std::shared_ptr<Texture>& skybox) {
-	std::unique_ptr<VertexArray> vao = std::make_unique<VertexArray>();
-
-	float vertices[] = {
+void Scene::setSkybox(const std::vector<std::string>& tex) {
+	const float vertices[] = {
 		-1.0f,  1.0f, -1.0f,
 		-1.0f, -1.0f, -1.0f,
 		 1.0f, -1.0f, -1.0f,
@@ -58,16 +56,12 @@ void Scene::setSkybox(std::shared_ptr<Texture>& skybox) {
 		-1.0f, -1.0f,  1.0f,
 		 1.0f, -1.0f,  1.0f
 	};
-	std::unique_ptr<VertexBuffer> vbo = std::make_unique<VertexBuffer>((const void*) vertices, 36 * 3 * sizeof(float));
 
-	vao->addBuffer(*vbo, VertexBufferLayout::DEFAULT_P());
+	MeshDetails md = { 36, 0 };
 
-	MeshDetails md;
-	md.indice_count = 36;
-	md.vertex_count = 36 * 3;
+	std::unique_ptr<Mesh> mesh = std::make_unique<Mesh>((void*)vertices, nullptr, VertexBufferLayout::DEFAULT_P(), md);
+	mesh->setMaterial(DIFFUSE_MAP, tex);
 
-	std::vector<Mesh> meshes;
-	meshes.emplace_back(vao, vbo, md);
-
-	m_skybox = std::make_unique<Model>(meshes);
+	m_skybox = std::make_unique<Model>();
+	m_skybox->addMesh(mesh);
 }

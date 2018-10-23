@@ -1,6 +1,7 @@
 #include "Texture.h"
 
 #include <unordered_map>
+#include <iostream>
 
 #include "vendor/stb_image.h"
 
@@ -30,7 +31,9 @@ Texture::Texture(const std::string& filepath, unsigned int mode) : m_type(GL_TEX
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, mode);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, mode);
 
+	std::cout << "\n" << filepath;
 	if (buffer) {
+		std::cout << " OK";
 		stbi_image_free(buffer);
 	}
 }
@@ -63,7 +66,6 @@ Texture::~Texture() {
 }
 
 void Texture::bind(unsigned int slot) const {
-
 	glActiveTexture(GL_TEXTURE0 + slot);
 	glBindTexture(m_type, m_handle);
 }

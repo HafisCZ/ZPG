@@ -19,11 +19,11 @@ class Object {
 		void setPosition(glm::vec3 position) { m_position = position; }
 		void setModelTransformation(glm::mat4 transformation) { m_model_matrix = transformation; }
 
-		inline const glm::vec3 getPosition() const { return m_position; }
-		inline const glm::mat4 getModelTransformation() const { return m_model_matrix; }
+		inline glm::vec3 getPosition() { return m_position; }
+		inline glm::mat4 getModelTransformation() { return m_model_matrix; }
+		
+		inline glm::mat4 getModelMatrix() { return glm::translate(m_model_matrix, m_position); }
 
-		inline const glm::mat4 getModelMatrix() const { return glm::translate(m_model_matrix, m_position); }
-
-		inline const Model* getModel() const { return m_model; }
-		inline const Program* getProgram() const { return m_program; }
+		inline Model* getModel() { return m_model; }
+		inline Program* getProgram() { return m_program; }
 };

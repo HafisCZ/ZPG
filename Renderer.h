@@ -2,17 +2,148 @@
 
 #include <GL/glew.h>
 
+#include <iostream>
+
 #include "Scene.h"
+#include "Framebuffer.h"
 
 class Renderer {
+	private:
+		Program m_shad_program;
+		Program m_geom_program;
+		Program m_dark_program;
+		Program m_skyb_program;
+
+		Framebuffer3D m_dark_buffer;
+
+		void draw(Mesh& mesh) {
+			mesh.getVAO()->bind();
+
+			if (mesh.hasIBO()) {
+				mesh.getIBO()->bind();
+	
+				glDrawElements(GL_TRIANGLES, mesh.getIBO()->getCount(), GL_UNSIGNED_INT, nullptr);
+			} else {
+				glDrawArrays(GL_TRIANGLES, 0, mesh.getDetails().vertex_count);
+			}
+		}
 	public:
-		virtual void clear() const;
+		Renderer(const std::string& dark_filepath, const std::string& geom_filepath, const std::string& shad_filepath, const std::string& skyb_filepath)
+			: m_dark_program(dark_filepath + ".vert", dark_filepath + ".frag", dark_filepath + ".geom"),
+				//m_shad_program(geom_filepath + ".vert", geom_filepath + ".frag", geom_filepath + ".geom"),
+				//m_geom_program(shad_filepath + ".vert", shad_filepath + ".frag"),
+				m_skyb_program(skyb_filepath + ".vert", skyb_filepath + ".frag"),
+				m_dark_buffer(1024)
+		{
+		
+		}
 
-		virtual void draw(const VertexArray& va, const IndexBuffer& ib, const Program& program) const;
-		virtual void draw(const VertexArray& va, std::size_t count, const Program& program) const;
+		void clear() const {
+			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		}
 
-		virtual void draw(Scene& scene) {
+		void draw(Scene& scene) {
+			m_dark_buffer.begin();
+			glDisable(GL_CULL_FACE);
 
+			for (unsigned int i = 0; i < scene.getLights().size(); i++) {
+				static glm::mat4 per_matrix = glm::perspective(glm::radians(90.0f), 1.0f, 1.0f, 25.0f);
+				static glm::mat4 faces[6];
+
+				glm::vec3 light_position = scene.getLights()[0]->getPosition();
+				faces[0] = per_matrix * glm::lookAt(light_position, light_position + glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f));
+				faces[1] = per_matrix * glm::lookAt(light_position, light_position + glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f));
+				faces[2] = per_matrix * glm::lookAt(light_position, light_position + glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+				faces[3] = per_matrix * glm::lookAt(light_position, light_position + glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f));
+				faces[4] = per_matrix * glm::lookAt(light_position, light_position + glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, -1.0f, 0.0f));
+				faces[5] = per_matrix * glm::lookAt(light_position, light_position + glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, -1.0f, 0.0f));
+
+				m_dark_program.bind();
+				m_dark_program.setUniform("u_smaf", 25.0f);
+				m_dark_program.setUniform("u_smap", light_position);
+				for (unsigned int j = 0; j < 6; j++) {
+					m_dark_program.setUniform("u_smat[" + std::to_string(j) + "]", faces[j]);
+				}
+				
+				for (Object*& obj : scene.getObjects(FORWARD)) {
+					m_dark_program.setUniform("u_model", obj->getModelMatrix());
+					for (auto& mesh : obj->getModel()->getMeshes()) {
+						draw(*mesh);
+					}
+				}
+			}
+
+			glEnable(GL_CULL_FACE);
+			m_dark_buffer.end(1200, 900);
+			
+			for (Object*& obj : scene.getObjects(FORWARD)) {
+				obj->getProgram()->bind();
+				obj->getProgram()->setUniform("vp", scene.getViewProjectionMatrix());
+				obj->getProgram()->setUniform("view", scene.getViewPosition());
+				obj->getProgram()->setUniform("u_model", obj->getModelMatrix());
+				obj->getProgram()->setUniform("u_inver", glm::transpose(glm::inverse(obj->getModelMatrix())));
+
+				Light* light = scene.getLights()[0];
+				obj->getProgram()->setUniform("u_light.pos", light->getPosition());
+				obj->getProgram()->setUniform("u_light.amb", light->getAmbient());
+				obj->getProgram()->setUniform("u_light.dif", light->getDiffusion());
+				obj->getProgram()->setUniform("u_light.spc", light->getSpecular());
+				obj->getProgram()->setUniform("u_light.clq", light->getLinear(), light->getQuadratic());
+
+				obj->getProgram()->setUniform("texture_shadow", 0);
+		
+				for (auto& mesh : obj->getModel()->getMeshes()) {
+					bool has_specular = mesh->getMaterials().count(SPECULAR_MAP) > 0;
+					bool has_normal = mesh->getMaterials().count(BUMP_NORMAL_MAP) > 0;
+					bool has_height = mesh->getMaterials().count(HEIGHT_MAP) > 0;
+
+					obj->getProgram()->setUniform("texture_specular_enable", has_specular);
+					obj->getProgram()->setUniform("texture_normal_enable", has_normal);
+					obj->getProgram()->setUniform("texture_height_enable", has_height);
+
+					obj->getProgram()->setUniform("texture_diffuse", 8);
+					mesh->getMaterials()[DIFFUSE_MAP]->bind(8);
+
+					if (has_specular) {
+						obj->getProgram()->setUniform("texture_specular", 9);
+						mesh->getMaterials()[SPECULAR_MAP]->bind(9);
+					} else {
+						obj->getProgram()->setUniform("texture_specular", 8);
+					}
+
+					if (has_normal) {
+						obj->getProgram()->setUniform("texture_normal", 10);
+						mesh->getMaterials()[BUMP_NORMAL_MAP]->bind(10);
+					} else {
+						obj->getProgram()->setUniform("texture_normal", 8);
+					}
+
+					if (has_height) {
+						obj->getProgram()->setUniform("texture_height", 11);
+						mesh->getMaterials()[HEIGHT_MAP]->bind(11);
+					} else {
+						obj->getProgram()->setUniform("texture_height", 8);
+					}
+					
+					draw(*mesh);
+				}
+			}
+
+			if (scene.hasSkybox()) {
+				glDepthMask(GL_FALSE);
+
+				scene.getSkybox()->getMeshes()[0]->getMaterials()[DIFFUSE_MAP]->bind(8);
+
+				m_skyb_program.bind();
+				m_skyb_program.setUniform("view", glm::mat4(glm::mat3(scene.getViewMatrix())));
+				m_skyb_program.setUniform("proj", scene.getProjectionMatrix());
+				m_skyb_program.setUniform("skybox", 8);
+
+				draw(*scene.getSkybox()->getMeshes()[0]);
+
+				glDepthMask(GL_TRUE);
+			}
 		}
 };
 

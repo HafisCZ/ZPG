@@ -39,8 +39,9 @@ Framebuffer3D::Framebuffer3D(unsigned int size) : Framebuffer(size, size) {
 
 	glDrawBuffer(GL_NONE);
 	glReadBuffer(GL_NONE);
-}
 
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
 
 void Framebuffer3D::end(unsigned int width, unsigned int height) const {
 	Framebuffer::end(width, height);

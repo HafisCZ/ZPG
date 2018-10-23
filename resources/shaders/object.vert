@@ -6,18 +6,12 @@ layout(location = 2) in vec2 uv;
 layout(location = 3) in vec3 tt;
 layout(location = 4) in vec3 bt;
 
-layout(std140) uniform data_matrix { 
-	mat4 vp;
-};
+uniform mat4 vp;
+uniform vec3 view;
 
-layout(std140) uniform data_view {
-	vec3 view;
-};
+struct Light { vec3 pos, amb, dif, spc; vec2 clq; };
 
-struct Light { vec3 pos, amb, dif, spc, clq; };
-layout(std140) uniform data_light {
-	Light light;
-};
+uniform Light u_light;
 
 uniform mat4 u_model;
 uniform mat4 u_inver;
@@ -49,9 +43,9 @@ void main()
 
 	frag.nmo = tbn * nmo;
 
-	frag.tlp = tbn * light.pos;
+	frag.tlp = tbn * u_light.pos;
 	frag.tvp = tbn * view;
 	frag.tfp = tbn * frag.pos;
 
-	frag.light = light;
+	frag.light = u_light;
 }

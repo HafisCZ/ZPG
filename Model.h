@@ -10,12 +10,12 @@
 
 class Model {
 	private:
-		std::vector<Mesh> m_meshes;
+		std::vector<std::unique_ptr<Mesh>> m_meshes;
 
 	public:
-		Model(std::vector<Mesh>& meshes) : m_meshes(std::move(meshes)) {}
+		void addMesh(std::unique_ptr<Mesh>& mesh) { m_meshes.push_back(std::move(mesh)); }
 
-		inline const std::vector<Mesh>& getMeshes() const { return m_meshes; }
+		inline std::vector<std::unique_ptr<Mesh>>& getMeshes() { return m_meshes; }
 
 		static Model load(const std::string& filepath);
 };

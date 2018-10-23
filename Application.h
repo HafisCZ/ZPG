@@ -58,13 +58,7 @@ class Application {
 
 			Model nanosuit = Model::load("resources/models/nanosuit/nanosuit.obj");
 			Model kusanagi = Model::load("resources/models/ghost/ghost.obj");
-			Model cube = Model::load("resources/models/cube.obj");
-
-			std::shared_ptr<Texture> skybox = std::make_shared<Texture>(std::vector<std::string>{
-				"resources/textures/skybox/ss_ft.tga", "resources/textures/skybox/ss_bk.tga",
-				"resources/textures/skybox/ss_up.tga", "resources/textures/skybox/ss_dn.tga",
-				"resources/textures/skybox/ss_rt.tga", "resources/textures/skybox/ss_lf.tga"
-			});
+			//Model cube = Model::load("resources/models/cube.obj");
 
 			Camera camera(1200.0f, 900.0f, 60.0f);
 			glfwSetWindowUserPointer(m_window, &camera);
@@ -72,7 +66,7 @@ class Application {
 
 			Object object0(nanosuit, prog_obj);
 			Object object1(kusanagi, prog_obj);
-			Object object2(cube, prog_def);
+			//Object object2(cube, prog_def);
 
 			object0.setModelTransformation(glm::scale(glm::mat4(1.0f), glm::vec3(0.5f)));
 			object0.setPosition({ -5.0f, 0.0f, 0.0f });
@@ -80,19 +74,23 @@ class Application {
 			object1.setModelTransformation(glm::scale(glm::mat4(1.0f), glm::vec3(1.0f)));
 			object1.setPosition({ 5.0f, 0.0f, 0.0f });
 
-			object2.setModelTransformation(glm::scale(glm::mat4(1.0f), glm::vec3(0.1f)));
-			object2.setPosition({ 0.0f, 0.0f, 0.0f });
+			//object2.setModelTransformation(glm::scale(glm::mat4(1.0f), glm::vec3(0.1f)));
+			//object2.setPosition({ 0.0f, 0.0f, 0.0f });
 
-			Light light0(glm::vec3(0.2f), glm::vec3(0.8f), glm::vec3(1.0f), { 1.0f, 0.007f, 0.0002f });
+			Light light0(glm::vec3(0.2f), glm::vec3(0.8f), glm::vec3(1.0f), { 0.007f, 0.0002f });
 
-			Scene scene;
+			Scene scene(camera);
 			scene.addObject(object0, FORWARD);
 			scene.addObject(object1, FORWARD);
-			scene.addObject(object2, FORWARD);
+			//scene.addObject(object2, FORWARD);
 			scene.addLight(light0);
-			scene.setSkybox(skybox);
+			scene.setSkybox({
+				"resources/textures/skybox/ss_ft.tga", "resources/textures/skybox/ss_bk.tga",
+				"resources/textures/skybox/ss_up.tga", "resources/textures/skybox/ss_dn.tga",
+				"resources/textures/skybox/ss_rt.tga", "resources/textures/skybox/ss_lf.tga"
+			});
 
-			Renderer renderer;
+			Renderer renderer("resources/shaders/shadow", "resources/shaders/deferred_render/geometry_pass", "resources/shaders/deferred_render/shading_pass", "resources/shaders/skybox");
 
 			while (!glfwWindowShouldClose(m_window)) {
 				renderer.clear();

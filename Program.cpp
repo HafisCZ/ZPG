@@ -125,7 +125,7 @@ int Program::getUniformLocation(const std::string& name) {
 
 	int location = glGetUniformLocation(m_handle, name.c_str());
 	if (location == -1) {
-
+		std::cout << name << "\n";
 	}
 
 	m_uniformLocationCache[name] = location;

@@ -2,7 +2,7 @@
 
 layout (location = 0) out vec4 color;
 
-struct Light { vec3 pos, amb, dif, spc, clq; };
+struct Light { vec3 pos, amb, dif, spc; vec2 clq; };
 in VS_OUT {
 	vec3 nmo;
 	vec3 pos;
@@ -13,7 +13,6 @@ in VS_OUT {
 	Light light;
 } vert;
 
-uniform bool texture_diffuse_enable;
 uniform sampler2D texture_diffuse;
 
 uniform bool texture_specular_enable;
@@ -59,7 +58,7 @@ float process_shading()
 vec3 process_lightning() {
 	vec2 uv = vert.tex;
 
-	vec3 diffuse_color = texture_diffuse_enable ? texture(texture_diffuse, uv).rgb : vec3(1.0);
+	vec3 diffuse_color = texture(texture_diffuse, uv).rgb;
 	vec3 specular_color = texture_specular_enable ? texture(texture_specular, uv).rgb : vec3(0.0);
 	vec3 normal = texture_normal_enable ? normalize(texture(texture_normal, uv).rgb * 2.0 - 1.0) : vert.nmo;
 
@@ -71,8 +70,8 @@ vec3 process_lightning() {
 	float specular_intensity = pow(max(dot(normal, halfway_direction), 0.0), 32.0);
 
 	float distance_from_light = length(vert.tlp - vert.tfp);
-	float attenuation = 1.0 / (vert.light.clq.x + vert.light.clq.y * distance_from_light + vert.light.clq.z * distance_from_light * distance_from_light);
-
+	float attenuation = 1.0 / (1.0 + vert.light.clq.x * distance_from_light + vert.light.clq.y * distance_from_light * distance_from_light);
+	
 	vec3 ambient = attenuation * vert.light.amb * diffuse_color;
 	vec3 diffuse = attenuation * vert.light.dif * diffuse_color * diffuse_intensity;
 	vec3 specular = attenuation * vert.light.spc * specular_color * specular_intensity;

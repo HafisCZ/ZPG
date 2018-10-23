@@ -1,5 +1,8 @@
 #pragma once
 
+#include <memory>
+#include <unordered_map>
+
 #include "VertexArray.h"
 #include "IndexBuffer.h"
 #include "Material.h"
@@ -15,20 +18,31 @@ class Mesh {
 		std::unique_ptr<VertexBuffer> m_vbo;
 		std::unique_ptr<IndexBuffer> m_ibo;
 		
-		std::vector<Material> m_materials;
+		std::unordered_map<MapType, std::shared_ptr<Texture>> m_materials;
 
 		MeshDetails m_details;
 
 	public:
-		Mesh(std::unique_ptr<VertexArray>& vao, std::unique_ptr<VertexBuffer>& vbo, MeshDetails details) : m_vao(std::move(vao)), m_vbo(std::move(vbo)), m_details(details) {}
-		Mesh(std::unique_ptr<VertexArray>& vao, std::unique_ptr<VertexBuffer>& vbo, std::unique_ptr<IndexBuffer>& ibo, MeshDetails details) : m_vao(std::move(vao)), m_vbo(std::move(vbo)), m_ibo(std::move(ibo)), m_details(details) { }
+		Mesh(void* vertices_ptr, void* indices_ptr, VertexBufferLayout vbl, MeshDetails md) : m_details(md) {
+			m_vao = std::make_unique<VertexArray>();
+			m_vbo = std::make_unique<VertexBuffer>(vertices_ptr, md.vertex_count * vbl.getStride());
 
-		inline const std::unique_ptr<VertexArray>& getVAO() const { return m_vao; }
-		inline const std::unique_ptr<VertexBuffer>& getVBO() const { return m_vbo; }
-		inline const std::unique_ptr<IndexBuffer>& getIBO() const { return m_ibo; }
+			if (indices_ptr) {
+				m_ibo = std::make_unique<IndexBuffer>(indices_ptr, md.indice_count);
+			}
+
+			m_vao->addBuffer(*m_vbo, vbl);
+		}
+
+		void setMaterial(MapType type, const std::string& material) { m_materials[type] = std::move(Texture::load(material, GL_REPEAT)); }
+		void setMaterial(MapType type, const std::vector<std::string>& materials) { m_materials[type] = std::make_shared<Texture>(materials); }
+
+		inline std::unique_ptr<VertexArray>& getVAO() { return m_vao; }
+		inline std::unique_ptr<VertexBuffer>& getVBO() { return m_vbo; }
+		inline std::unique_ptr<IndexBuffer>& getIBO() { return m_ibo; }
 
 		inline bool hasIBO() const { return m_ibo != nullptr; }
 
-		inline const std::vector<Material>& getMaterials() const { return m_materials; }
-		inline const MeshDetails getDetails() const { return m_details; }
+		inline std::unordered_map<MapType, std::shared_ptr<Texture>>& getMaterials() { return m_materials; }
+		inline MeshDetails getDetails() { return m_details; }
 };
