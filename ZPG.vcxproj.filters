@@ -160,9 +160,6 @@
     <ClInclude Include="Model.h">
       <Filter>Source Files\Scene\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="Material.h">
-      <Filter>Source Files\Scene\Headers</Filter>
-    </ClInclude>
     <ClInclude Include="Light.h">
       <Filter>Source Files\Scene\Headers</Filter>
     </ClInclude>

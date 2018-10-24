@@ -12,7 +12,7 @@ void Scene::addLight(Light& light) {
 	m_lights.emplace_back(&light);
 }
 
-void Scene::setSkybox(const std::vector<std::string>& tex) {
+void Scene::setSkybox(const std::vector<std::string>& tex) {/*
 	const float vertices[] = {
 		-1.0f,  1.0f, -1.0f,
 		-1.0f, -1.0f, -1.0f,
@@ -63,5 +63,5 @@ void Scene::setSkybox(const std::vector<std::string>& tex) {
 	mesh->setMaterial(DIFFUSE_MAP, tex);
 
 	m_skybox = std::make_unique<Model>();
-	m_skybox->addMesh(mesh);
+	m_skybox->addMesh(mesh);*/
 }

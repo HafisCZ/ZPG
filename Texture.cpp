@@ -31,7 +31,7 @@ Texture::Texture(const std::string& filepath, unsigned int mode) : m_type(GL_TEX
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, mode);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, mode);
 
-	std::cout << "\n" << filepath;
+	std::cout << "\n" << filepath << " " << width <<" " << height << " " << format;
 	if (buffer) {
 		std::cout << " OK";
 		stbi_image_free(buffer);

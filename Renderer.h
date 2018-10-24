@@ -24,7 +24,7 @@ class Renderer {
 	
 				glDrawElements(GL_TRIANGLES, mesh.getIBO()->getCount(), GL_UNSIGNED_INT, nullptr);
 			} else {
-				glDrawArrays(GL_TRIANGLES, 0, mesh.getDetails().vertex_count);
+				glDrawArrays(GL_TRIANGLES, 0, mesh.getProperties().vertex_count);
 			}
 		}
 	public:
@@ -94,49 +94,32 @@ class Renderer {
 				obj->getProgram()->setUniform("texture_shadow", 0);
 		
 				for (auto& mesh : obj->getModel()->getMeshes()) {
-					bool has_diffuse = mesh->getMaterials().count(DIFFUSE_MAP) > 0;
-					bool has_specular = mesh->getMaterials().count(SPECULAR_MAP) > 0;
-					bool has_normal = mesh->getMaterials().count(BUMP_NORMAL_MAP) > 0;
-					bool has_height = mesh->getMaterials().count(HEIGHT_MAP) > 0;
+					bool has_diffuse = mesh->getTextures()[0] != nullptr;
+					bool has_specular = mesh->getTextures()[1] != nullptr;
+					bool has_normal = mesh->getTextures()[2] != nullptr;
+					bool has_height = mesh->getTextures()[3] != nullptr;
 
 					obj->getProgram()->setUniform("texture_diffuse_enable", has_diffuse);
 					obj->getProgram()->setUniform("texture_specular_enable", has_specular);
 					obj->getProgram()->setUniform("texture_normal_enable", has_normal);
 					obj->getProgram()->setUniform("texture_height_enable", has_height);
 
-					if (has_diffuse) {
-						obj->getProgram()->setUniform("texture_diffuse", 8);
-						mesh->getMaterials()[DIFFUSE_MAP]->bind(8);
-					} else {
-						obj->getProgram()->setUniform("texture_diffuse", 8);
-						obj->getProgram()->setUniform("u_color", obj->getBaseColor());
-					}
+					obj->getProgram()->setUniform("texture_diffuse", 8);
+					obj->getProgram()->setUniform("texture_specular", 9);
+					obj->getProgram()->setUniform("texture_normal", 10);
+					obj->getProgram()->setUniform("texture_height", 11);
 
-					if (has_specular) {
-						obj->getProgram()->setUniform("texture_specular", 9);
-						mesh->getMaterials()[SPECULAR_MAP]->bind(9);
-					} else {
-						obj->getProgram()->setUniform("texture_specular", 8);
-					}
+					if (has_diffuse) mesh->getTextures()[0]->bind(8);
+					else obj->getProgram()->setUniform("u_color", obj->getBaseColor());
 
-					if (has_normal) {
-						obj->getProgram()->setUniform("texture_normal", 10);
-						mesh->getMaterials()[BUMP_NORMAL_MAP]->bind(10);
-					} else {
-						obj->getProgram()->setUniform("texture_normal", 8);
-					}
+					if (has_specular) mesh->getTextures()[1]->bind(9);
+					if (has_normal) mesh->getTextures()[2]->bind(10);
+					if (has_height) mesh->getTextures()[3]->bind(11);
 
-					if (has_height) {
-						obj->getProgram()->setUniform("texture_height", 11);
-						mesh->getMaterials()[HEIGHT_MAP]->bind(11);
-					} else {
-						obj->getProgram()->setUniform("texture_height", 8);
-					}
-					
 					draw(*mesh);
 				}
 			}
-
+			/*
 			if (scene.hasSkybox()) {
 				glDepthMask(GL_FALSE);
 
@@ -150,7 +133,7 @@ class Renderer {
 				draw(*scene.getSkybox()->getMeshes()[0]);
 
 				glDepthMask(GL_TRUE);
-			}
+			}*/
 		}
 };
 

@@ -1,81 +1,105 @@
 #include "Model.h"
 
-#include <unordered_map>
-#include <iostream>
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
-#include <glm/glm.hpp>
+#include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
 
-#include "gtype.h"
+Model::Model(const std::string& filepath) {
+	loadViaAssimp(filepath);
+}
 
-Model Model::load(const std::string& filepath) {
-	Model model;
-
+void Model::loadViaAssimp(const std::string& filepath) {
 	Assimp::Importer importer;
 
 	const aiScene* scene = importer.ReadFile(filepath.c_str(), aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_GenSmoothNormals);
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
-		return model;
+		return;
 	}
 
 	std::string directory = filepath.substr(0, filepath.find_last_of('/'));
 
-	const static std::function<glm::vec3(const aiVector3D&)> convert = [](const aiVector3D& value) -> glm::vec3 { return glm::vec3(value.x, value.y, value.z); };
+	const static std::function<glm::vec3(const aiVector3D&)> vec3(
+		[](const aiVector3D& vec) -> glm::vec3 { return glm::vec3(vec.x, vec.y, vec.z); }
+	);
 
-	const static std::function<void(aiMesh*)> process_mesh = [&model, &directory, &scene](aiMesh* mesh) {
-		std::vector<pnttb_t> vertices;
-		std::vector<unsigned int> indices;
+	const static std::function<glm::vec2(const aiVector3D&)> vec2(
+		[](const aiVector3D& vec) -> glm::vec2 { return glm::vec2(vec.x, vec.y); }
+	);
 
-		for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
-			vertices.push_back({
-				convert(mesh->mVertices[i]),
-				mesh->mNormals ? convert(mesh->mNormals[i]) : glm::vec3(0.0f),
-				mesh->mTextureCoords[0] ? glm::vec2(mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y) : glm::vec2(0.0f),
-				mesh->mTangents ? convert(mesh->mTangents[i]) : glm::vec3(0.0f),
-				mesh->mBitangents ? convert(mesh->mBitangents[i]) : glm::vec3(0.0f)
-				});
-		}
+	const static std::function<void(aiMesh*)> processMesh(
+		[&, this](aiMesh* mesh) {
+			using vertex_t = struct { 
+				glm::vec3 pos, nor; 
+				glm::vec2 tex;
+				glm::vec3 tan, bta;
+			};
 
-		for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
-			aiFace face = mesh->mFaces[i];
-			for (unsigned int j = 0; j < face.mNumIndices; j++) {
-				indices.push_back(face.mIndices[j]);
+			std::vector<vertex_t> vertices(mesh->mNumVertices);
+			std::vector<unsigned int> indices(
+				[&mesh]() {
+					unsigned int count = 0;
+					for (unsigned int i = 0; i < mesh->mNumFaces; i++) count += mesh->mFaces[i].mNumIndices;
+					return count;
+				}()
+			);
+
+			for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
+				vertices[i] = {
+					vec3(mesh->mVertices[i]),
+					mesh->mNormals ? vec3(mesh->mNormals[i]) : glm::vec3(0.0f),
+					mesh->mTextureCoords[0] ? vec2(mesh->mTextureCoords[0][i]) : glm::vec2(0.0f),
+					mesh->mTangents ? vec3(mesh->mTangents[i]) : glm::vec3(0.0f),
+					mesh->mBitangents ? vec3(mesh->mBitangents[i]) : glm::vec3(0.0f)
+				};
 			}
-		}
 
-		MeshDetails md = { vertices.size(), indices.size() };
-		std::unique_ptr<Mesh> modelmesh = std::make_unique<Mesh>(vertices.data(), indices.data(), VertexBufferLayout::DEFAULT_PNTTB(), md);
-
-		aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-
-		const static std::function<void(aiTextureType)> process_material = [&directory, &modelmesh, &material](aiTextureType type) {
-			for (unsigned int i = 0; i < material->GetTextureCount(type); i++) {
-				aiString str;
-				material->GetTexture(type, i, &str);
-
-				MapType mattype;
-				if (type == aiTextureType_DIFFUSE) mattype = DIFFUSE_MAP;
-				else if (type == aiTextureType_SPECULAR) mattype = SPECULAR_MAP;
-				else if (type == aiTextureType_HEIGHT) mattype = BUMP_NORMAL_MAP;
-				else if (type == aiTextureType_AMBIENT) mattype = HEIGHT_MAP;
-
-				modelmesh->setMaterial(mattype, directory + '/' + std::string(str.C_Str()));
+			for (unsigned int i = 0, indice = 0; i < mesh->mNumFaces; i++) {
+				aiFace face = mesh->mFaces[i];
+				for (unsigned int j = 0; j < face.mNumIndices; j++) {
+					indices[indice++] = face.mIndices[j];
+				}
 			}
-		};
 
-		process_material(aiTextureType_DIFFUSE);
-		process_material(aiTextureType_SPECULAR);
-		process_material(aiTextureType_HEIGHT);
-		process_material(aiTextureType_AMBIENT);
+			aiMaterial* materials = scene->mMaterials[mesh->mMaterialIndex];
+			const static std::function<TextureHandle(aiTextureType)> processMaterial(
+				[&](aiTextureType type) -> TextureHandle {
+					if (materials->GetTextureCount(type) > 0) {
+						aiString textureName;
+						materials->GetTexture(type, 0, &textureName);
 
-		model.addMesh(modelmesh);
+						return Texture::load(directory + '/' + std::string(textureName.C_Str()), GL_REPEAT);
+					} else return nullptr;
+				}
+			);
+
+			_meshes.emplace_back(
+				std::move(
+					std::make_shared<Mesh>(
+						vertices.data(),
+						indices.data(),
+						Mesh::Properties{ vertices.size(), indices.size() },
+						VertexBufferLayout::DEFAULT_PNTTB(),
+						processMaterial(aiTextureType_DIFFUSE),
+						processMaterial(aiTextureType_SPECULAR),
+						processMaterial(aiTextureType_HEIGHT),
+						processMaterial(aiTextureType_AMBIENT)
+					)
+				)
+			);
+		}
+	);
+
+	const static std::function<void(aiNode*)> processNode = [&](aiNode* node) {
+		for (unsigned int i = 0; i < node->mNumMeshes; i++) {
+			processMesh(scene->mMeshes[node->mMeshes[i]]);
+		}
+		for (unsigned int i = 0; i < node->mNumChildren; i++) {
+			processNode(node->mChildren[i]);
+		}
 	};
 
-	const static std::function<void(aiNode*)> process_node = [&directory, &scene](aiNode* node) {
-		for (unsigned int i = 0; i < node->mNumMeshes; i++) process_mesh(scene->mMeshes[node->mMeshes[i]]);
-		for (unsigned int i = 0; i < node->mNumChildren; i++) process_node(node->mChildren[i]);
-	};
-
-	process_node(scene->mRootNode);
-
-	return model;
+	processNode(scene->mRootNode);
 }

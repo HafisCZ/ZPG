@@ -1,27 +1,20 @@
 #pragma once
 
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
-
 #include <functional>
 
 #include "Mesh.h"
 
 class Model {
 	private:
-		std::vector<std::unique_ptr<Mesh>> m_meshes;
+		std::vector<std::shared_ptr<Mesh>> _meshes;
 
 	public:
-		Model() {}
-		Model(void* vertices, unsigned int vertice_count, VertexBufferLayout vertex_layout) {
-			std::unique_ptr<Mesh> mesh = std::make_unique<Mesh>(vertices, (void*) nullptr, vertex_layout, MeshDetails { vertice_count, 0 });
-			m_meshes.push_back(std::move(mesh));
-		}
+		Model(const std::string& filepath);
 
-		void addMesh(std::unique_ptr<Mesh>& mesh) { m_meshes.push_back(std::move(mesh)); }
+		template <typename T, typename ... Args, typename = typename std::enable_if<std::is_same<T, void*>::value>::type>  Model(T t, Args ... args) : _meshes{ { std::forward<Args>(args)... } } {}
 
-		inline std::vector<std::unique_ptr<Mesh>>& getMeshes() { return m_meshes; }
+		inline std::vector<std::shared_ptr<Mesh>>& getMeshes() { return _meshes; }
 
-		static Model load(const std::string& filepath);
+	private:
+		void loadViaAssimp(const std::string& filepath);
 };
