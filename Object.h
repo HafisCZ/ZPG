@@ -7,24 +7,26 @@
 
 class Object {
 	private:
-		glm::vec3 m_position;
-		glm::mat4 m_model_matrix;
+		glm::vec3 _position;
+		glm::mat4 _modelTransformation;
 
-		Program* m_program;
-		Model* m_model;
+		Program& _program;
+		Model& _model;
+
+		glm::mat4 _modelMatrix;
+		bool _shouldUpdate;
 
 	public:
-		Object(Model& model, Program& program) : m_model(&model), m_program(&program), m_position(0.0f), m_model_matrix(1.0f) {}
+		Object(Model& model, Program& program);
 
-		void setPosition(glm::vec3 position) { m_position = position; }
-		void setModelTransformation(glm::mat4 transformation) { m_model_matrix = transformation; }
+		void setPosition(glm::vec3 position) { _position = position; }
+		void setTransformation(glm::mat4 transformation) { _modelTransformation = transformation; }
 
-		inline glm::vec3 getPosition() { return m_position; }
-		inline glm::mat4 getModelTransformation() { return m_model_matrix; }
+		inline glm::vec3 getPosition() { return _position; }
+		inline glm::mat4 getTransformation() { return _modelTransformation; }
 		
-		inline glm::mat4 getModelMatrix() { return glm::translate(m_model_matrix, m_position); }
-		inline glm::vec3 getBaseColor() { return glm::vec3(0.8f); }
+		glm::mat4 getMatrix();
 
-		inline Model* getModel() { return m_model; }
-		inline Program* getProgram() { return m_program; }
+		inline Model& getModel() { return _model; }
+		inline Program& getProgram() { return _program; }
 };

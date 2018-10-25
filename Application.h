@@ -10,8 +10,6 @@
 #include "Camera.h"
 #include "Renderer.h"
 
-#include "resources/sphere.h"
-
 class Application {
 	private:
 		GLFWwindow* m_window;
@@ -65,20 +63,14 @@ class Application {
 
 			Object object1(kusanagi, prog_obj);
 
-			object1.setModelTransformation(glm::rotate(glm::mat4(1.0f), glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f)));
 			object1.setPosition({ 5.0f, 0.0f, 5.0f });
 			
-			Light light0(glm::vec3(0.2f), glm::vec3(0.8f), glm::vec3(1.0f), { 0.007f, 0.0002f });
+			Light light0(glm::vec3(1.0f), glm::vec3(0.2f), glm::vec3(0.8f), glm::vec3(1.0f), 0.007f, 0.0002f);
 			light0.setPosition({ 0.0f, 5.0f, 0.0f });
 
 			Scene scene(camera);
-			scene.addObject(object1, FORWARD);
+			scene.addObjectForward(object1);
 			scene.addLight(light0);
-			scene.setSkybox({
-				"resources/textures/skybox/ss_ft.tga", "resources/textures/skybox/ss_bk.tga",
-				"resources/textures/skybox/ss_up.tga", "resources/textures/skybox/ss_dn.tga",
-				"resources/textures/skybox/ss_rt.tga", "resources/textures/skybox/ss_lf.tga"
-			});
 
 			Renderer renderer("resources/shaders/shadow", "resources/shaders/deferred_render/geometry_pass", "resources/shaders/deferred_render/shading_pass", "resources/shaders/skybox");
 

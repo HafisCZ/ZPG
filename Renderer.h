@@ -21,12 +21,13 @@ class Renderer {
 
 			if (mesh.hasIBO()) {
 				mesh.getIBO()->bind();
-	
+
 				glDrawElements(GL_TRIANGLES, mesh.getIBO()->getCount(), GL_UNSIGNED_INT, nullptr);
 			} else {
 				glDrawArrays(GL_TRIANGLES, 0, mesh.getProperties().vertex_count);
 			}
 		}
+
 	public:
 		Renderer(const std::string& dark_filepath, const std::string& geom_filepath, const std::string& shad_filepath, const std::string& skyb_filepath)
 			: m_dark_program(dark_filepath + ".vert", dark_filepath + ".frag", dark_filepath + ".geom"),
@@ -66,9 +67,9 @@ class Renderer {
 					m_dark_program.setUniform("u_smat[" + std::to_string(j) + "]", faces[j]);
 				}
 				
-				for (Object*& obj : scene.getObjects(FORWARD)) {
-					m_dark_program.setUniform("u_model", obj->getModelMatrix());
-					for (auto& mesh : obj->getModel()->getMeshes()) {
+				for (auto& obj : scene.getObjectsForward()) {
+					m_dark_program.setUniform("u_model", obj->getMatrix());
+					for (auto& mesh : obj->getModel().getMeshes()) {
 						draw(*mesh);
 					}
 				}
@@ -76,42 +77,50 @@ class Renderer {
 
 			glEnable(GL_CULL_FACE);
 			m_dark_buffer.end(1200, 900);
+
+			bool updateCamera = scene.getCamera().isPending();
+			glm::mat4 cameraVP = scene.getCamera().get();
+			glm::mat4 cameraV = scene.getCamera().getViewMatrix();
+			glm::mat4 cameraP = scene.getCamera().getProjectionMatrix();
+			glm::vec3 cameraVv = scene.getCamera().getPosition();
 			
-			for (Object*& obj : scene.getObjects(FORWARD)) {
-				obj->getProgram()->bind();
-				obj->getProgram()->setUniform("vp", scene.getViewProjectionMatrix());
-				obj->getProgram()->setUniform("view", scene.getViewPosition());
-				obj->getProgram()->setUniform("u_model", obj->getModelMatrix());
-				obj->getProgram()->setUniform("u_inver", glm::transpose(glm::inverse(obj->getModelMatrix())));
+			for (auto& obj : scene.getObjectsForward()) {
+				obj->getProgram().bind();
 
+				if (updateCamera) {
+					obj->getProgram().setUniform("vp", scene.getCamera().get());
+					obj->getProgram().setUniform("view", scene.getCamera().getPosition());
+				}
+
+				obj->getProgram().setUniform("u_model", obj->getMatrix());
+				obj->getProgram().setUniform("u_inver", glm::transpose(glm::inverse(obj->getMatrix())));
+	
 				Light* light = scene.getLights()[0];
-				obj->getProgram()->setUniform("u_light.pos", light->getPosition());
-				obj->getProgram()->setUniform("u_light.amb", light->getAmbient());
-				obj->getProgram()->setUniform("u_light.dif", light->getDiffusion());
-				obj->getProgram()->setUniform("u_light.spc", light->getSpecular());
-				obj->getProgram()->setUniform("u_light.clq", light->getLinear(), light->getQuadratic());
+				obj->getProgram().setUniform("u_light.pos", light->getPosition());
+				obj->getProgram().setUniform("u_light.amb", light->getAmbientIntensity());
+				obj->getProgram().setUniform("u_light.dif", light->getDiffusionIntensity());
+				obj->getProgram().setUniform("u_light.spc", light->getSpecularIntensity());
+				obj->getProgram().setUniform("u_light.clq", glm::vec2 { light->getLinearAttenuation(), light->getQuadraticAttenuation() });
 
-				obj->getProgram()->setUniform("texture_shadow", 0);
+				obj->getProgram().setUniform("texture_shadow", 0);
 		
-				for (auto& mesh : obj->getModel()->getMeshes()) {
+				for (auto& mesh : obj->getModel().getMeshes()) {
 					bool has_diffuse = mesh->getTextures()[0] != nullptr;
 					bool has_specular = mesh->getTextures()[1] != nullptr;
 					bool has_normal = mesh->getTextures()[2] != nullptr;
 					bool has_height = mesh->getTextures()[3] != nullptr;
 
-					obj->getProgram()->setUniform("texture_diffuse_enable", has_diffuse);
-					obj->getProgram()->setUniform("texture_specular_enable", has_specular);
-					obj->getProgram()->setUniform("texture_normal_enable", has_normal);
-					obj->getProgram()->setUniform("texture_height_enable", has_height);
+					obj->getProgram().setUniform("texture_diffuse_enable", has_diffuse);
+					obj->getProgram().setUniform("texture_specular_enable", has_specular);
+					obj->getProgram().setUniform("texture_normal_enable", has_normal);
+					obj->getProgram().setUniform("texture_height_enable", has_height);
 
-					obj->getProgram()->setUniform("texture_diffuse", 8);
-					obj->getProgram()->setUniform("texture_specular", 9);
-					obj->getProgram()->setUniform("texture_normal", 10);
-					obj->getProgram()->setUniform("texture_height", 11);
+					obj->getProgram().setUniform("texture_diffuse", 8);
+					obj->getProgram().setUniform("texture_specular", 9);
+					obj->getProgram().setUniform("texture_normal", 10);
+					obj->getProgram().setUniform("texture_height", 11);
 
 					if (has_diffuse) mesh->getTextures()[0]->bind(8);
-					else obj->getProgram()->setUniform("u_color", obj->getBaseColor());
-
 					if (has_specular) mesh->getTextures()[1]->bind(9);
 					if (has_normal) mesh->getTextures()[2]->bind(10);
 					if (has_height) mesh->getTextures()[3]->bind(11);
@@ -119,21 +128,25 @@ class Renderer {
 					draw(*mesh);
 				}
 			}
-			/*
-			if (scene.hasSkybox()) {
+
+			if (scene.getSkybox() != nullptr) {
 				glDepthMask(GL_FALSE);
 
-				scene.getSkybox()->getMeshes()[0]->getMaterials()[DIFFUSE_MAP]->bind(8);
-
 				m_skyb_program.bind();
-				m_skyb_program.setUniform("view", glm::mat4(glm::mat3(scene.getViewMatrix())));
-				m_skyb_program.setUniform("proj", scene.getProjectionMatrix());
+
+				if (updateCamera) {
+					m_skyb_program.setUniform("view", glm::mat4(glm::mat3(cameraV)));
+					m_skyb_program.setUniform("proj", cameraP);
+				}
+
 				m_skyb_program.setUniform("skybox", 8);
+
+				scene.getSkybox()->getMeshes()[0]->getTextures()[0]->bind(8);
 
 				draw(*scene.getSkybox()->getMeshes()[0]);
 
 				glDepthMask(GL_TRUE);
-			}*/
+			}
 		}
 };
 

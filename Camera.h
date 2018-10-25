@@ -28,6 +28,7 @@ class Camera {
 
 		bool m_ut;
 		bool m_ft;
+		bool _pending;
 
 		float m_lx;
 		float m_ly;
@@ -45,4 +46,6 @@ class Camera {
 
 		inline glm::mat4 getProjectionMatrix() const { return m_proj; }
 		inline glm::mat4 getViewMatrix() const { return m_view; }
+
+		bool isPending();
 };

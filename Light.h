@@ -4,32 +4,33 @@
 
 class Light {
 	private:
-		unsigned int m_id;
+		glm::vec3 _position;
 
-		glm::vec3 m_position;
-		glm::vec3 m_ambient;
-		glm::vec3 m_diffusion;
-		glm::vec3 m_specular;
-		glm::vec2 m_ql;
+		glm::vec3 _color;
+		
+		glm::vec3 _ambientIntensity;
+		glm::vec3 _diffusionIntensity;
+		glm::vec3 _specularIntensity;
+
+		float _linearAttenuation;
+		float _quadraticAttenuation;
 
 	public:
-		Light(glm::vec3 amb, glm::vec3 dif, glm::vec3 spc, glm::vec2 ql);
+		Light(glm::vec3 color, glm::vec3 ambient, glm::vec3 diffusion, glm::vec3 specular, float linear, float quadratic);
 
-		inline void setPosition(glm::vec3 position) { m_position = position; }
+		void setPosition(glm::vec3 position) { _position = position; }
+		void setColor(glm::vec3 color) { _color = color; }
+		void setAmbientIntensity(glm::vec3 ambient) { _ambientIntensity = ambient; }
+		void setDiffusionIntensity(glm::vec3 diffusion) { _diffusionIntensity = diffusion; }
+		void setSpecularIntensity(glm::vec3 specular) { _specularIntensity = specular; }
+		void setLinearAttenuation(float linear) { _linearAttenuation = linear; }
+		void setQuadraticAttenuation(float quadratic) {	_quadraticAttenuation = quadratic; }
 
-		inline void setAmbient(glm::vec3 amb) { m_ambient = amb; }
-		inline void setDiffusion(glm::vec3 dif) { m_diffusion = dif; }
-		inline void setSpecular(glm::vec3 spc) { m_specular = spc; }
-
-		inline void setLinear(float l) { m_ql.x = l; }
-		inline void setQuadratic(float q) { m_ql.y = q; }
-
-		inline float getLinear() const { return m_ql.x; }
-		inline float getQuadratic() const { return m_ql.y; }
-
-		inline glm::vec3 getPosition() const { return m_position; }
-
-		inline glm::vec3 getAmbient() { return m_ambient; }
-		inline glm::vec3 getDiffusion() { return m_diffusion; }
-		inline glm::vec3 getSpecular() { return m_specular; }
+		inline glm::vec3 getPosition() { return _position; }
+		inline glm::vec3 getColor() { return _color; }
+		inline glm::vec3 getAmbientIntensity() { return _ambientIntensity; }
+		inline glm::vec3 getDiffusionIntensity() { return _diffusionIntensity; }
+		inline glm::vec3 getSpecularIntensity() { return _specularIntensity; }
+		inline float getLinearAttenuation() { return _linearAttenuation; }
+		inline float getQuadraticAttenuation() { return _quadraticAttenuation; }
 };

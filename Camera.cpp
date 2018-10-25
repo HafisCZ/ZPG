@@ -1,6 +1,6 @@
 #include "Camera.h"
 
-Camera::Camera(float sw, float sh, float fov) : m_ver(0.0f), m_hor(3.14f / 2.0f), m_w(sw), m_h(sh), m_ut(true), m_lx(sw / 2.0f), m_ly(sh / 2.0f), m_ft(true) {
+Camera::Camera(float sw, float sh, float fov) : m_ver(0.0f), m_hor(3.14f / 2.0f), m_w(sw), m_h(sh), m_ut(true), m_lx(sw / 2.0f), m_ly(sh / 2.0f), m_ft(true), _pending(true) {
 	m_pos = { 0.0f, 0.0f, 0.0f };
 	m_dir = { 1.0f, 1.0f, 0.0f };
 	m_ups = { 0.0f, 1.0f, 0.0f };
@@ -24,9 +24,21 @@ const glm::mat4& Camera::get() {
 		m_view = glm::lookAt(m_pos, m_pos + m_dir, m_ups);
 
 		m_vpmt = m_proj * m_view;
+
+		_pending = true;
 	}
 
 	return m_vpmt;
+}
+
+bool Camera::isPending() {
+	if (_pending) {
+		_pending = false;
+
+		return true;
+	}
+
+	return false;
 }
 
 void Camera::setCursor(float x, float y) {
