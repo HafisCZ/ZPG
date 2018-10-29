@@ -1,11 +1,13 @@
 #pragma once
 
 #include <GL/glew.h>
+#include <GLFW/glfw3.h>
 
 #include <iostream>
 
 #include "Scene.h"
 #include "Framebuffer.h"
+#include "TextureBindingManager.h"
 
 class Renderer {
 	private:
@@ -45,6 +47,8 @@ class Renderer {
 		}
 
 		void draw(Scene& scene) {
+			static TextureBindingManager tbm(8, 8);
+
 			m_dark_buffer.begin();
 			glDisable(GL_CULL_FACE);
 
@@ -115,15 +119,15 @@ class Renderer {
 					obj->getProgram().setUniform("texture_normal_enable", has_normal);
 					obj->getProgram().setUniform("texture_height_enable", has_height);
 
+					if (has_diffuse) mesh->getTextures()[0]->bind(8);
+					if (has_specular) mesh->getTextures()[1]->bind(9);
+					if (has_normal) mesh->getTextures()[2]->bind(10);
+					if (has_height)mesh->getTextures()[3]->bind(11);
+
 					obj->getProgram().setUniform("texture_diffuse", 8);
 					obj->getProgram().setUniform("texture_specular", 9);
 					obj->getProgram().setUniform("texture_normal", 10);
 					obj->getProgram().setUniform("texture_height", 11);
-
-					if (has_diffuse) mesh->getTextures()[0]->bind(8);
-					if (has_specular) mesh->getTextures()[1]->bind(9);
-					if (has_normal) mesh->getTextures()[2]->bind(10);
-					if (has_height) mesh->getTextures()[3]->bind(11);
 
 					draw(*mesh);
 				}

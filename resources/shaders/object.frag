@@ -1,5 +1,7 @@
 #version 330 core
 
+#include library.glsl
+
 layout (location = 0) out vec4 color;
 
 struct Light { vec3 pos, amb, dif, spc; vec2 clq; };
@@ -30,15 +32,6 @@ uniform bool texture_height_enable;
 uniform sampler2D texture_height;
 
 uniform samplerCube texture_shadow;
-
-vec3 samples[20] = vec3[]
-(
-   vec3(1, 1,  1), vec3( 1, -1,  1), vec3(-1, -1,  1), vec3(-1, 1,  1), 
-   vec3(1, 1, -1), vec3( 1, -1, -1), vec3(-1, -1, -1), vec3(-1, 1, -1),
-   vec3(1, 1,  0), vec3( 1, -1,  0), vec3(-1, -1,  0), vec3(-1, 1,  0),
-   vec3(1, 0,  1), vec3(-1,  0,  1), vec3( 1,  0, -1), vec3(-1, 0, -1),
-   vec3(0, 1,  1), vec3( 0, -1,  1), vec3( 0, -1, -1), vec3( 0, 1, -1)
-);
 
 float process_shading() 
 {

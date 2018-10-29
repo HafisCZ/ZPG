@@ -11,6 +11,11 @@ Model::Model(const std::string& filepath) {
 	loadViaAssimp(filepath);
 }
 
+Model::Model(const std::string& filepath, std::shared_ptr<Texture>& cubetex) {
+	loadViaAssimp(filepath);
+	_meshes[0]->getTextures()[0] = cubetex;
+}
+
 void Model::loadViaAssimp(const std::string& filepath) {
 	Assimp::Importer importer;
 
@@ -29,8 +34,8 @@ void Model::loadViaAssimp(const std::string& filepath) {
 		[](const aiVector3D& vec) -> glm::vec2 { return glm::vec2(vec.x, vec.y); }
 	);
 
-	const static std::function<void(aiMesh*)> processMesh(
-		[&, this](aiMesh* mesh) {
+	const std::function<void(const aiScene*, aiMesh*)> processMesh(
+		[&, this](const aiScene* scene, aiMesh* mesh) {
 			using vertex_t = struct { 
 				glm::vec3 pos, nor; 
 				glm::vec2 tex;
@@ -64,8 +69,9 @@ void Model::loadViaAssimp(const std::string& filepath) {
 			}
 
 			aiMaterial* materials = scene->mMaterials[mesh->mMaterialIndex];
-			const static std::function<TextureHandle(aiTextureType)> processMaterial(
-				[&](aiTextureType type) -> TextureHandle {
+
+			const std::function<TextureHandle(aiMaterial*, aiTextureType)> processMaterial(
+				[&](aiMaterial* materials, aiTextureType type) -> TextureHandle {
 					if (materials->GetTextureCount(type) > 0) {
 						aiString textureName;
 						materials->GetTexture(type, 0, &textureName);
@@ -82,24 +88,24 @@ void Model::loadViaAssimp(const std::string& filepath) {
 						indices.data(),
 						Mesh::Properties{ vertices.size(), indices.size() },
 						VertexBufferLayout::DEFAULT_PNTTB(),
-						processMaterial(aiTextureType_DIFFUSE),
-						processMaterial(aiTextureType_SPECULAR),
-						processMaterial(aiTextureType_HEIGHT),
-						processMaterial(aiTextureType_AMBIENT)
+						processMaterial(materials, aiTextureType_DIFFUSE),
+						processMaterial(materials, aiTextureType_SPECULAR),
+						processMaterial(materials, aiTextureType_HEIGHT),
+						processMaterial(materials, aiTextureType_AMBIENT)
 					)
 				)
 			);
 		}
 	);
 
-	const static std::function<void(aiNode*)> processNode = [&](aiNode* node) {
+	const std::function<void(const aiScene*, aiNode*)> processNode = [&, this](const aiScene* scene, aiNode* node) {
 		for (unsigned int i = 0; i < node->mNumMeshes; i++) {
-			processMesh(scene->mMeshes[node->mMeshes[i]]);
+			processMesh(scene, scene->mMeshes[node->mMeshes[i]]);
 		}
 		for (unsigned int i = 0; i < node->mNumChildren; i++) {
-			processNode(node->mChildren[i]);
+			processNode(scene, node->mChildren[i]);
 		}
 	};
 
-	processNode(scene->mRootNode);
+	processNode(scene, scene->mRootNode);
 }

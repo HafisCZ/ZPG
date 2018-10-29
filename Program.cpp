@@ -45,14 +45,25 @@ void Program::bindUniformBlock(const std::string& name, unsigned int index) {
 std::string Program::readFile(const std::string& filepath) {
 	std::ifstream stream(filepath);
 
-	std::string line;
-	std::stringstream ss;
+	std::string token, line;
+	std::ostringstream output;
 
 	while (getline(stream, line)) {
-		ss << line << '\n';
+		std::istringstream input(line);
+
+		if (input >> token) {
+			if (token.compare("#include") == 0) {
+				input >> token;
+				output << readFile(filepath.substr(0, filepath.find_last_of('/') + 1) + token) << '\n';
+			} else {
+				output << line << '\n';
+			}
+		} else {
+			output << '\n';
+		}
 	}
 
-	return ss.str();
+	return output.str();
 }
 
 unsigned int Program::compileShader(unsigned int type, const std::string& filepath) {
@@ -66,6 +77,7 @@ unsigned int Program::compileShader(unsigned int type, const std::string& filepa
 
 	int glcs;
 	glGetShaderiv(handle, GL_COMPILE_STATUS, &glcs);
+
 	if (glcs == GL_FALSE) {
 		int length;
 		glGetShaderiv(handle, GL_INFO_LOG_LENGTH, &length);
@@ -84,23 +96,22 @@ unsigned int Program::compileShader(unsigned int type, const std::string& filepa
 }
 
 unsigned int Program::getShader(unsigned int type, const std::string& filepath) {
-	if (m_shaderHandleCache.find(filepath) != m_shaderHandleCache.end()) {
-		return m_shaderHandleCache[filepath];
+	static std::unordered_map<std::string, unsigned int> shaderCache;
+
+	if (shaderCache.find(filepath) != shaderCache.end()) {
+		return shaderCache[filepath];
 	}
 
-	unsigned int handle = compileShader(type, filepath);
-	if (handle == 0) {
-
+	unsigned int handle;
+	if ((handle = compileShader(type, filepath)) != 0) {
+		shaderCache[filepath] = handle;
 	}
 
-	m_shaderHandleCache[filepath] = handle;
 	return handle;
 }
 
 void Program::setShader(unsigned int type, const std::string& filepath) {
-	unsigned int handle = getShader(type, filepath);
-
-	m_linkedShaders[type] = handle;
+	m_linkedShaders[type] = getShader(type, filepath);
 }
 
 void Program::compile() {
@@ -123,13 +134,10 @@ int Program::getUniformLocation(const std::string& name) {
 		return m_uniformLocationCache[name];
 	}
 
-	int location = glGetUniformLocation(m_handle, name.c_str());
-	if (location == -1) {
-		std::cout << name << "\n";
+	int location;
+	if ((location = glGetUniformLocation(m_handle, name.c_str())) != -1) {
+		m_uniformLocationCache[name] = location;
 	}
 
-	m_uniformLocationCache[name] = location;
 	return location;
 }
-
-std::unordered_map<std::string, unsigned int> Program::m_shaderHandleCache;

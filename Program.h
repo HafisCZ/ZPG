@@ -12,8 +12,6 @@ class Program {
 
 		std::unordered_map<std::string, unsigned int> m_uniformLocationCache;
 		std::unordered_map<unsigned int, unsigned int> m_linkedShaders;
-
-		static std::unordered_map<std::string, unsigned int> m_shaderHandleCache;
 		
 		void _setFun(int loc) { assert(false); }
 

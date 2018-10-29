@@ -154,9 +154,9 @@
     <ClInclude Include="Object.h" />
     <ClInclude Include="Program.h" />
     <ClInclude Include="Renderer.h" />
-    <ClInclude Include="resources\sphere.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="TextureBindingManager.h" />
     <ClInclude Include="UniformBuffer.h" />
     <ClInclude Include="UniformBufferLayout.h" />
     <ClInclude Include="vendor\stb_image.h" />
@@ -176,6 +176,7 @@
   <ItemGroup>
     <None Include="resources\shaders\default.frag" />
     <None Include="resources\shaders\default.vert" />
+    <None Include="resources\shaders\library.glsl" />
     <None Include="resources\shaders\object.frag" />
     <None Include="resources\shaders\object.vert" />
     <None Include="resources\shaders\shadow.frag" />

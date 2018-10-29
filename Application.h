@@ -55,22 +55,21 @@ class Application {
 		void run() {
 			Program prog_obj("resources/shaders/object.vert", "resources/shaders/object.frag");
 
-			Model kusanagi("resources/models/ghost/ghost.obj");
+			Model test("resources/models/ghost/ghost.obj");
 
 			Camera camera(1200.0f, 900.0f, 60.0f);
 			glfwSetWindowUserPointer(m_window, &camera);
 			glfwSetCursorPosCallback(m_window, [](GLFWwindow* w, double x, double y) -> void { ((Camera*)glfwGetWindowUserPointer(w))->setCursor(float(x), float(y)); });
 
-			Object object1(kusanagi, prog_obj);
+			Object object1(test, prog_obj);
 
-			object1.setPosition({ 5.0f, 0.0f, 5.0f });
-			
 			Light light0(glm::vec3(1.0f), glm::vec3(0.2f), glm::vec3(0.8f), glm::vec3(1.0f), 0.007f, 0.0002f);
-			light0.setPosition({ 0.0f, 5.0f, 0.0f });
+			light0.setPosition({ 5.0f, 5.0f, 2.5f });
 
 			Scene scene(camera);
 			scene.addObjectForward(object1);
 			scene.addLight(light0);
+			scene.setSkybox("resources/textures/skybox/");
 
 			Renderer renderer("resources/shaders/shadow", "resources/shaders/deferred_render/geometry_pass", "resources/shaders/deferred_render/shading_pass", "resources/shaders/skybox");
 

@@ -26,6 +26,8 @@ class Scene {
 		inline std::vector<Object*> getObjectsForward() { return _objectsForward; }
 		inline std::vector<Light*> getLights() { return _lights; }
 
+		void setSkybox(const std::string& skyboxFolder);
+
 		inline std::shared_ptr<Model>& getSkybox() { return _skyboxModel; }
 		inline Camera& getCamera() { return _camera; }
 };
