@@ -5,10 +5,12 @@
 #include <glm/mat4x4.hpp>
 
 #include <unordered_map>
+#include <fstream>
+#include <sstream>
 
 class Program {
 	private:
-		unsigned int m_handle;
+		unsigned int _handle;
 
 		std::unordered_map<std::string, unsigned int> m_uniformLocationCache;
 		std::unordered_map<unsigned int, unsigned int> m_linkedShaders;
@@ -50,10 +52,9 @@ class Program {
 	private:
 		unsigned int compileShader(unsigned int type, const std::string& filepath);
 		unsigned int getShader(unsigned int type, const std::string& filepath);
+		std::string readFile(const std::string& filepath);
 
 		int getUniformLocation(const std::string& name);
-
-		std::string readFile(const std::string& filepath);
 
 		class DefaultProgramImpl {
 			private:
@@ -82,35 +83,14 @@ class Program {
 						void operator = (Arg arg) { _ua._program.setUniform(_ua._name + "[" + std::to_string(_i) + "]", arg); }
 					} _F_PROXY;
 
-					public:
+				public:
 					UniformArray(Program& program, const std::string& name) : _program(program), _name(name), _F_PROXY{ *this } {}
 					inline _PROXY& operator [] (unsigned int i) { return _F_PROXY.get(i); }
-				};
+			};
 
 
 			public:
-				DefaultProgramImpl(Program& program) :
-					Sampler3D_0(program, "texture_shadow"),
-					Sampler2D_0(program, "texture_diffuse"),
-					Sampler2D_1(program, "texture_specular"),
-					Sampler2D_2(program, "texture_normal"),
-					Sampler2D_3(program, "texture_height"),
-					Sampler2D_0_Enable(program, "texture_diffuse_enable"),
-					Sampler2D_1_Enable(program, "texture_specular_enable"),
-					Sampler2D_2_Enable(program, "texture_normal_enable"),
-					Sampler2D_3_Enable(program, "texture_height_enable"),
-					Matrix_VP(program, "vp"),
-					Matrix_M(program, "u_model"),
-					Matrix_I(program, "u_inver"),
-					Vector_V(program, "view"),
-					Lights(program, "light_cnt"),
-					Lights_P(program, "light_pos"),
-					Lights_A(program, "light_amb"),
-					Lights_D(program, "light_dif"),
-					Lights_S(program, "light_spc"),
-					Lights_C(program, "light_clq") {
-					program.bind();
-				}
+				DefaultProgramImpl(Program& program);
 
 				Uniform<unsigned int> Sampler3D_0;
 
@@ -139,11 +119,8 @@ class Program {
 		} _impl;
 
 	public:
-		inline DefaultProgramImpl& getDefaultImpl() { return _impl; }
-
-		explicit operator DefaultProgramImpl& () {
-			return _impl;
-		}
-
 		using Impl = DefaultProgramImpl;
+
+		inline DefaultProgramImpl& getDefaultImpl() { return _impl; }
+		inline explicit operator DefaultProgramImpl& () { return _impl; }
 };

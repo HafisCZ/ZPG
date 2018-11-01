@@ -3,7 +3,6 @@
 #include <memory>
 #include <iostream>
 
-#include "Window.h"
 #include "Renderer.h"
 
 class Application {
