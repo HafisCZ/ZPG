@@ -76,7 +76,7 @@ void Model::loadViaAssimp(const std::string& filepath) {
 						aiString textureName;
 						materials->GetTexture(type, 0, &textureName);
 
-						return Texture::load(directory + '/' + std::string(textureName.C_Str()), GL_REPEAT);
+						return TextureLoader::load(directory + '/' + std::string(textureName.C_Str()), GL_REPEAT);
 					} else return nullptr;
 				}
 			);

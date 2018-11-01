@@ -7,14 +7,13 @@
 
 #include "Scene.h"
 #include "Framebuffer.h"
-#include "TextureBindingManager.h"
+#include "Window.h"
 
 class Renderer {
 	private:
 		Program m_shad_program;
 		Program m_geom_program;
 		Program m_dark_program;
-		Program m_skyb_program;
 
 		Framebuffer3D m_dark_buffer;
 
@@ -31,11 +30,10 @@ class Renderer {
 		}
 
 	public:
-		Renderer(const std::string& dark_filepath, const std::string& geom_filepath, const std::string& shad_filepath, const std::string& skyb_filepath)
+		Renderer(const std::string& dark_filepath, const std::string& geom_filepath, const std::string& shad_filepath)
 			: m_dark_program(dark_filepath + ".vert", dark_filepath + ".frag", dark_filepath + ".geom"),
 				//m_shad_program(geom_filepath + ".vert", geom_filepath + ".frag", geom_filepath + ".geom"),
 				//m_geom_program(shad_filepath + ".vert", shad_filepath + ".frag"),
-				m_skyb_program(skyb_filepath + ".vert", skyb_filepath + ".frag"),
 				m_dark_buffer(1024)
 		{
 		
@@ -46,9 +44,18 @@ class Renderer {
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		}
 
-		void draw(Scene& scene) {
-			static TextureBindingManager tbm(8, 8);
+		void loop(Window& window, Scene& scene, std::function<void(void)> update) {
+			while (window.isOpen()) {
+				update();
 
+				clear();
+				draw(scene);
+
+				window.swap();
+			}
+		}
+
+		void draw(Scene& scene) {
 			m_dark_buffer.begin();
 			glDisable(GL_CULL_FACE);
 
@@ -128,7 +135,7 @@ class Renderer {
 					obj->getProgram().setUniform("texture_specular", 9);
 					obj->getProgram().setUniform("texture_normal", 10);
 					obj->getProgram().setUniform("texture_height", 11);
-
+					
 					draw(*mesh);
 				}
 			}
@@ -136,18 +143,19 @@ class Renderer {
 			if (scene.getSkybox() != nullptr) {
 				glDepthMask(GL_FALSE);
 
-				m_skyb_program.bind();
+				Program& skyboxProg = scene.getSkybox()->getProgram();
 
+				skyboxProg.bind();
 				if (updateCamera) {
-					m_skyb_program.setUniform("view", glm::mat4(glm::mat3(cameraV)));
-					m_skyb_program.setUniform("proj", cameraP);
+					skyboxProg.setUniform("view", glm::mat4(glm::mat3(cameraV)));
+					skyboxProg.setUniform("proj", cameraP);
 				}
 
-				m_skyb_program.setUniform("skybox", 8);
+				skyboxProg.setUniform("skybox", 8);
+				
+				scene.getSkybox()->getMesh().getTextures()[0]->bind(8);
 
-				scene.getSkybox()->getMeshes()[0]->getTextures()[0]->bind(8);
-
-				draw(*scene.getSkybox()->getMeshes()[0]);
+				draw(scene.getSkybox()->getMesh());
 
 				glDepthMask(GL_TRUE);
 			}

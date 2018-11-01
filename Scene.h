@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Camera.h"
-#include "Object.h"
+#include "Skybox.h"
 #include "Light.h"
 
 class Scene {
@@ -13,7 +13,7 @@ class Scene {
 
 		Camera& _camera;
 
-		std::shared_ptr<Model> _skyboxModel;
+		Skybox* _skybox;
 
 	public:
 		Scene(Camera& camera) : _camera(camera) {}
@@ -26,8 +26,8 @@ class Scene {
 		inline std::vector<Object*> getObjectsForward() { return _objectsForward; }
 		inline std::vector<Light*> getLights() { return _lights; }
 
-		void setSkybox(const std::string& skyboxFolder);
+		void setSkybox(Skybox& skybox);
 
-		inline std::shared_ptr<Model>& getSkybox() { return _skyboxModel; }
+		inline Skybox* getSkybox() { return _skybox; }
 		inline Camera& getCamera() { return _camera; }
 };

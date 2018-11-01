@@ -1,12 +1,16 @@
 #include "Camera.h"
 
-Camera::Camera(float sw, float sh, float fov) : m_ver(0.0f), m_hor(3.14f / 2.0f), m_w(sw), m_h(sh), m_ut(true), m_lx(sw / 2.0f), m_ly(sh / 2.0f), m_ft(true), _pending(true) {
+#include "Window.h"
+
+Camera::Camera(Window& window, float fov) : m_ver(0.0f), m_hor(3.14f / 2.0f), m_w(window.getWidth()), m_h(window.getHeight()), m_ut(true), m_lx(m_w / 2.0f), m_ly(m_h / 2.0f), m_ft(true), _pending(true) {
 	m_pos = { 0.0f, 0.0f, 0.0f };
 	m_dir = { 1.0f, 1.0f, 0.0f };
 	m_ups = { 0.0f, 1.0f, 0.0f };
 
 	m_view = glm::lookAt(m_pos, m_pos + m_dir, m_ups);
-	m_proj = glm::perspective(glm::radians(fov), sw / sh, 0.1f, 100.0f);
+	m_proj = glm::perspective(glm::radians(fov), m_w / m_h, 0.1f, 100.0f);
+
+	window.attachCamera(*this);
 }
 
 void Camera::setFov(float fov) {

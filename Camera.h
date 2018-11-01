@@ -8,6 +8,8 @@ enum SpaceDirection {
 	BACKWARDS, FORWARDS
 };
 
+class Window;
+
 class Camera {
 	private:
 		glm::mat4 m_proj;
@@ -33,7 +35,7 @@ class Camera {
 		float m_lx;
 		float m_ly;
 	public:
-		Camera(float sw, float sh, float fov);
+		Camera(Window& window, float fov);
 
 		void setFov(float fov);
 		void setCursor(float x, float y);

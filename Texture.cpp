@@ -1,73 +1,61 @@
 #include "Texture.h"
 
-#include <unordered_map>
-#include <iostream>
+#include <stack>
 
-#include "vendor/stb_image.h"
+void TextureBindGuard::attemptBind(unsigned int slot, Texture* texture) {
+	static std::unordered_map<Texture*, unsigned int> boundTextures;
+	static std::size_t activeSlot = -1;
 
-std::shared_ptr<Texture> Texture::load(const std::string& filepath, unsigned int mode) {
+	if (activeSlot != slot) {
+		glActiveTexture(GL_TEXTURE0 + slot);
+		activeSlot = slot;
+	}
+
+	if (boundTextures[texture] != slot) {
+		boundTextures[texture] = slot;
+		texture->bindUnsafe(slot);
+	}
+}
+
+unsigned int TextureBindGuard::autoBind(Texture* texture) {
+	static std::stack<unsigned int> slotStack({ 8, 9, 10, 11, 12, 13, 14, 15 });
+
+	static std::unordered_map<Texture*, unsigned int> boundTextures;
+
+	if (slotStack.empty()) {
+		// rebind texture over another 
+	} else {
+		if (boundTextures[texture] == 0) {
+			boundTextures[texture] = slotStack.top();
+
+			glActiveTexture(GL_TEXTURE0 + slotStack.top());
+			texture->bindUnsafe(slotStack.top());
+
+			slotStack.pop();
+		}
+
+		return boundTextures[texture];
+	}
+}
+
+std::shared_ptr<Texture> TextureLoader::load(const std::string& filepath, unsigned int mode) {
 	static std::unordered_map<std::string, std::shared_ptr<Texture>> textures;
+
 	if (textures.find(filepath) == textures.end()) {
-		textures[filepath] = std::make_shared<Texture>(filepath, mode);
+		textures[filepath] = std::make_shared<Texture2D>(filepath, mode);
 	}
 
 	return textures[filepath];
 }
 
-Texture::Texture(const std::string& filepath, unsigned int mode) : m_type(GL_TEXTURE_2D) {
-	int width, height, channel_count;
+std::shared_ptr<Texture> TextureLoader::load(const std::vector<std::string>& filepaths, unsigned int mode) {
+	static std::unordered_map<std::string, std::shared_ptr<Texture>> textures;
 
-	unsigned char* buffer = stbi_load(filepath.c_str(), &width, &height, &channel_count, 0);
+	std::string hash = filepaths[0].substr(0, filepaths[0].find_last_of('/') + 1);
 
-	glGenTextures(1, &m_handle);
-	glBindTexture(GL_TEXTURE_2D, m_handle);
-
-	unsigned int format = channel_count == 1 ? GL_RED : (channel_count == 3 ? GL_RGB : GL_RGBA);
-	glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, buffer);
-
-	glGenerateMipmap(GL_TEXTURE_2D);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, mode);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, mode);
-
-	if (buffer) {
-		stbi_image_free(buffer);
-	}
-}
-
-Texture::Texture(const std::vector<std::string>& filepaths, unsigned int mode) : m_type(GL_TEXTURE_CUBE_MAP) {
-	int width, height, channel_count;
-
-	glGenTextures(1, &m_handle);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, m_handle);
-
-	for (unsigned int i = 0; i < filepaths.size(); i++) {
-		unsigned char* buffer = stbi_load(filepaths[i].c_str(), &width, &height, &channel_count, 0);
-
-		if (buffer) {
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, buffer);
-
-			stbi_image_free(buffer);
-		}
+	if (textures.find(hash) == textures.end()) {
+		textures[hash] = std::make_shared<Texture3D>(filepaths, mode);
 	}
 
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, mode);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, mode);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, mode);
-}
-
-Texture::~Texture() {
-	glDeleteTextures(1, &m_handle);
-}
-
-void Texture::bind(unsigned int slot) const {
-	glActiveTexture(GL_TEXTURE0 + slot);
-	glBindTexture(m_type, m_handle);
-}
-
-void Texture::unbind() const {
-	glBindTexture(m_type, 0);
+	return textures[hash];
 }

@@ -27,5 +27,3 @@ class Input {
 		static inline bool wasHeld(int key) { return m_prvmap[key]; }
 		static inline bool isPressed(int key) { return isHeld(key) && !wasHeld(key); }
 };
-
-std::unordered_map<int, bool> Input::m_keymap, Input::m_prvmap;

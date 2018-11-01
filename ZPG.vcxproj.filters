@@ -104,6 +104,18 @@
     <ClCompile Include="Light.cpp">
       <Filter>Source Files\Scene\Sources</Filter>
     </ClCompile>
+    <ClCompile Include="SpatialObject.cpp">
+      <Filter>Source Files\Scene\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="TransformableObject.cpp">
+      <Filter>Source Files\Scene\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Window.cpp">
+      <Filter>Source Files\Engine\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Input.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="vendor\stb_image.h">
@@ -169,8 +181,17 @@
     <ClInclude Include="Object.h">
       <Filter>Source Files\Scene\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="TextureBindingManager.h">
+    <ClInclude Include="SpatialObject.h">
+      <Filter>Source Files\Scene\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="TransformableObject.h">
+      <Filter>Source Files\Scene\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Window.h">
       <Filter>Source Files\Engine\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Skybox.h">
+      <Filter>Source Files\Scene\Headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
