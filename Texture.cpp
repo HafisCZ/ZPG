@@ -18,24 +18,35 @@ void TextureBindGuard::attemptBind(unsigned int slot, Texture* texture) {
 }
 
 unsigned int TextureBindGuard::autoBind(Texture* texture) {
-	static std::stack<unsigned int> slotStack({ 8, 9, 10, 11, 12, 13, 14, 15 });
-
-	static std::unordered_map<Texture*, unsigned int> boundTextures;
-
-	if (slotStack.empty()) {
-		// rebind texture over another 
-	} else {
-		if (boundTextures[texture] == 0) {
-			boundTextures[texture] = slotStack.top();
-
-			glActiveTexture(GL_TEXTURE0 + slotStack.top());
-			texture->bindUnsafe(slotStack.top());
-
-			slotStack.pop();
+	static std::unordered_map<unsigned int, Texture*> slotAlloc;
+	static bool slotAllocInit = [] { 
+		for (unsigned int i = 0; i < 16; i++) {
+			slotAlloc.emplace(8 + i, nullptr);
 		}
+		return true; 
+	}();
 
-		return boundTextures[texture];
+	unsigned int slot = 0;
+	unsigned long least = -1;
+
+	for (auto& keyval : slotAlloc) {
+		if (keyval.second == texture) {
+			return keyval.first;
+		} else if (keyval.second == nullptr) {
+			slot = keyval.first;
+			break;
+		} else if (keyval.second->getBindCount() < least) {
+			slot = keyval.first;
+			least = keyval.second->getBindCount();
+		}
 	}
+
+	slotAlloc[slot] = texture;
+
+	glActiveTexture(GL_TEXTURE0 + slot);
+	texture->bindUnsafe(slot);
+
+	return slot;
 }
 
 std::shared_ptr<Texture> TextureLoader::load(const std::string& filepath, unsigned int mode) {

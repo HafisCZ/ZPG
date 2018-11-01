@@ -11,7 +11,12 @@ uniform vec3 view;
 
 struct Light { vec3 pos, amb, dif, spc; vec2 clq; };
 
-uniform Light u_light;
+uniform int light_cnt;
+uniform vec3 light_pos[1];
+uniform vec3 light_amb[1];
+uniform vec3 light_dif[1];
+uniform vec3 light_spc[1];
+uniform vec2 light_clq[1];
 
 uniform mat4 u_model;
 uniform mat4 u_inver;
@@ -47,11 +52,15 @@ void main()
 
 	frag.nmo = tbn * nmo;
 
-	frag.tlp = tbn * u_light.pos;
+	frag.tlp = tbn * light_pos[0];
 	frag.tvp = tbn * view;
 	frag.tfp = tbn * frag.pos;
 
-	frag.light = u_light;
+	frag.light.pos = light_pos[0];
+	frag.light.amb = light_amb[0];
+	frag.light.dif = light_dif[0];
+	frag.light.spc = light_spc[0];	
+	frag.light.clq = light_clq[0];
 
 	frag.view = view;
 }

@@ -4,7 +4,7 @@
 #include <fstream>
 #include <sstream>
 
-Program::Program() {
+Program::Program() : _impl(*this) {
 	m_handle = glCreateProgram();
 }
 

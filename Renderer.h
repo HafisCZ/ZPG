@@ -32,8 +32,6 @@ class Renderer {
 	public:
 		Renderer(const std::string& dark_filepath, const std::string& geom_filepath, const std::string& shad_filepath)
 			: m_dark_program(dark_filepath + ".vert", dark_filepath + ".frag", dark_filepath + ".geom"),
-				//m_shad_program(geom_filepath + ".vert", geom_filepath + ".frag", geom_filepath + ".geom"),
-				//m_geom_program(shad_filepath + ".vert", shad_filepath + ".frag"),
 				m_dark_buffer(1024)
 		{
 		
@@ -93,48 +91,48 @@ class Renderer {
 			glm::mat4 cameraVP = scene.getCamera().get();
 			glm::mat4 cameraV = scene.getCamera().getViewMatrix();
 			glm::mat4 cameraP = scene.getCamera().getProjectionMatrix();
-			glm::vec3 cameraVv = scene.getCamera().getPosition();
+			glm::vec3 cameraVV = scene.getCamera().getPosition();
 			
 			for (auto& obj : scene.getObjectsForward()) {
-				obj->getProgram().bind();
+				Program::Impl prog = obj->getProgram();
 
 				if (updateCamera) {
-					obj->getProgram().setUniform("vp", scene.getCamera().get());
-					obj->getProgram().setUniform("view", scene.getCamera().getPosition());
+					prog.Matrix_VP = cameraVP;
+					prog.Vector_V = cameraVV;
 				}
 
-				obj->getProgram().setUniform("u_model", obj->getMatrix());
-				obj->getProgram().setUniform("u_inver", glm::transpose(glm::inverse(obj->getMatrix())));
-	
-				Light* light = scene.getLights()[0];
-				obj->getProgram().setUniform("u_light.pos", light->getPosition());
-				obj->getProgram().setUniform("u_light.amb", light->getAmbientIntensity());
-				obj->getProgram().setUniform("u_light.dif", light->getDiffusionIntensity());
-				obj->getProgram().setUniform("u_light.spc", light->getSpecularIntensity());
-				obj->getProgram().setUniform("u_light.clq", glm::vec2 { light->getLinearAttenuation(), light->getQuadraticAttenuation() });
+				prog.Matrix_M = obj->getMatrix();
+				prog.Matrix_I = obj->getInverMatrix();
 
-				obj->getProgram().setUniform("texture_shadow", 0);
+				for (unsigned int i = 0; i < scene.getLights().size(); i++) {
+					auto it = scene.getLights()[i];
+					
+					prog.Lights_P[i] = it->getPosition();
+					prog.Lights_A[i] = it->getAmbientIntensity();
+					prog.Lights_D[i] = it->getDiffusionIntensity();
+					prog.Lights_S[i] = it->getSpecularIntensity();
+					prog.Lights_C[i] = { it->getLinearAttenuation(), it->getQuadraticAttenuation() };
+				}
+
+				prog.Lights = scene.getLights().size();
+				prog.Sampler3D_0 = 0;
 		
 				for (auto& mesh : obj->getModel().getMeshes()) {
 					bool has_diffuse = mesh->getTextures()[0] != nullptr;
+					prog.Sampler2D_0_Enable = has_diffuse;
+					prog.Sampler2D_0 = has_diffuse ? mesh->getTextures()[0]->bind() : 8;
+
 					bool has_specular = mesh->getTextures()[1] != nullptr;
+					prog.Sampler2D_1_Enable = has_specular;
+					prog.Sampler2D_1 = has_specular ? mesh->getTextures()[1]->bind() : 8;
+
 					bool has_normal = mesh->getTextures()[2] != nullptr;
+					prog.Sampler2D_2_Enable = has_normal;
+					prog.Sampler2D_2 = has_normal ? mesh->getTextures()[2]->bind() : 8;
+
 					bool has_height = mesh->getTextures()[3] != nullptr;
-
-					obj->getProgram().setUniform("texture_diffuse_enable", has_diffuse);
-					obj->getProgram().setUniform("texture_specular_enable", has_specular);
-					obj->getProgram().setUniform("texture_normal_enable", has_normal);
-					obj->getProgram().setUniform("texture_height_enable", has_height);
-
-					if (has_diffuse) mesh->getTextures()[0]->bind(8);
-					if (has_specular) mesh->getTextures()[1]->bind(9);
-					if (has_normal) mesh->getTextures()[2]->bind(10);
-					if (has_height)mesh->getTextures()[3]->bind(11);
-
-					obj->getProgram().setUniform("texture_diffuse", 8);
-					obj->getProgram().setUniform("texture_specular", 9);
-					obj->getProgram().setUniform("texture_normal", 10);
-					obj->getProgram().setUniform("texture_height", 11);
+					prog.Sampler2D_3_Enable = has_height;
+					prog.Sampler2D_3 = has_height ? mesh->getTextures()[3]->bind() : 8;
 					
 					draw(*mesh);
 				}

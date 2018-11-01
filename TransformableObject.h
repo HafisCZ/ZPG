@@ -6,20 +6,22 @@
 
 class TransformableObject : public SpatialObject {
 	private:
-	glm::mat4 _transformation;
-	glm::mat4 _matrix;
+		glm::mat4 _transformation;
+		glm::mat4 _matrix;
+		glm::mat4 _inverted;
 
-	bool _requiresRecalc;
+		bool _requiresRecalc;
 
 	public:
-	TransformableObject();
-	TransformableObject(glm::vec3 position);
-	TransformableObject(glm::mat4 transformation);
-	TransformableObject(glm::vec3 position, glm::mat4 transformation);
+		TransformableObject();
+		TransformableObject(glm::vec3 position);
+		TransformableObject(glm::mat4 transformation);
+		TransformableObject(glm::vec3 position, glm::mat4 transformation);
 
-	inline glm::mat4 getTransformation() { return _transformation; }
-	inline bool hasChanged() { return _requiresRecalc; }
-	glm::mat4 getMatrix();
+		inline glm::mat4 getTransformation() { return _transformation; }
+		inline bool hasChanged() { return _requiresRecalc; }
+		glm::mat4 getMatrix();
+		glm::mat4 getInverMatrix();
 
-	void setTransformation(glm::mat4 transformation);
+		void setTransformation(glm::mat4 transformation);
 };

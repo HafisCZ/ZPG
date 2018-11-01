@@ -63,14 +63,19 @@ class Texture {
 			glDeleteTextures(1, &_handle);
 		}
 
-		void bind(unsigned int slot = 0) {
+		void bind(unsigned int slot) {
 			TextureBindGuard::attemptBind(slot, this);
-
-			_binds++;
 		}
 
-		void bindUnsafe(unsigned int slot) const {
+		unsigned int bind() {
+			return TextureBindGuard::autoBind(this);
+		}
+
+		void bindUnsafe(unsigned int slot) {
 			glBindTexture(_type, _handle);
+			_binds++;
+
+			std::cout << "BIND\n";
 		}
 
 		unsigned long getBindCount() {

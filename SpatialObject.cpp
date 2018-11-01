@@ -1,6 +1,6 @@
 #include "SpatialObject.h"
 
-SpatialObject::SpatialObject() : SpatialObject(0.0f, 0.0f, 0.0f) {
+SpatialObject::SpatialObject() : _position(0.0f) {
 
 }
 
