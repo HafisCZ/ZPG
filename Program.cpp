@@ -145,10 +145,10 @@ Program::DefaultProgramImpl::DefaultProgramImpl(Program& program) :
 	Vector_V(program, "view"),
 	Lights(program, "light_cnt"),
 	Lights_P(program, "light_pos"),
-	Lights_A(program, "light_amb"),
 	Lights_D(program, "light_dif"),
 	Lights_S(program, "light_spc"),
-	Lights_C(program, "light_clq")
+	Lights_LA(program, "light_la"),
+	Lights_QA(program, "light_qa")
 {
 	program.bind();
 }

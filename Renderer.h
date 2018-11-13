@@ -58,29 +58,33 @@ class Renderer {
 			glDisable(GL_CULL_FACE);
 
 			for (unsigned int i = 0; i < scene.getLights().size(); i++) {
-				static glm::mat4 per_matrix = glm::perspective(glm::radians(90.0f), 1.0f, 1.0f, 25.0f);
-				static glm::mat4 faces[6];
+				if (PointLight* light = dynamic_cast<PointLight*>(scene.getLights()[i])) {
+					static glm::mat4 per_matrix = glm::perspective(glm::radians(90.0f), 1.0f, 1.0f, 25.0f);
+					static glm::mat4 faces[6];
 
-				glm::vec3 light_position = scene.getLights()[0]->getPosition();
-				faces[0] = per_matrix * glm::lookAt(light_position, light_position + glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f));
-				faces[1] = per_matrix * glm::lookAt(light_position, light_position + glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f));
-				faces[2] = per_matrix * glm::lookAt(light_position, light_position + glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-				faces[3] = per_matrix * glm::lookAt(light_position, light_position + glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f));
-				faces[4] = per_matrix * glm::lookAt(light_position, light_position + glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, -1.0f, 0.0f));
-				faces[5] = per_matrix * glm::lookAt(light_position, light_position + glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, -1.0f, 0.0f));
+					glm::vec3 light_position = light->getPosition();
+					faces[0] = per_matrix * glm::lookAt(light_position, light_position + glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f));
+					faces[1] = per_matrix * glm::lookAt(light_position, light_position + glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f));
+					faces[2] = per_matrix * glm::lookAt(light_position, light_position + glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+					faces[3] = per_matrix * glm::lookAt(light_position, light_position + glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f));
+					faces[4] = per_matrix * glm::lookAt(light_position, light_position + glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, -1.0f, 0.0f));
+					faces[5] = per_matrix * glm::lookAt(light_position, light_position + glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, -1.0f, 0.0f));
 
-				m_dark_program.bind();
-				m_dark_program.setUniform("u_smaf", 25.0f);
-				m_dark_program.setUniform("u_smap", light_position);
-				for (unsigned int j = 0; j < 6; j++) {
-					m_dark_program.setUniform("u_smat[" + std::to_string(j) + "]", faces[j]);
-				}
-				
-				for (auto& obj : scene.getObjectsForward()) {
-					m_dark_program.setUniform("u_model", obj->getMatrix());
-					for (auto& mesh : obj->getModel().getMeshes()) {
-						draw(*mesh);
+					m_dark_program.bind();
+					m_dark_program.setUniform("u_smaf", 25.0f);
+					m_dark_program.setUniform("u_smap", light_position);
+					for (unsigned int j = 0; j < 6; j++) {
+						m_dark_program.setUniform("u_smat[" + std::to_string(j) + "]", faces[j]);
 					}
+
+					for (auto& obj : scene.getObjectsForward()) {
+						m_dark_program.setUniform("u_model", obj->getMatrix());
+						for (auto& mesh : obj->getModel().getMeshes()) {
+							draw(*mesh);
+						}
+					}
+
+					break;
 				}
 			}
 
@@ -105,13 +109,16 @@ class Renderer {
 				prog.Matrix_I = obj->getInverMatrix();
 
 				for (unsigned int i = 0; i < scene.getLights().size(); i++) {
-					auto it = scene.getLights()[i];
-					
-					prog.Lights_P[i] = it->getPosition();
-					prog.Lights_A[i] = it->getAmbientIntensity();
-					prog.Lights_D[i] = it->getDiffusionIntensity();
-					prog.Lights_S[i] = it->getSpecularIntensity();
-					prog.Lights_C[i] = { it->getLinearAttenuation(), it->getQuadraticAttenuation() };
+					if (PointLight* light = dynamic_cast<PointLight*>(scene.getLights()[i])) {
+						
+						prog.Lights_P[i] = light->getPosition();
+						prog.Lights_D[i] = light->getDiffuseIntensity();
+						prog.Lights_S[i] = light->getSpecularIntensity();
+						prog.Lights_LA[i] = light->getLinearAttenuation();
+						prog.Lights_QA[i] = light->getQuadraticAttenuation();
+
+						break;
+					}
 				}
 
 				prog.Lights = scene.getLights().size();

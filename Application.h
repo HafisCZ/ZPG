@@ -18,13 +18,12 @@ class Application {
 			Program prog_sky("resources/shaders/skybox.vert", "resources/shaders/skybox.frag");
 			Skybox object2("resources/models/skybox", prog_sky);
 
-			Light light0(glm::vec3(1.0f), glm::vec3(0.2f), glm::vec3(0.8f), glm::vec3(1.0f), 0.007f, 0.0002f);
-			light0.setPosition({ 5.0f, 5.0f, 2.5f });
+			PointLight light(glm::vec3(1.0f), glm::vec3(5.0f, 5.0f, 2.5f), 1.0f, 0.8f, 0.007f, 0.0002f);
 
 			Scene scene(camera);
 			scene.addObjectForward(object1);
 			scene.setSkybox(object2);
-			scene.addLight(light0);
+			scene.addLight(light);
 
 			Renderer renderer(
 				"resources/shaders/shadow", 

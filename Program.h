@@ -111,11 +111,13 @@ class Program {
 				Uniform<glm::vec3> Vector_V;
 
 				Uniform<unsigned int> Lights;
+
 				UniformArray<glm::vec3> Lights_P;
-				UniformArray<glm::vec3> Lights_A;
-				UniformArray<glm::vec3> Lights_D;
-				UniformArray<glm::vec3> Lights_S;
-				UniformArray<glm::vec2> Lights_C;
+
+				UniformArray<float> Lights_D;
+				UniformArray<float> Lights_S;
+				UniformArray<float> Lights_LA;
+				UniformArray<float> Lights_QA;
 		} _impl;
 
 	public:
