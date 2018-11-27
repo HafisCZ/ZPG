@@ -9,7 +9,7 @@ class Skybox {
 
 	public:
 		Skybox(const std::string& model, Program& program) : _program(program), _model(model + "/skybox.obj") {
-			_model.getMeshes()[0]->getTextures()[0] = TextureLoader::load(
+			_model.getMeshes()[0]->getTexturePack().setHandleOfType(MeshTexturePack::Type::DIFFUSE, TextureLoader::load(
 				std::vector<std::string> {
 					{
 						model + "/ss_ft.tga", model + "/ss_bk.tga",
@@ -18,7 +18,7 @@ class Skybox {
 					}
 
 				}
-			);
+			));
 		}
 
 		Program& getProgram() { return _program; }

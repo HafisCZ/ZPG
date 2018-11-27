@@ -13,7 +13,7 @@ Model::Model(const std::string& filepath) {
 
 Model::Model(const std::string& filepath, std::shared_ptr<Texture>& cubetex) {
 	loadViaAssimp(filepath);
-	_meshes[0]->getTextures()[0] = cubetex;
+	_meshes[0]->getTexturePack().setHandleOfType(MeshTexturePack::Type::DIFFUSE, cubetex);
 }
 
 void Model::loadViaAssimp(const std::string& filepath) {
@@ -81,17 +81,20 @@ void Model::loadViaAssimp(const std::string& filepath) {
 				}
 			);
 
+			MeshTexturePack mtp;
+			mtp.setHandleOfType(MeshTexturePack::Type::DIFFUSE, processMaterial(materials, aiTextureType_DIFFUSE));
+			mtp.setHandleOfType(MeshTexturePack::Type::SPECULAR, processMaterial(materials, aiTextureType_SPECULAR));
+			mtp.setHandleOfType(MeshTexturePack::Type::HEIGHT, processMaterial(materials, aiTextureType_AMBIENT));
+			mtp.setHandleOfType(MeshTexturePack::Type::NORMAL, processMaterial(materials, aiTextureType_HEIGHT));
+
 			_meshes.emplace_back(
 				std::move(
 					std::make_shared<Mesh>(
 						vertices.data(),
 						indices.data(),
-						Mesh::Properties{ vertices.size(), indices.size() },
+						Mesh::Property{ vertices.size(), indices.size() },
 						VertexBufferLayout::DEFAULT_PNTTB(),
-						processMaterial(materials, aiTextureType_DIFFUSE),
-						processMaterial(materials, aiTextureType_SPECULAR),
-						processMaterial(materials, aiTextureType_HEIGHT),
-						processMaterial(materials, aiTextureType_AMBIENT)
+						mtp
 					)
 				)
 			);

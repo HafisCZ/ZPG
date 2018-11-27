@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <array>
+#include <unordered_map>
 
 #include "VertexArray.h"
 #include "IndexBuffer.h"
@@ -9,31 +10,49 @@
 
 using TextureHandle = std::shared_ptr<Texture>;
 
-class Mesh {
+class MeshTexturePack {
 	public:
-		struct Properties {
-			unsigned int vertex_count;
-			unsigned int indice_count;
+		enum class Type {
+			DIFFUSE, NORMAL, HEIGHT, SPECULAR
 		};
 
 	private:
-		std::unique_ptr<VertexArray> _vao;
-		std::unique_ptr<VertexBuffer> _vbo;
-		std::unique_ptr<IndexBuffer> _ibo;
-		
-		Properties _properties;
-
-		std::array<TextureHandle, 4> _textures;
+		std::unordered_map<Type, TextureHandle> _textures;
 
 	public:
-		Mesh(void* vertices_ptr, void* indices_ptr, Properties properties, VertexBufferLayout vbl, TextureHandle diffuse = nullptr, TextureHandle specular = nullptr, TextureHandle normal = nullptr, TextureHandle height = nullptr);
+		inline TextureHandle requestHandleOfType(Type type) {
+			return _textures[type];
+		}
 
-		inline std::unique_ptr<VertexArray>& getVAO() { return _vao; }
-		inline std::unique_ptr<VertexBuffer>& getVBO() { return _vbo; }
-		inline std::unique_ptr<IndexBuffer>& getIBO() { return _ibo; }
+		void setHandleOfType(Type type, TextureHandle handle) {
+			_textures[type] = handle;
+		}
+};
 
-		inline std::array<TextureHandle, 4>& getTextures() { return _textures; }
+class Mesh {
+	public:
+		struct Property {
+			std::size_t vertex_cnt;
+			std::size_t indice_cnt;
+		};
 
-		inline const bool hasIBO() const { return _ibo != nullptr; }
-		inline const Properties& getProperties() const { return _properties; }
+	private:
+		VertexArray _vao;
+		VertexBuffer _vbo;
+		IndexBuffer _ibo;
+		Property _prop;
+		MeshTexturePack _pack;
+
+	public:
+		Mesh(void* vptr, void* iptr, Property prop, VertexBufferLayout lay, MeshTexturePack pack) : _prop(prop), _pack(pack), _vao(), _vbo(vptr, prop.vertex_cnt * lay.getStride()), _ibo(iptr, prop.indice_cnt) {
+			_vao.addBuffer(_vbo, lay);
+		}
+
+		inline const bool hasIndices() const { return _prop.indice_cnt; }
+
+		inline const VertexArray& getVAO() { return _vao; }
+		inline const VertexBuffer& getVBO() { return _vbo; }
+		inline const IndexBuffer& getIBO() { return _ibo; }
+		inline const Property& getProperty() { return _prop; }
+		inline MeshTexturePack& getTexturePack() { return _pack; }
 };

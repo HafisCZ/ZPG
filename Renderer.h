@@ -18,14 +18,14 @@ class Renderer {
 		Framebuffer3D m_dark_buffer;
 
 		void draw(Mesh& mesh) {
-			mesh.getVAO()->bind();
+			mesh.getVAO().bind();
 
-			if (mesh.hasIBO()) {
-				mesh.getIBO()->bind();
+			if (mesh.hasIndices()) {
+				mesh.getIBO().bind();
 
-				glDrawElements(GL_TRIANGLES, mesh.getIBO()->getCount(), GL_UNSIGNED_INT, nullptr);
+				glDrawElements(GL_TRIANGLES, mesh.getIBO().getCount(), GL_UNSIGNED_INT, nullptr);
 			} else {
-				glDrawArrays(GL_TRIANGLES, 0, mesh.getProperties().vertex_count);
+				glDrawArrays(GL_TRIANGLES, 0, mesh.getProperty().vertex_cnt);
 			}
 		}
 
@@ -125,21 +125,21 @@ class Renderer {
 				prog.Sampler3D_0 = 0;
 		
 				for (auto& mesh : obj->getModel().getMeshes()) {
-					bool has_diffuse = mesh->getTextures()[0] != nullptr;
+					bool has_diffuse = mesh->getTexturePack().requestHandleOfType(MeshTexturePack::Type::DIFFUSE) != nullptr;
 					prog.Sampler2D_0_Enable = has_diffuse;
-					prog.Sampler2D_0 = has_diffuse ? mesh->getTextures()[0]->bind() : 8;
+					prog.Sampler2D_0 = has_diffuse ? mesh->getTexturePack().requestHandleOfType(MeshTexturePack::Type::DIFFUSE)->bind() : 8;
 
-					bool has_specular = mesh->getTextures()[1] != nullptr;
+					bool has_specular = mesh->getTexturePack().requestHandleOfType(MeshTexturePack::Type::SPECULAR) != nullptr;
 					prog.Sampler2D_1_Enable = has_specular;
-					prog.Sampler2D_1 = has_specular ? mesh->getTextures()[1]->bind() : 8;
+					prog.Sampler2D_1 = has_specular ? mesh->getTexturePack().requestHandleOfType(MeshTexturePack::Type::SPECULAR)->bind() : 8;
 
-					bool has_normal = mesh->getTextures()[2] != nullptr;
+					bool has_normal = mesh->getTexturePack().requestHandleOfType(MeshTexturePack::Type::NORMAL) != nullptr;
 					prog.Sampler2D_2_Enable = has_normal;
-					prog.Sampler2D_2 = has_normal ? mesh->getTextures()[2]->bind() : 8;
+					prog.Sampler2D_2 = has_normal ? mesh->getTexturePack().requestHandleOfType(MeshTexturePack::Type::NORMAL)->bind() : 8;
 
-					bool has_height = mesh->getTextures()[3] != nullptr;
+					bool has_height = mesh->getTexturePack().requestHandleOfType(MeshTexturePack::Type::HEIGHT) != nullptr;
 					prog.Sampler2D_3_Enable = has_height;
-					prog.Sampler2D_3 = has_height ? mesh->getTextures()[3]->bind() : 8;
+					prog.Sampler2D_3 = has_height ? mesh->getTexturePack().requestHandleOfType(MeshTexturePack::Type::HEIGHT)->bind() : 8;
 					
 					draw(*mesh);
 				}
@@ -158,7 +158,7 @@ class Renderer {
 
 				skyboxProg.setUniform("skybox", 8);
 				
-				scene.getSkybox()->getMesh().getTextures()[0]->bind(8);
+				scene.getSkybox()->getMesh().getTexturePack().requestHandleOfType(MeshTexturePack::Type::DIFFUSE)->bind(8);
 
 				draw(scene.getSkybox()->getMesh());
 

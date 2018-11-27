@@ -16,20 +16,16 @@ class Program {
 		std::unordered_map<unsigned int, unsigned int> m_linkedShaders;
 
 		void _setFun(int loc) { assert(false); }
-
 		void _setFun(int loc, float a) { glUniform1f(loc, a); }
 		void _setFun(int loc, float a, float b) { glUniform2f(loc, a, b); }
 		void _setFun(int loc, float a, float b, float c) { glUniform3f(loc, a, b, c); }
 		void _setFun(int loc, float a, float b, float c, float d) { glUniform4f(loc, a, b, c, d); }
-
 		void _setFun(int loc, const glm::vec2& a) { glUniform2fv(loc, 1, &a[0]); }
 		void _setFun(int loc, const glm::vec3& a) { glUniform3fv(loc, 1, &a[0]); }
 		void _setFun(int loc, const glm::vec4& a) { glUniform4fv(loc, 1, &a[0]); }
-
 		void _setFun(int loc, bool a) { glUniform1i(loc, a); }
 		void _setFun(int loc, int a) { glUniform1i(loc, a); };
 		void _setFun(int loc, unsigned int a) { glUniform1i(loc, a); }
-
 		void _setFun(int loc, glm::mat4 a) { glUniformMatrix4fv(loc, 1, GL_FALSE, &a[0][0]); }
 
 	public:
@@ -44,7 +40,7 @@ class Program {
 		void setShader(unsigned int type, const std::string& filepath);
 		void compile();
 
-		template <typename ... Args> void setUniform(const std::string& name, Args ... args) { _setFun(getUniformLocation(name), args ...);	}
+		template <typename ... Args> void setUniform(const std::string& name, Args&& ... args) { _setFun(getUniformLocation(name), std::forward<Args>(args)...);	}
 
 		void bind() const;
 		void unbind() const;

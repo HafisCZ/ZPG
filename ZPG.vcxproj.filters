@@ -116,6 +116,9 @@
     <ClCompile Include="Input.cpp">
       <Filter>Source Files\Utils</Filter>
     </ClCompile>
+    <ClCompile Include="Buffer.cpp">
+      <Filter>Source Files\Engine\Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="vendor\stb_image.h">
@@ -193,6 +196,12 @@
     <ClInclude Include="Skybox.h">
       <Filter>Source Files\Scene\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="ModelLoader.h">
+      <Filter>Source Files\Scene\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Buffer.h">
+      <Filter>Source Files\Engine\Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="resources\textures\spc.png">
@@ -245,5 +254,6 @@
     <None Include="resources\shaders\library.glsl">
       <Filter>Resource Files\Object shaders</Filter>
     </None>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
 </Project>
