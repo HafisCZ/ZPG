@@ -126,6 +126,7 @@
     <ClCompile Include="Buffer.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Framebuffer.cpp" />
+    <ClCompile Include="Framebuffer3D.cpp" />
     <ClCompile Include="IndexBuffer.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Light.cpp" />
@@ -151,6 +152,7 @@
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Framebuffer.h" />
+    <ClInclude Include="Framebuffer3D.h" />
     <ClInclude Include="gtype.h" />
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="Input.h" />
@@ -167,11 +169,9 @@
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TransformableObject.h" />
     <ClInclude Include="UniformBuffer.h" />
-    <ClInclude Include="UniformBufferLayout.h" />
     <ClInclude Include="vendor\stb_image.h" />
     <ClInclude Include="VertexArray.h" />
     <ClInclude Include="VertexBuffer.h" />
-    <ClInclude Include="VertexBufferLayout.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="YGenerator.h" />
   </ItemGroup>
@@ -184,7 +184,6 @@
     <Image Include="resources\textures\tile_spc.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ClassDiagram.cd" />
     <None Include="resources\shaders\default.frag" />
     <None Include="resources\shaders\default.vert" />
     <None Include="resources\shaders\library.glsl" />

@@ -1,35 +1,81 @@
 #include "VertexArray.h"
 
-VertexArray::VertexArray() {
-	glGenVertexArrays(1, &m_handle);
-	glBindVertexArray(m_handle);
-}
-
-VertexArray::~VertexArray() {
-	glDeleteVertexArrays(1, &m_handle);
-}
-
-void VertexArray::addBuffer(const VertexBuffer& vb, const VertexBufferLayout& layout) {
-	bind();
-	vb.bind();
-
-	const auto& elements = layout.getElements();
-	unsigned int offset = 0;
-
-	for (unsigned int i = 0; i < elements.size(); i++) {
-		const auto& element = elements[i];
-
-		glEnableVertexAttribArray(i);
-		glVertexAttribPointer(i, element.count, element.type, element.normalized, layout.getStride(), (const void*)offset);
-
-		offset += element.count * VertexBufferElement::GetSizeOfType(element.type);
+std::size_t VertexLayout::getSize(std::size_t type) {
+	switch (type) {
+		case GL_UNSIGNED_INT:
+		case GL_FLOAT: return 4;
+		case GL_UNSIGNED_BYTE: return 1;
+		default: return 0;
 	}
 }
 
-void VertexArray::bind() const {
-	glBindVertexArray(m_handle);
+VertexLayout VertexLayout::getPNTTB() {
+	VertexLayout layout;
+	layout.push<float>(3);
+	layout.push<float>(3);
+	layout.push<float>(2);
+	layout.push<float>(3);
+	layout.push<float>(3);
+	return layout;
 }
 
-void VertexArray::unbind() const {
+VertexLayout VertexLayout::getPNT() {
+	VertexLayout layout;
+	layout.push<float>(3);
+	layout.push<float>(3);
+	layout.push<float>(2);
+	return layout;
+}
+
+VertexLayout VertexLayout::getPN() {
+	VertexLayout layout;
+	layout.push<float>(3);
+	layout.push<float>(3);
+	return layout;
+}
+
+VertexLayout VertexLayout::getPT() {
+	VertexLayout layout;
+	layout.push<float>(3);
+	layout.push<float>(2);
+	return layout;
+}
+
+VertexLayout VertexLayout::getP() {
+	VertexLayout layout;
+	layout.push<float>(3);
+	return layout;
+}
+
+VertexArray::VertexArray() : Buffer(VAO) {
+	glGenVertexArrays(1, &_hid);
+	glBindVertexArray(_hid);
+}
+
+VertexArray::~VertexArray() {
+	glDeleteVertexArrays(1, &_hid);
+}
+
+void VertexArray::bind() {
+	glBindVertexArray(_hid);
+}
+
+void VertexArray::unbind() {
 	glBindVertexArray(0);
+}
+
+void VertexArray::addBuffer(VertexBuffer& vbo, VertexLayout vbl) {
+	BufferGuard::attemptBind(this);
+	BufferGuard::attemptBind(&vbo);
+
+	const auto& elements = vbl.getElements();
+	std::size_t offset = 0;
+	for (int i = 0; i < elements.size(); i++) {
+		const auto& element = elements[i];
+
+		glEnableVertexAttribArray(i);
+		glVertexAttribPointer(i, element.count, element.type, element.normal, vbl.getStride(), (void_cptr)offset);
+
+		offset += element.count * VertexLayout::getSize(element.type);
+	}
 }

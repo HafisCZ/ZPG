@@ -1,15 +1,12 @@
 #pragma once
 
-#include <GL/glew.h>
+#include "Buffer.h"
 
-class VertexBuffer {
-	private:
-		unsigned int m_handle;
-
+class VertexBuffer : public Buffer {
 	public:
-		VertexBuffer(const void* data, unsigned int size);
+		VertexBuffer(void_cptr ptr, std::size_t size);
 		~VertexBuffer();
 
-		void bind() const;
-		void unbind() const;
+		void bind();
+		void unbind();
 };

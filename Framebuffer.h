@@ -1,25 +1,19 @@
 #pragma once
 
-#include <GL/glew.h>
+#include "Buffer.h"
 
-class Framebuffer {
+class Framebuffer : public Buffer {
 	protected:
-		unsigned int m_handle;
-		unsigned int m_texture_handle;
+		std::size_t _tid;
+		std::size_t _size;
 
-		unsigned int m_width;
-		unsigned int m_height;
+		void unbind() {
+
+		}
 
 	public:
-		Framebuffer(unsigned int width, unsigned int height);
+		Framebuffer(std::size_t size);
 
-		virtual void begin() const;
-		virtual void end(unsigned int width, unsigned int height) const;
-};
-
-class Framebuffer3D : public Framebuffer {
-	public:
-		Framebuffer3D(unsigned int size);
-
-		void end(unsigned int width, unsigned int size) const override;
+		virtual void bind();
+		virtual void unbind(std::size_t width, std::size_t height);
 };

@@ -1,18 +1,17 @@
 #pragma once
 
-#include <GL/glew.h>
+#include "Buffer.h"
 
-class IndexBuffer {
+class IndexBuffer : public Buffer {
 	private:
-		unsigned int m_handle;
-		unsigned int m_count;
+		std::size_t _indices;
 
 	public:
-		IndexBuffer(const void* data, unsigned int count);
+		IndexBuffer(void_cptr ptr, std::size_t size);
 		~IndexBuffer();
 
-		void bind() const;
-		void unbind() const;
+		void bind();
+		void unbind();
 
-		inline unsigned int getCount() const { return m_count; }
+		inline std::size_t getCount() const { return _indices; }
 };

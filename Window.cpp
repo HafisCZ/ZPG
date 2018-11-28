@@ -1,65 +1,82 @@
-#include "Window.h"
+#include "Window.h"		
 
-void Window::init() {
-	if (!glfwInit()) exit(EXIT_FAILURE);
+void WindowEventManager::setListener(WindowEvent::WindowEventType type, std::function<void(WindowEvent::Event)> listener) {
+	listeners.insert(std::make_pair(type, listener));
+}
 
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	glfwWindowHint(GLFW_SAMPLES, 4);
+void WindowEventManager::fireEvent(WindowEvent::WindowEventType type, WindowEvent::Event event) {
+	for (auto& listener : listeners) {
+		listener.second(event);
+	}
+}
 
-
-	if (!(_window = glfwCreateWindow(1200, 900, "", NULL, NULL))) {
-		glfwTerminate();
+void Window::GLWrapper::init() {
+	if (!glfwInit()) {
 		exit(EXIT_FAILURE);
 	}
+}
 
-	glfwMakeContextCurrent(_window);
-	glfwSwapInterval(1);
+void Window::GLWrapper::setVersion(int major, int minor, Profile profile) {
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, major);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, minor);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+}
 
-	if (glewInit() != GLEW_OK) {}
+void Window::GLWrapper::setSamples(unsigned int samples) {
+	glfwWindowHint(GLFW_SAMPLES, samples);
+}
 
-	glEnable(GL_BLEND);
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
-	glEnable(GL_MULTISAMPLE);
-	glEnable(GL_DEBUG_OUTPUT);
+void Window::GLWrapper::createWindow(glwPtr& ptr, int wpx, int hpx, const std::string& title, WindowStyle style) {
+	if (!(ptr = glfwCreateWindow(wpx, hpx, title.c_str(), style == WINDOW ? nullptr : glfwGetPrimaryMonitor(), nullptr))) {
+		glfwTerminate();
+		exit(EXIT_FAILURE);
+	} else {
+		glfwMakeContextCurrent(ptr);
+		glfwSwapInterval(1);
 
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glDepthFunc(GL_LEQUAL);
-	glCullFace(GL_BACK);
+		glewInit();
+	}
+}
 
+void Window::GLWrapper::setBlending(Blending source, Blending target) {
+	glBlendFunc(source, target);
+}
+
+void Window::GLWrapper::setDepthFilter(DepthFilter filter) {
+	glDepthFunc(filter);
+}
+
+void Window::GLWrapper::setCulling(Culling cull) {
+	glCullFace(cull);
+}
+
+void Window::GLWrapper::enableDebugCallback() {
 	glDebugMessageCallback([](unsigned int src, unsigned int type, unsigned int id, unsigned int sev, int len, const char* msg, const void* param) -> void {
 		if (type != 0x8251) fprintf(stderr, "[GL%s] TYPE (0x%x) SEVERITY (0x%x) { \n%s }\n", (type == GL_DEBUG_TYPE_ERROR ? " ERROR" : ""), type, sev, msg);
 	}, 0);
 }
 
-void Window::initInput() {
-	glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	glfwSetKeyCallback(_window, Input::keyboardCallback);
-	glfwSetMouseButtonCallback(_window, Input::mouseCallback);
+void Window::GLWrapper::enableKeyCallback(glwPtr ptr) {
+	glfwSetKeyCallback(ptr, [](glwPtr, int key, int, int act, int) { InputManager::getManager().processKey(key, act); });
 }
 
-Window::~Window() {
-	glfwTerminate();
-	exit(EXIT_SUCCESS);
+void Window::GLWrapper::enableCursorKeyCallback(glwPtr ptr) {
+	glfwSetMouseButtonCallback(ptr, [](glwPtr, int but, int act, int) { InputManager::getManager().processKey(but, act); });
 }
 
-Window::Window(int width, int height) : _width(width), _height(height) {
-	init();
-	initInput();
+void Window::GLWrapper::disableCursor(glwPtr ptr) {
+	glfwSetInputMode(ptr, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
-void Window::attachCamera(Camera& camera) {
-	glfwSetWindowUserPointer(_window, &camera);
-	glfwSetCursorPosCallback(_window, [](GLFWwindow* w, double x, double y) -> void { ((Camera*)glfwGetWindowUserPointer(w))->setCursor(float(x), float(y)); });
+void Window::GLWrapper::enableResizeCallback(glwPtr ptr) {
+	glfwSetWindowSizeCallback(ptr, [](glwPtr ptr, int w, int h) { WindowEventManager::getManager().fireEvent(WindowEvent::RESIZE, WindowEvent::ResizeEvent(w, h)); });
 }
 
-bool Window::isOpen() {
-	return !glfwWindowShouldClose(_window);
-}
-
-void Window::swap() {
-	glfwSwapBuffers(_window);
+void Window::GLWrapper::endFrame(glwPtr ptr) {
+	glfwSwapBuffers(ptr);
 	glfwPollEvents();
+}
+
+bool Window::GLWrapper::beginFrame(glwPtr ptr) {
+	return !glfwWindowShouldClose(ptr);
 }

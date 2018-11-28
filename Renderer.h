@@ -43,14 +43,7 @@ class Renderer {
 		}
 
 		void loop(Window& window, Scene& scene, std::function<void(void)> update) {
-			while (window.isOpen()) {
-				update();
 
-				clear();
-				draw(scene);
-
-				window.swap();
-			}
 		}
 
 		void draw(Scene& scene) {

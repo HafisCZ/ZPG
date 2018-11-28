@@ -51,6 +51,24 @@
     <Filter Include="Source Files\Scene\Sources">
       <UniqueIdentifier>{a6d6da21-d1b2-442b-a0fd-4655d31dfa6b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Engine\Buffers">
+      <UniqueIdentifier>{678f64ae-a5f4-4098-bc7e-0179005f986f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Core">
+      <UniqueIdentifier>{3495e0ac-2af8-4afd-a813-df5a2f147af6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Buffers\Data">
+      <UniqueIdentifier>{fad89b16-1eb1-4edc-851b-077a1fad2983}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Buffers\Uniforms">
+      <UniqueIdentifier>{6dd2cee8-0372-4c81-ae56-2eab24ca36bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Buffers\Framebuffers">
+      <UniqueIdentifier>{f8db5371-ea88-4e2f-ab2c-53a11cc8af5b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Buffers\Textures">
+      <UniqueIdentifier>{e9bc0b6c-2f84-466f-a735-68531abfe808}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="vendor\stb_image.cpp">
@@ -58,27 +76,6 @@
     </ClCompile>
     <ClCompile Include="Source.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Framebuffer.cpp">
-      <Filter>Source Files\Engine\Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="IndexBuffer.cpp">
-      <Filter>Source Files\Engine\Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Program.cpp">
-      <Filter>Source Files\Engine\Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Texture.cpp">
-      <Filter>Source Files\Engine\Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="UniformBuffer.cpp">
-      <Filter>Source Files\Engine\Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="VertexBuffer.cpp">
-      <Filter>Source Files\Engine\Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="VertexArray.cpp">
-      <Filter>Source Files\Engine\Sources</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files\World\Sources</Filter>
@@ -110,14 +107,38 @@
     <ClCompile Include="TransformableObject.cpp">
       <Filter>Source Files\Scene\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="Window.cpp">
-      <Filter>Source Files\Engine\Sources</Filter>
-    </ClCompile>
     <ClCompile Include="Input.cpp">
       <Filter>Source Files\Utils</Filter>
     </ClCompile>
+    <ClCompile Include="Window.cpp">
+      <Filter>Source Files\Engine\Core</Filter>
+    </ClCompile>
     <ClCompile Include="Buffer.cpp">
-      <Filter>Source Files\Engine\Sources</Filter>
+      <Filter>Source Files\Engine\Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="VertexBuffer.cpp">
+      <Filter>Source Files\Engine\Buffers\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="IndexBuffer.cpp">
+      <Filter>Source Files\Engine\Buffers\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="VertexArray.cpp">
+      <Filter>Source Files\Engine\Buffers\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="UniformBuffer.cpp">
+      <Filter>Source Files\Engine\Buffers\Uniforms</Filter>
+    </ClCompile>
+    <ClCompile Include="Framebuffer3D.cpp">
+      <Filter>Source Files\Engine\Buffers\Framebuffers</Filter>
+    </ClCompile>
+    <ClCompile Include="Framebuffer.cpp">
+      <Filter>Source Files\Engine\Buffers\Framebuffers</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Source Files\Engine\Buffers\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="Program.cpp">
+      <Filter>Source Files\Engine\Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -126,33 +147,6 @@
     </ClInclude>
     <ClInclude Include="Application.h">
       <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="VertexBufferLayout.h">
-      <Filter>Source Files\Engine\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="UniformBuffer.h">
-      <Filter>Source Files\Engine\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="UniformBufferLayout.h">
-      <Filter>Source Files\Engine\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="VertexArray.h">
-      <Filter>Source Files\Engine\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="VertexBuffer.h">
-      <Filter>Source Files\Engine\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Texture.h">
-      <Filter>Source Files\Engine\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Program.h">
-      <Filter>Source Files\Engine\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="IndexBuffer.h">
-      <Filter>Source Files\Engine\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Framebuffer.h">
-      <Filter>Source Files\Engine\Headers</Filter>
     </ClInclude>
     <ClInclude Include="gtype.h">
       <Filter>Source Files\Utils</Filter>
@@ -190,17 +184,41 @@
     <ClInclude Include="TransformableObject.h">
       <Filter>Source Files\Scene\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="Window.h">
-      <Filter>Source Files\Engine\Headers</Filter>
-    </ClInclude>
     <ClInclude Include="Skybox.h">
       <Filter>Source Files\Scene\Headers</Filter>
     </ClInclude>
     <ClInclude Include="ModelLoader.h">
       <Filter>Source Files\Scene\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="Window.h">
+      <Filter>Source Files\Engine\Core</Filter>
+    </ClInclude>
     <ClInclude Include="Buffer.h">
-      <Filter>Source Files\Engine\Headers</Filter>
+      <Filter>Source Files\Engine\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexBuffer.h">
+      <Filter>Source Files\Engine\Buffers\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="IndexBuffer.h">
+      <Filter>Source Files\Engine\Buffers\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexArray.h">
+      <Filter>Source Files\Engine\Buffers\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="UniformBuffer.h">
+      <Filter>Source Files\Engine\Buffers\Uniforms</Filter>
+    </ClInclude>
+    <ClInclude Include="Framebuffer3D.h">
+      <Filter>Source Files\Engine\Buffers\Framebuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="Framebuffer.h">
+      <Filter>Source Files\Engine\Buffers\Framebuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Source Files\Engine\Buffers\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="Program.h">
+      <Filter>Source Files\Engine\Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -254,6 +272,5 @@
     <None Include="resources\shaders\library.glsl">
       <Filter>Resource Files\Object shaders</Filter>
     </None>
-    <None Include="ClassDiagram.cd" />
   </ItemGroup>
 </Project>
