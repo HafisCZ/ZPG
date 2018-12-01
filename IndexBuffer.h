@@ -4,14 +4,14 @@
 
 class IndexBuffer : public Buffer {
 	private:
-		std::size_t _indices;
+		unsigned int _count;
 
 	public:
-		IndexBuffer(void_cptr ptr, std::size_t size);
+		IndexBuffer(void_cptr data, unsigned int count);
 		~IndexBuffer();
 
-		void bind();
-		void unbind();
+		virtual void bind() override;
+		virtual void unbind() override;
 
-		inline std::size_t getCount() const { return _indices; }
+		inline unsigned int getCount() { return _count; }
 };

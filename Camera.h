@@ -1,53 +1,36 @@
 #pragma once
 
-#include <glm/gtc/type_ptr.hpp>
-
-enum SpaceDirection {
-	LEFT, RIGHT,
-	DOWN, UP,
-	BACKWARDS, FORWARDS
-};
-
-class Window;
+#include <glm/mat4x4.hpp>
 
 class Camera {
 	private:
-		glm::mat4 m_proj;
-		glm::mat4 m_view;
+		glm::mat4 _projection;
+		glm::mat4 _view;
 
-		glm::mat4 m_vpmt;
+		glm::mat4 _viewProjection;
+		
+		glm::vec3 _position;
+		glm::vec3 _direction;
 
-		glm::vec3 m_pos;
-		glm::vec3 m_dir;
-		glm::vec3 m_rts;
-		glm::vec3 m_ups;
+		glm::vec3 _rightVector;
+		glm::vec3 _upVector;
 
-		float m_ver;
-		float m_hor;
+		glm::vec2 _angle;
+		glm::vec2 _last;
 
-		float m_w;
-		float m_h;
-
-		bool m_ut;
-		bool m_ft;
-		bool _pending;
-
-		float m_lx;
-		float m_ly;
 	public:
-		Camera(Window& window, float fov);
+		Camera();
+		Camera(unsigned int width, unsigned int height);
 
-		void setFov(float fov);
+		inline glm::mat4& getProjectionMatrix() { return _projection; }
+		inline glm::mat4& getViewMatrix() { return _view; }
+		inline glm::mat4& getViewProjectionMatrix() { return _viewProjection; }
+
+		inline glm::vec3& getPosition() { return _position; }
+		inline glm::vec3& getDirection() { return _direction; }
+		
 		void setCursor(float x, float y);
-		void setPosition(SpaceDirection sd, float mag = 0.5f);
+		void move(float x, float y, float z);
 
-		const glm::mat4& get();
-
-		inline glm::vec3 getPosition() const { return m_pos; }
-		inline glm::vec3 getDirection() const { return m_dir; }
-
-		inline glm::mat4 getProjectionMatrix() const { return m_proj; }
-		inline glm::mat4 getViewMatrix() const { return m_view; }
-
-		bool isPending();
+		void sync();
 };

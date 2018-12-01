@@ -25,7 +25,7 @@ void TransformableObject::setTransformation(glm::mat4 transformation) {
 
 glm::mat4 TransformableObject::getMatrix() {
 	if (_requiresRecalc || SpatialObject::_requiresRecalc) {
-		_matrix = glm::translate(_transformation, _position);
+		_matrix = glm::translate(glm::mat4(1.0f), _position) * _transformation;
 		_inverted = glm::transpose(glm::inverse(_matrix));
 		_requiresRecalc = false;
 	}

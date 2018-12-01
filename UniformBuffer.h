@@ -4,58 +4,57 @@
 
 class Alignment {
 	public:
-		static inline const std::size_t alignto(std::size_t size, std::size_t align = 16) {
+		static inline const unsigned int alignto(unsigned int size, unsigned int align = 16) {
 			return size % align == 0 ? size : size + align - size % align;
 		}
-
-};
-
-struct UniformElement {
-	std::size_t index;
-	std::size_t stride;
-	std::size_t size;
-};
-
-struct UniformGroup : UniformElement {
-	std::vector<UniformElement> elements;
-
-	UniformGroup(std::size_t index, std::size_t stride, std::size_t size) : UniformElement { index, stride, size } { }
-
-	inline const std::size_t getBlockSize() const { return size; }
-	inline const std::size_t getItemSize(std::size_t index) const { return elements[index].size; }
-	inline const std::size_t getBlockStride(std::size_t offset = 0) const { return stride + elements[offset].stride; }
 };
 
 class UniformLayout {
 	private:
-		std::vector<UniformGroup> _elements;
-		std::vector<UniformElement> _items;
+		struct BlockItem {
+			unsigned int index;
+			unsigned int stride;
+			unsigned int size;
+		};
 
-		std::size_t _size;
-		std::size_t _istr;
+		struct Block : public BlockItem {
+			std::vector<BlockItem> items;
 
+			Block(unsigned int index, unsigned int stride, unsigned int size) : BlockItem{ index, stride, size } {}
+
+			inline unsigned int blockSize() { return size; }
+			inline unsigned int blockStride(unsigned int offset = 0) { return stride + items[offset].stride; }
+			inline unsigned int itemSize(unsigned int index) { return items[index].size; }
+		};
+
+		std::vector<BlockItem> _items;
+		std::vector<Block> _blocks;
+
+		unsigned int _size;
+		unsigned int _istr;
 		int _step;
 
 	public:
 		UniformLayout();
 
-		template <typename T> void push(std::size_t count = 1) {
-			std::size_t	bytes = sizeof(T);
-			for (std::size_t i = 0; i < count; i++) {
-				m_items.push_back({ m_items.size(), m_istr, bytes });
-				m_istr += Alignment::alignto(bytes);
+		template <typename T> void addBlock(unsigned int count) {
+			unsigned int bytes = sizeof(T);
+
+			for (unsigned int i = 0; i < count; i++) {
+				_items.push_back({ _items.size(), _istr, bytes });
+				_istr += Alignment::alignto(bytes);
 			}
 		}
 
 		void pack();
 
 		template <typename T> void pack() {
-			push<T>();
+			addBlock<T>(1);
 			pack();
 		}
 
-		inline const std::vector<UniformGroup>& getElements() const { return _elements; }
-		inline unsigned int getSize() const { return _size; }
+		inline const std::vector<Block>& getBlocks() { return _blocks; }
+		inline unsigned int getSize() { return _size; }
 };
 
 class UniformBuffer : public Buffer {
@@ -63,18 +62,19 @@ class UniformBuffer : public Buffer {
 		UniformLayout _layout;
 
 	public:
-		UniformBuffer(const UniformLayout& layout);
+		UniformBuffer(UniformLayout& layout);
 		~UniformBuffer();
 
-		template <typename T> void setUniformBlock(std::size_t index, const T& a) {
-			glBufferSubData(GL_UNIFORM_BUFFER, _layout.getElements()[index].getBlockStride(), _layout.getElements()[index].getBlockSize(), &a);
+		template <typename T> void setUniformBlock(unsigned int index, const T& a) {
+			glBufferSubData(GL_UNIFORM_BUFFER, _layout.getBlocks()[index].blockStride(), _layout.getBlocks()[index].blockSize(), &a);
 		}
 
-		template <typename T> void setUniformBlock(std::size_t index, std::size_t position, const T& a) {
-			glBufferSubData(GL_UNIFORM_BUFFER, _layout.getElements()[index].getBlockStride(position), _layout.getElements()[index].getItemSize(position), &a);
+		template <typename T> void setUniformBlock(unsigned int index, unsigned int position, const T& a) {
+			glBufferSubData(GL_UNIFORM_BUFFER, _layout.getBlocks()[index].blockStride(position), _layout.getBlocks()[index].itemSize(position), &a);
 		}
 
-		void bind();
-		void unbind();
+		virtual void bind() override;
+		virtual void unbind() override;
 };
+
 

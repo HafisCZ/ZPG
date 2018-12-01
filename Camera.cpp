@@ -1,88 +1,44 @@
 #include "Camera.h"
 
-#include "Window.h"
+#include <glm/gtc/matrix_transform.hpp>
 
-Camera::Camera(Window& window, float fov) : m_ver(0.0f), m_hor(3.14f / 2.0f), m_w(1200), m_h(900), m_ut(true), m_lx(m_w / 2.0f), m_ly(m_h / 2.0f), m_ft(true), _pending(true) {
-	m_pos = { 0.0f, 0.0f, 0.0f };
-	m_dir = { 1.0f, 1.0f, 0.0f };
-	m_ups = { 0.0f, 1.0f, 0.0f };
+#include "InputManager.h"
+#include "WindowManager.h"
 
-	m_view = glm::lookAt(m_pos, m_pos + m_dir, m_ups);
-	m_proj = glm::perspective(glm::radians(fov), m_w / m_h, 0.1f, 100.0f);
+Camera::Camera() : Camera(WindowManager::getManager().getWindowWidth(), WindowManager::getManager().getWindowHeight()) { }
 
-}
-
-void Camera::setFov(float fov) {
-	m_proj = glm::perspective(glm::radians(fov), m_w / m_h, 0.1f, 100.0f);
-
-	m_ut = true;
-}
-
-const glm::mat4& Camera::get() {
-	if (m_ut) {
-		m_ut = false;
-
-		m_dir = { cos(m_ver) * sin(m_hor), sin(m_ver), cos(m_ver) * cos(m_hor) };
-		m_rts = { sin(m_hor - 3.14f / 2.0f), 0.0f, cos(m_hor - 3.14f / 2.0f) };
-		m_view = glm::lookAt(m_pos, m_pos + m_dir, m_ups);
-
-		m_vpmt = m_proj * m_view;
-
-		_pending = true;
-	}
-
-	return m_vpmt;
-}
-
-bool Camera::isPending() {
-	if (_pending) {
-		_pending = false;
-
-		return true;
-	}
-
-	return false;
+Camera::Camera(unsigned int width, unsigned int height) :
+	_angle(0.0f, glm::pi<float>() / 2.0f), _position(0.0f),
+	_direction(1.0f, 1.0f, 0.0f), _upVector(0.0f, 1.0f, 0.0f), _last((float)width / 2.0f, (float)height / 2.0f),
+	_view(glm::lookAt(_position, _position + _direction, _upVector)),
+	_projection(glm::perspective(glm::radians(60.0f), (float)width / height, 0.1f, 100.0f)),
+	_viewProjection(_projection * _view) {
 }
 
 void Camera::setCursor(float x, float y) {
-	if (m_ft) {
-		m_lx = x;
-		m_ly = y;
+	static bool init = [this, x, y]() { return (_last = { x * 5, y * 5 }, true); }();
 
-		m_ft = false;
-	}
+	_angle.x += (1.0f / 600.0f) * (_last.x - x * 5);
+	_angle.y += (1.0f / 600.0f) * (_last.y - y * 5);
 
-	m_hor += (1.0f / 600.0f) * (m_lx - x);
-	m_ver += (1.0f / 600.0f) * (m_ly - y);
+	if (_angle.y > glm::half_pi<float>()) _angle.y = glm::half_pi<float>();
+	if (_angle.y < -glm::half_pi<float>()) _angle.y = -glm::half_pi<float>();
 
-	if (m_ver > 3.1f / 2.0f) m_ver = 3.1f / 2.0f;
-	if (m_ver < -3.1f / 2.0f) m_ver = -3.1f / 2.0f;
-
-	m_lx = x;
-	m_ly = y;
-
-	m_ut = true;
+	_last = { x * 5, y * 5 };
 }
 
-void Camera::setPosition(SpaceDirection sd, float mag) {
-	if (sd == LEFT) {
-		m_pos -= m_rts * mag;
-	}
-	else if (sd == RIGHT) {
-		m_pos += m_rts * mag;
-	}
-	else if (sd == DOWN) {
-		m_pos -= m_ups * mag;
-	}
-	else if (sd == UP) {
-		m_pos += m_ups * mag;
-	}
-	else if (sd == BACKWARDS) {
-		m_pos -= m_dir * mag;
-	}
-	else if (sd == FORWARDS) {
-		m_pos += m_dir * mag;
-	}
+void Camera::sync() {
+	auto cursor = InputManager::getManager().getCursor();
+	setCursor(cursor[0], cursor[1]);
 
-	m_ut = true;
+	_direction = { cosf(_angle.y) * sinf(_angle.x), sinf(_angle.y), cosf(_angle.y) * cosf(_angle.x) };
+	_rightVector = { sinf(_angle.x - glm::half_pi<float>()), 0.0f, cosf(_angle.x - glm::half_pi<float>()) };
+	_view = glm::lookAt(_position, _position + _direction, _upVector);
+	_viewProjection = _projection * _view;
+}
+
+void Camera::move(float x, float y, float z) {
+	_position += x * _direction;
+	_position += y * _upVector;
+	_position += z * _rightVector;
 }

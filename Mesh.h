@@ -44,15 +44,15 @@ class Mesh {
 		MeshTexturePack _pack;
 
 	public:
-		Mesh(void* vptr, void* iptr, Property prop, VertexBufferLayout lay, MeshTexturePack pack) : _prop(prop), _pack(pack), _vao(), _vbo(vptr, prop.vertex_cnt * lay.getStride()), _ibo(iptr, prop.indice_cnt) {
-			_vao.addBuffer(_vbo, lay);
+		Mesh(void* vptr, void* iptr, VertexLayout layout, Property prop, MeshTexturePack pack) : _prop(prop), _pack(pack), _vao(), _vbo(vptr, prop.vertex_cnt, layout), _ibo(iptr, prop.indice_cnt) {
+			_vao.setBuffer(_vbo);
 		}
 
 		inline const bool hasIndices() const { return _prop.indice_cnt; }
 
-		inline const VertexArray& getVAO() { return _vao; }
-		inline const VertexBuffer& getVBO() { return _vbo; }
-		inline const IndexBuffer& getIBO() { return _ibo; }
-		inline const Property& getProperty() { return _prop; }
+		inline VertexArray& getVAO() { return _vao; }
+		inline VertexBuffer& getVBO() { return _vbo; }
+		inline IndexBuffer& getIBO() { return _ibo; }
+		inline Property& getProperty() { return _prop; }
 		inline MeshTexturePack& getTexturePack() { return _pack; }
 };

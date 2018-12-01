@@ -8,6 +8,13 @@
 #include <fstream>
 #include <sstream>
 
+enum Shaders {
+	VERTEX = 1,
+	FRAGMENT = 2,
+	GEOMETRY = 4,
+	ALL = 7
+};
+
 class Program {
 	private:
 		unsigned int _handle;

@@ -1,5 +1,7 @@
 #include "Program.h"
 
+#include <iostream>
+
 Program::Program() : _impl(*this) {
 	_handle = glCreateProgram();
 }
@@ -8,6 +10,7 @@ Program::Program(const std::string& vertex, const std::string& fragment) : Progr
 	setShader(GL_VERTEX_SHADER, vertex);
 	setShader(GL_FRAGMENT_SHADER, fragment);
 	compile();
+
 }
 
 Program::Program(const std::string& vertex, const std::string& fragment, const std::string& geometry) : Program() {
@@ -69,6 +72,8 @@ unsigned int Program::compileShader(unsigned int type, const std::string& filepa
 		char* message = (char*)alloca(length * sizeof(char));
 		glGetShaderInfoLog(handle, length, &length, message);
 
+		std::cout << message << "\n";
+
 		glDeleteShader(handle);
 
 		return 0;
@@ -100,6 +105,8 @@ int Program::getUniformLocation(const std::string& name) {
 	int location;
 	if ((location = glGetUniformLocation(_handle, name.c_str())) != -1) {
 		m_uniformLocationCache[name] = location;
+	} else {
+		std::cout << "ERROR_SHADER " << name << "\n";
 	}
 
 	return location;
@@ -150,5 +157,5 @@ Program::DefaultProgramImpl::DefaultProgramImpl(Program& program) :
 	Lights_LA(program, "light_la"),
 	Lights_QA(program, "light_qa")
 {
-	program.bind();
+
 }

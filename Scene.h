@@ -11,20 +11,18 @@ class Scene {
 
 		std::vector<Light*> _lights;
 
-		Camera& _camera;
+		Camera _camera;
 
 		Skybox* _skybox;
 
 	public:
-		Scene(Camera& camera) : _camera(camera) {}
-
 		void addObjectDeferred(Object& object) { _objectsDeferred.emplace_back(&object); }
 		void addObjectForward(Object& object) { _objectsForward.emplace_back(&object); }
 		void addLight(Light& light) { _lights.emplace_back(&light); }
 
-		inline std::vector<Object*> getObjectsDeferred() { return _objectsDeferred; }
-		inline std::vector<Object*> getObjectsForward() { return _objectsForward; }
-		inline std::vector<Light*> getLights() { return _lights; }
+		inline std::vector<Object*>& getObjectsDeferred() { return _objectsDeferred; }
+		inline std::vector<Object*>& getObjectsForward() { return _objectsForward; }
+		inline std::vector<Light*>& getLights() { return _lights; }
 
 		void setSkybox(Skybox& skybox);
 

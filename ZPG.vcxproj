@@ -126,9 +126,8 @@
     <ClCompile Include="Buffer.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Framebuffer.cpp" />
-    <ClCompile Include="Framebuffer3D.cpp" />
     <ClCompile Include="IndexBuffer.cpp" />
-    <ClCompile Include="Input.cpp" />
+    <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Model.cpp" />
@@ -145,17 +144,16 @@
     <ClCompile Include="VertexArray.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
     <ClCompile Include="Window.cpp" />
-    <ClCompile Include="YGenerator.cpp" />
+    <ClCompile Include="WindowEvent.cpp" />
+    <ClCompile Include="WindowManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Framebuffer.h" />
-    <ClInclude Include="Framebuffer3D.h" />
-    <ClInclude Include="gtype.h" />
     <ClInclude Include="IndexBuffer.h" />
-    <ClInclude Include="Input.h" />
+    <ClInclude Include="InputManager.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Model.h" />
@@ -167,13 +165,15 @@
     <ClInclude Include="Skybox.h" />
     <ClInclude Include="SpatialObject.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="TextureManager.h" />
     <ClInclude Include="TransformableObject.h" />
     <ClInclude Include="UniformBuffer.h" />
     <ClInclude Include="vendor\stb_image.h" />
     <ClInclude Include="VertexArray.h" />
     <ClInclude Include="VertexBuffer.h" />
     <ClInclude Include="Window.h" />
-    <ClInclude Include="YGenerator.h" />
+    <ClInclude Include="WindowEvent.h" />
+    <ClInclude Include="WindowManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="resources\textures\grass.png" />
@@ -184,6 +184,10 @@
     <Image Include="resources\textures\tile_spc.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="geom.frag" />
+    <None Include="geom.vert" />
+    <None Include="light.frag" />
+    <None Include="light.vert" />
     <None Include="resources\shaders\default.frag" />
     <None Include="resources\shaders\default.vert" />
     <None Include="resources\shaders\library.glsl" />

@@ -27,18 +27,6 @@
     <Filter Include="Source Files\Engine\Sources">
       <UniqueIdentifier>{fa583eb6-f956-4b77-9cda-dccffd721842}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\World">
-      <UniqueIdentifier>{9a33f4b7-f190-460e-a393-b68102af6ae1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\World\Headers">
-      <UniqueIdentifier>{176b82a5-4cb8-4448-8e58-bf01f140387b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\World\Sources">
-      <UniqueIdentifier>{a8c95ac8-b65a-4b35-bc8e-805ff44b4b19}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Utils">
-      <UniqueIdentifier>{e0f8913e-65b1-421e-bdff-a413999434a0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Engine\Vendor">
       <UniqueIdentifier>{0fdf4172-63b9-4ac8-9a4f-54c42e450064}</UniqueIdentifier>
     </Filter>
@@ -51,23 +39,26 @@
     <Filter Include="Source Files\Scene\Sources">
       <UniqueIdentifier>{a6d6da21-d1b2-442b-a0fd-4655d31dfa6b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Engine\Buffers">
-      <UniqueIdentifier>{678f64ae-a5f4-4098-bc7e-0179005f986f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Engine\Core">
-      <UniqueIdentifier>{3495e0ac-2af8-4afd-a813-df5a2f147af6}</UniqueIdentifier>
+      <UniqueIdentifier>{3893ce0c-447d-4ba5-9230-6ea944e6cd07}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Engine\Buffers\Data">
-      <UniqueIdentifier>{fad89b16-1eb1-4edc-851b-077a1fad2983}</UniqueIdentifier>
+    <Filter Include="Source Files\Engine\Event">
+      <UniqueIdentifier>{2683b0d0-8bf1-4b25-aa46-e332c4e5bd65}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Engine\Buffers\Uniforms">
-      <UniqueIdentifier>{6dd2cee8-0372-4c81-ae56-2eab24ca36bd}</UniqueIdentifier>
+    <Filter Include="Source Files\Engine\Interface">
+      <UniqueIdentifier>{ce2039d5-3e2a-4866-8787-8f8ee3723dac}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Engine\Buffers\Framebuffers">
-      <UniqueIdentifier>{f8db5371-ea88-4e2f-ab2c-53a11cc8af5b}</UniqueIdentifier>
+    <Filter Include="Source Files\Engine\Buffer">
+      <UniqueIdentifier>{13276570-c6b0-47f9-8081-2ac4d46bedb4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Engine\Buffers\Textures">
-      <UniqueIdentifier>{e9bc0b6c-2f84-466f-a735-68531abfe808}</UniqueIdentifier>
+    <Filter Include="Source Files\Engine\Texture">
+      <UniqueIdentifier>{3e20c7a8-679c-49cf-b38b-de721c5129fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Deferred shaders">
+      <UniqueIdentifier>{da5cc260-9352-4fcd-a59d-5622dd7eb6ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Scene\View">
+      <UniqueIdentifier>{f2b266ff-31b2-4a24-96c0-69f61939496a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -77,14 +68,14 @@
     <ClCompile Include="Source.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Camera.cpp">
-      <Filter>Source Files\World\Sources</Filter>
+    <ClCompile Include="Framebuffer.cpp">
+      <Filter>Source Files\Engine\Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Program.cpp">
+      <Filter>Source Files\Engine\Sources</Filter>
     </ClCompile>
     <ClCompile Include="Renderer.cpp">
       <Filter>Source Files\Engine\Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="YGenerator.cpp">
-      <Filter>Source Files\World\Sources</Filter>
     </ClCompile>
     <ClCompile Include="Model.cpp">
       <Filter>Source Files\Scene\Sources</Filter>
@@ -93,9 +84,6 @@
       <Filter>Source Files\Scene\Sources</Filter>
     </ClCompile>
     <ClCompile Include="Object.cpp">
-      <Filter>Source Files\Scene\Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene.cpp">
       <Filter>Source Files\Scene\Sources</Filter>
     </ClCompile>
     <ClCompile Include="Light.cpp">
@@ -107,37 +95,40 @@
     <ClCompile Include="TransformableObject.cpp">
       <Filter>Source Files\Scene\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="Input.cpp">
-      <Filter>Source Files\Utils</Filter>
+    <ClCompile Include="WindowEvent.cpp">
+      <Filter>Source Files\Engine\Event</Filter>
+    </ClCompile>
+    <ClCompile Include="InputManager.cpp">
+      <Filter>Source Files\Engine\Interface</Filter>
     </ClCompile>
     <ClCompile Include="Window.cpp">
       <Filter>Source Files\Engine\Core</Filter>
     </ClCompile>
     <ClCompile Include="Buffer.cpp">
-      <Filter>Source Files\Engine\Buffers</Filter>
-    </ClCompile>
-    <ClCompile Include="VertexBuffer.cpp">
-      <Filter>Source Files\Engine\Buffers\Data</Filter>
+      <Filter>Source Files\Engine\Buffer</Filter>
     </ClCompile>
     <ClCompile Include="IndexBuffer.cpp">
-      <Filter>Source Files\Engine\Buffers\Data</Filter>
+      <Filter>Source Files\Engine\Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="VertexBuffer.cpp">
+      <Filter>Source Files\Engine\Buffer</Filter>
     </ClCompile>
     <ClCompile Include="VertexArray.cpp">
-      <Filter>Source Files\Engine\Buffers\Data</Filter>
+      <Filter>Source Files\Engine\Buffer</Filter>
     </ClCompile>
     <ClCompile Include="UniformBuffer.cpp">
-      <Filter>Source Files\Engine\Buffers\Uniforms</Filter>
-    </ClCompile>
-    <ClCompile Include="Framebuffer3D.cpp">
-      <Filter>Source Files\Engine\Buffers\Framebuffers</Filter>
-    </ClCompile>
-    <ClCompile Include="Framebuffer.cpp">
-      <Filter>Source Files\Engine\Buffers\Framebuffers</Filter>
+      <Filter>Source Files\Engine\Buffer</Filter>
     </ClCompile>
     <ClCompile Include="Texture.cpp">
-      <Filter>Source Files\Engine\Buffers\Textures</Filter>
+      <Filter>Source Files\Engine\Texture</Filter>
     </ClCompile>
-    <ClCompile Include="Program.cpp">
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files\Scene\View</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Source Files\Scene\View</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowManager.cpp">
       <Filter>Source Files\Engine\Core</Filter>
     </ClCompile>
   </ItemGroup>
@@ -148,20 +139,14 @@
     <ClInclude Include="Application.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="gtype.h">
-      <Filter>Source Files\Utils</Filter>
+    <ClInclude Include="Program.h">
+      <Filter>Source Files\Engine\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="Input.h">
-      <Filter>Source Files\Utils</Filter>
+    <ClInclude Include="Framebuffer.h">
+      <Filter>Source Files\Engine\Headers</Filter>
     </ClInclude>
     <ClInclude Include="Renderer.h">
       <Filter>Source Files\Engine\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>Source Files\World\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="YGenerator.h">
-      <Filter>Source Files\World\Headers</Filter>
     </ClInclude>
     <ClInclude Include="Mesh.h">
       <Filter>Source Files\Scene\Headers</Filter>
@@ -170,9 +155,6 @@
       <Filter>Source Files\Scene\Headers</Filter>
     </ClInclude>
     <ClInclude Include="Light.h">
-      <Filter>Source Files\Scene\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene.h">
       <Filter>Source Files\Scene\Headers</Filter>
     </ClInclude>
     <ClInclude Include="Object.h">
@@ -190,35 +172,44 @@
     <ClInclude Include="ModelLoader.h">
       <Filter>Source Files\Scene\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="WindowEvent.h">
+      <Filter>Source Files\Engine\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="InputManager.h">
+      <Filter>Source Files\Engine\Interface</Filter>
+    </ClInclude>
     <ClInclude Include="Window.h">
       <Filter>Source Files\Engine\Core</Filter>
     </ClInclude>
     <ClInclude Include="Buffer.h">
-      <Filter>Source Files\Engine\Buffers</Filter>
-    </ClInclude>
-    <ClInclude Include="VertexBuffer.h">
-      <Filter>Source Files\Engine\Buffers\Data</Filter>
+      <Filter>Source Files\Engine\Buffer</Filter>
     </ClInclude>
     <ClInclude Include="IndexBuffer.h">
-      <Filter>Source Files\Engine\Buffers\Data</Filter>
+      <Filter>Source Files\Engine\Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexBuffer.h">
+      <Filter>Source Files\Engine\Buffer</Filter>
     </ClInclude>
     <ClInclude Include="VertexArray.h">
-      <Filter>Source Files\Engine\Buffers\Data</Filter>
+      <Filter>Source Files\Engine\Buffer</Filter>
     </ClInclude>
     <ClInclude Include="UniformBuffer.h">
-      <Filter>Source Files\Engine\Buffers\Uniforms</Filter>
-    </ClInclude>
-    <ClInclude Include="Framebuffer3D.h">
-      <Filter>Source Files\Engine\Buffers\Framebuffers</Filter>
-    </ClInclude>
-    <ClInclude Include="Framebuffer.h">
-      <Filter>Source Files\Engine\Buffers\Framebuffers</Filter>
+      <Filter>Source Files\Engine\Buffer</Filter>
     </ClInclude>
     <ClInclude Include="Texture.h">
-      <Filter>Source Files\Engine\Buffers\Textures</Filter>
+      <Filter>Source Files\Engine\Texture</Filter>
     </ClInclude>
-    <ClInclude Include="Program.h">
+    <ClInclude Include="Camera.h">
+      <Filter>Source Files\Scene\View</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Source Files\Scene\View</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowManager.h">
       <Filter>Source Files\Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureManager.h">
+      <Filter>Source Files\Engine\Texture</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -271,6 +262,18 @@
     </None>
     <None Include="resources\shaders\library.glsl">
       <Filter>Resource Files\Object shaders</Filter>
+    </None>
+    <None Include="light.vert">
+      <Filter>Resource Files\Deferred shaders</Filter>
+    </None>
+    <None Include="geom.vert">
+      <Filter>Resource Files\Deferred shaders</Filter>
+    </None>
+    <None Include="geom.frag">
+      <Filter>Resource Files\Deferred shaders</Filter>
+    </None>
+    <None Include="light.frag">
+      <Filter>Resource Files\Deferred shaders</Filter>
     </None>
   </ItemGroup>
 </Project>

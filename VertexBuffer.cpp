@@ -1,9 +1,9 @@
 #include "VertexBuffer.h"
 
-VertexBuffer::VertexBuffer(void_cptr ptr, std::size_t size) : Buffer(VBO) {
+VertexBuffer::VertexBuffer(void_cptr data, unsigned int count, VertexLayout layout) : Buffer(VBO), _count(count), _layout(layout) {
 	glGenBuffers(1, &_hid);
 	glBindBuffer(GL_ARRAY_BUFFER, _hid);
-	glBufferData(GL_ARRAY_BUFFER, size, ptr, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, count * layout.getStride(), data, GL_STATIC_DRAW);
 }
 
 VertexBuffer::~VertexBuffer() {

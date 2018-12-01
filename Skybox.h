@@ -18,7 +18,7 @@ class Skybox {
 					}
 
 				}
-			));
+			, GL_CLAMP_TO_EDGE_EXT));
 		}
 
 		Program& getProgram() { return _program; }

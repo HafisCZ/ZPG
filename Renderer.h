@@ -3,154 +3,152 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include <iostream>
+#include <functional>
 
 #include "Scene.h"
 #include "Framebuffer.h"
-#include "Window.h"
+
+class GBuffer {
+	private:
+		unsigned int _fbo;
+		unsigned int _textures[3];
+		unsigned int _depth;
+
+	public:
+		enum Textures {
+			POSITION, DIFFUSE, TEXTURE, length
+		};
+
+		GBuffer(unsigned int width, unsigned int height) {
+			glGenFramebuffers(1, &_fbo);
+			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _fbo);
+
+			glGenTextures(Textures::length, _textures);
+
+			for (unsigned int i = 0; i < Textures::length; i++) {
+				glBindTexture(GL_TEXTURE_2D, _textures[i]);
+
+				glTexImage2D(GL_TEXTURE_2D, 0, (i == Textures::TEXTURE ? GL_RGBA : GL_RGB16F), width, height, 0, (i == Textures::TEXTURE ? GL_RGBA : GL_RGB), (i == Textures::TEXTURE ? GL_UNSIGNED_BYTE : GL_FLOAT), nullptr);
+				glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+				glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, _textures[i], 0);
+			}
+
+			unsigned int* draw_buffers = new unsigned int[Textures::length];
+			for (unsigned int i = 0; i < Textures::length; i++) {
+				draw_buffers[i] = GL_COLOR_ATTACHMENT0 + i;
+			}
+
+			glDrawBuffers(Textures::length, draw_buffers);
+
+			glGenRenderbuffers(1, &_depth);
+			glBindRenderbuffer(GL_RENDERBUFFER, _depth);
+			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
+
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _depth);
+
+			unsigned int status;
+			if ((status = glCheckFramebufferStatus(GL_FRAMEBUFFER)) != GL_FRAMEBUFFER_COMPLETE) {
+				printf_s("GBUFFER ERROR: 0x%x\n", status);
+			}
+
+			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+		}
+
+		void bindTextures() {
+			for (unsigned int i = 0; i < Textures::length; i++) {
+				glActiveTexture(GL_TEXTURE0 + i);
+				glBindTexture(GL_TEXTURE_2D, _textures[i]);
+			}
+		}
+
+		void bind() {
+			glBindFramebuffer(GL_FRAMEBUFFER, _fbo);
+		}
+
+		void unbind() {
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		}
+
+		void copy(unsigned int width, unsigned int height) {
+			glBindFramebuffer(GL_READ_FRAMEBUFFER, _fbo);
+			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+			
+			glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		}
+};
 
 class Renderer {
 	private:
-		Program m_shad_program;
-		Program m_geom_program;
-		Program m_dark_program;
+		Program _geom;
+		Program _light;
+		GBuffer _buffer;
 
-		Framebuffer3D m_dark_buffer;
+		Model _sphere;
+		Model _quad;
+
+		unsigned int _width;
+		unsigned int _height;
 
 		void draw(Mesh& mesh) {
 			mesh.getVAO().bind();
 
-			if (mesh.hasIndices()) {
+			if (mesh.getIBO().getCount()) {
 				mesh.getIBO().bind();
-
+	
 				glDrawElements(GL_TRIANGLES, mesh.getIBO().getCount(), GL_UNSIGNED_INT, nullptr);
 			} else {
-				glDrawArrays(GL_TRIANGLES, 0, mesh.getProperty().vertex_cnt);
+				glDrawArrays(GL_TRIANGLES, 0, mesh.getVBO().getCount());		
 			}
+		}
+
+		void drawQuad() {
+			static float vertices[] = { -1.0f,  1.0f, 0.0f, 0.0f, 1.0f, -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f,  1.0f, 0.0f, 1.0f, 1.0f, 1.0f, -1.0f, 0.0f, 1.0f, 0.0f };
+			static VertexLayout layout = []() -> VertexLayout {
+				VertexLayout layout;
+				layout.addBlock<float>(3);
+				layout.addBlock<float>(2);
+
+				return layout;
+			}();
+
+			static Mesh mesh(vertices, nullptr, layout, Mesh::Property { 5, 0 }, MeshTexturePack());
+
+			mesh.getVAO().bind();
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 		}
 
 	public:
-		Renderer(const std::string& dark_filepath, const std::string& geom_filepath, const std::string& shad_filepath)
-			: m_dark_program(dark_filepath + ".vert", dark_filepath + ".frag", dark_filepath + ".geom"),
-				m_dark_buffer(1024)
-		{
-		
-		}
-
-		void clear() const {
-			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		}
-
-		void loop(Window& window, Scene& scene, std::function<void(void)> update) {
-
+		Renderer(unsigned int width, unsigned int height) : _width(width), _height(height), _buffer(width, height), _geom("geom.vert", "geom.frag"), _light("light.vert", "light.frag"),  _sphere("resources/models/sphere.obj"), _quad("resources/models/quad.obj") {
+			_light.bind();
+			_light.setUniform("gPosition", 0);
+			_light.setUniform("gNormal", 1);
+			_light.setUniform("gAlbedoSpec", 2);
 		}
 
 		void draw(Scene& scene) {
-			m_dark_buffer.begin();
-			glDisable(GL_CULL_FACE);
-
-			for (unsigned int i = 0; i < scene.getLights().size(); i++) {
-				if (PointLight* light = dynamic_cast<PointLight*>(scene.getLights()[i])) {
-					static glm::mat4 per_matrix = glm::perspective(glm::radians(90.0f), 1.0f, 1.0f, 25.0f);
-					static glm::mat4 faces[6];
-
-					glm::vec3 light_position = light->getPosition();
-					faces[0] = per_matrix * glm::lookAt(light_position, light_position + glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f));
-					faces[1] = per_matrix * glm::lookAt(light_position, light_position + glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f));
-					faces[2] = per_matrix * glm::lookAt(light_position, light_position + glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-					faces[3] = per_matrix * glm::lookAt(light_position, light_position + glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f));
-					faces[4] = per_matrix * glm::lookAt(light_position, light_position + glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, -1.0f, 0.0f));
-					faces[5] = per_matrix * glm::lookAt(light_position, light_position + glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, -1.0f, 0.0f));
-
-					m_dark_program.bind();
-					m_dark_program.setUniform("u_smaf", 25.0f);
-					m_dark_program.setUniform("u_smap", light_position);
-					for (unsigned int j = 0; j < 6; j++) {
-						m_dark_program.setUniform("u_smat[" + std::to_string(j) + "]", faces[j]);
-					}
-
-					for (auto& obj : scene.getObjectsForward()) {
-						m_dark_program.setUniform("u_model", obj->getMatrix());
-						for (auto& mesh : obj->getModel().getMeshes()) {
-							draw(*mesh);
-						}
-					}
-
-					break;
-				}
-			}
-
-			glEnable(GL_CULL_FACE);
-			m_dark_buffer.end(1200, 900);
-
-			bool updateCamera = scene.getCamera().isPending();
-			glm::mat4 cameraVP = scene.getCamera().get();
-			glm::mat4 cameraV = scene.getCamera().getViewMatrix();
-			glm::mat4 cameraP = scene.getCamera().getProjectionMatrix();
-			glm::vec3 cameraVV = scene.getCamera().getPosition();
+			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			
-			for (auto& obj : scene.getObjectsForward()) {
-				Program::Impl prog = obj->getProgram();
+			scene.getCamera().sync();
 
-				if (updateCamera) {
-					prog.Matrix_VP = cameraVP;
-					prog.Vector_V = cameraVV;
-				}
-
-				prog.Matrix_M = obj->getMatrix();
-				prog.Matrix_I = obj->getInverMatrix();
-
-				for (unsigned int i = 0; i < scene.getLights().size(); i++) {
-					if (PointLight* light = dynamic_cast<PointLight*>(scene.getLights()[i])) {
-						
-						prog.Lights_P[i] = light->getPosition();
-						prog.Lights_D[i] = light->getDiffuseIntensity();
-						prog.Lights_S[i] = light->getSpecularIntensity();
-						prog.Lights_LA[i] = light->getLinearAttenuation();
-						prog.Lights_QA[i] = light->getQuadraticAttenuation();
-
-						break;
-					}
-				}
-
-				prog.Lights = scene.getLights().size();
-				prog.Sampler3D_0 = 0;
-		
-				for (auto& mesh : obj->getModel().getMeshes()) {
-					bool has_diffuse = mesh->getTexturePack().requestHandleOfType(MeshTexturePack::Type::DIFFUSE) != nullptr;
-					prog.Sampler2D_0_Enable = has_diffuse;
-					prog.Sampler2D_0 = has_diffuse ? mesh->getTexturePack().requestHandleOfType(MeshTexturePack::Type::DIFFUSE)->bind() : 8;
-
-					bool has_specular = mesh->getTexturePack().requestHandleOfType(MeshTexturePack::Type::SPECULAR) != nullptr;
-					prog.Sampler2D_1_Enable = has_specular;
-					prog.Sampler2D_1 = has_specular ? mesh->getTexturePack().requestHandleOfType(MeshTexturePack::Type::SPECULAR)->bind() : 8;
-
-					bool has_normal = mesh->getTexturePack().requestHandleOfType(MeshTexturePack::Type::NORMAL) != nullptr;
-					prog.Sampler2D_2_Enable = has_normal;
-					prog.Sampler2D_2 = has_normal ? mesh->getTexturePack().requestHandleOfType(MeshTexturePack::Type::NORMAL)->bind() : 8;
-
-					bool has_height = mesh->getTexturePack().requestHandleOfType(MeshTexturePack::Type::HEIGHT) != nullptr;
-					prog.Sampler2D_3_Enable = has_height;
-					prog.Sampler2D_3 = has_height ? mesh->getTexturePack().requestHandleOfType(MeshTexturePack::Type::HEIGHT)->bind() : 8;
-					
-					draw(*mesh);
-				}
-			}
-
+			passGeom(scene);
+			passLight(scene);
+			passForward(scene);
+			
 			if (scene.getSkybox() != nullptr) {
 				glDepthMask(GL_FALSE);
 
 				Program& skyboxProg = scene.getSkybox()->getProgram();
 
 				skyboxProg.bind();
-				if (updateCamera) {
-					skyboxProg.setUniform("view", glm::mat4(glm::mat3(cameraV)));
-					skyboxProg.setUniform("proj", cameraP);
-				}
+				skyboxProg.setUniform("view", glm::mat4(glm::mat3(scene.getCamera().getViewMatrix())));
+				skyboxProg.setUniform("proj", scene.getCamera().getProjectionMatrix());
 
 				skyboxProg.setUniform("skybox", 8);
-				
+
 				scene.getSkybox()->getMesh().getTexturePack().requestHandleOfType(MeshTexturePack::Type::DIFFUSE)->bind(8);
 
 				draw(scene.getSkybox()->getMesh());
@@ -158,153 +156,79 @@ class Renderer {
 				glDepthMask(GL_TRUE);
 			}
 		}
-};
 
-/*
-class DeferredRenderer : public Renderer {
-	private:
-		unsigned int m_handle;
-		unsigned int m_render_handle;
+		void passForward(Scene& scene) {
+			for (auto& obj : scene.getObjectsDeferred()) {
+				Program& program = obj->getProgram();
 
-		unsigned int m_texture_handle_0;
-		unsigned int m_texture_handle_1;
-		unsigned int m_texture_handle_2;
+				program.bind();
+				program.setUniform("vp", scene.getCamera().getViewProjectionMatrix());
+				program.setUniform("u_model", obj->getMatrix());
 
-		unsigned int m_width;
-		unsigned int m_height;
+				for (auto& mesh : obj->getModel().getMeshes()) {
+					draw(*mesh);
+				}
+			}
+		}
 
-		Program m_program_pass_shading;
-		Program m_program_pass_geometry;
-	
-	public:
-		DeferredRenderer(unsigned int width, unsigned int height) : m_width(width), m_height(height), 
-			m_program_pass_shading("resources/shaders/deferred_render/shading_pass.vert", "resources/shaders/deferred_render/shading_pass.frag"), 
-			m_program_pass_geometry("resources/shaders/deferred_render/geometry_pass.vert", "resources/shaders/deferred_render/geometry_pass.frag")
-		{
-			glGenFramebuffers(1, &m_handle);
-			glBindFramebuffer(GL_FRAMEBUFFER, m_handle);
+		void passGeom(Scene& scene) {
+			_buffer.bind();
+			glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-			genTexture2D(m_texture_handle_0, GL_FLOAT, 0);
-			genTexture2D(m_texture_handle_1, GL_FLOAT, 1);
-			genTexture2D(m_texture_handle_2, GL_UNSIGNED_BYTE, 2);
+			_geom.bind();
+			_geom.setUniform("projection", scene.getCamera().getProjectionMatrix());
+			_geom.setUniform("view", scene.getCamera().getViewMatrix());
 
-			unsigned int attachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
-			glDrawBuffers(3, attachments);
+			for (auto& object : scene.getObjectsForward()) {
+				_geom.setUniform("model", object->getMatrix());
 
-			glGenRenderbuffers(1, &m_render_handle);
-			glBindRenderbuffer(GL_RENDERBUFFER, m_render_handle);
+				for (auto& mesh : object->getModel().getMeshes()) {
+					
+					if (mesh->getTexturePack().requestHandleOfType(MeshTexturePack::Type::DIFFUSE)) {
+						unsigned int diffuse = mesh->getTexturePack().requestHandleOfType(MeshTexturePack::Type::DIFFUSE)->bind();
+						_geom.setUniform("texture_diffuse1", diffuse);
+					}
 
-			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, m_width, m_height);
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_render_handle);
-			
-			if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+					if (mesh->getTexturePack().requestHandleOfType(MeshTexturePack::Type::SPECULAR)) {
+						unsigned int specular = mesh->getTexturePack().requestHandleOfType(MeshTexturePack::Type::SPECULAR)->bind();
+						_geom.setUniform("texture_specular1", specular);
+					}
+
+					draw(*mesh);
+				}
+			}
+
+			_buffer.unbind();
+		}
+
+		void passLight(Scene& scene) {
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+			_light.bind();
+			_buffer.bindTextures();
+
+			for (unsigned int i = 0; i < scene.getLights().size(); i++) {
+				Light* light = scene.getLights()[i];
 				
+				_light.setUniform("lights[" + std::to_string(i) + "].Position", light->getRaw()[1]);
+				_light.setUniform("lights[" + std::to_string(i) + "].Color", light->getRaw()[0]);
+
+				const float constant = light->getRaw()[3].x;
+				const float linear = light->getRaw()[3].y;
+				const float quadratic = light->getRaw()[3].z;
+
+				_light.setUniform("lights[" + std::to_string(i) + "].Linear", linear);
+				_light.setUniform("lights[" + std::to_string(i) + "].Quadratic", quadratic);
+
+				const float maxBrightness = std::fmaxf(std::fmaxf(light->getRaw()[0].r, light->getRaw()[0].g), light->getRaw()[0].b);
+				float radius = (-linear + std::sqrt(linear * linear - 4 * quadratic * (constant - (256.0f / 5.0f) * maxBrightness))) / (2.0f * quadratic);
+
+				_light.setUniform("lights[" + std::to_string(i) + "].Radius", radius);
 			}
 
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-			m_program_pass_shading.bind();
-			m_program_pass_shading.setUniform("target_position", 0);
-			m_program_pass_shading.setUniform("target_normal", 1);
-			m_program_pass_shading.setUniform("target_albedo", 2);
-		}
-
-		void geometry(glm::mat4& vp_matrix, std::vector<Object>& objects) {
-			glBindFramebuffer(GL_FRAMEBUFFER, m_handle);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-			m_program_pass_geometry.bind();
-			m_program_pass_geometry.setUniform("vp_matrix", vp_matrix);
-
-			for (auto& object : objects) {
-				m_program_pass_geometry.setUniform("m_matrix", object.getModelMatrix());
-				object.draw(*this, m_program_pass_geometry);
-			}
-
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		}
-
-		void shading(glm::vec3& view_position, std::vector<Light>& lights) {
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, m_texture_handle_0);
-
-			glActiveTexture(GL_TEXTURE1);
-			glBindTexture(GL_TEXTURE_2D, m_texture_handle_1);
-
-			glActiveTexture(GL_TEXTURE2);
-			glBindTexture(GL_TEXTURE_2D, m_texture_handle_2);
-
-			m_program_pass_shading.bind();
-			m_program_pass_shading.setUniform("view_position", view_position);
-
-			for (unsigned int i = 0; i < lights.size(); i++) {
-				const glm::vec3 color = lights[i].getColor();
-				const float linear = lights[i].getLinear();
-				const float quadratic = lights[i].getQuadratic();
-
-				m_program_pass_shading.setUniform("lights[" + std::to_string(i) + "].pos", lights[i].getPosition());
-				m_program_pass_shading.setUniform("lights[" + std::to_string(i) + "].col", color);
-				m_program_pass_shading.setUniform("lights[" + std::to_string(i) + "].lin", linear);
-				m_program_pass_shading.setUniform("lights[" + std::to_string(i) + "].qua", quadratic);
-
-				const float constant = 1.0f;
-				const float brightness_max = std::fmaxf(std::fmaxf(color.r, color.g), color.b);
-
-				float radius = (-linear + std::sqrt(linear * linear - 4 * quadratic * (constant - (256.0f / 5.0f) * brightness_max))) / (2.0f * quadratic);
-				m_program_pass_shading.setUniform("lights[" + std::to_string(i) + "].rad", radius);
-			}
-
+			_light.setUniform("viewPos", scene.getCamera().getPosition());
 			drawQuad();
 
-			glBindFramebuffer(GL_READ_FRAMEBUFFER, m_handle);
-			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-
-			glBlitFramebuffer(0, 0, m_width, m_height, 0, 0, m_width, m_height, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			_buffer.copy(_width, _height);
 		}
-
-		void forward(std::vector<Object>& objects) {
-			for (auto& object : objects) {
-				object.draw(*this);
-			}
-		}
-
-	private:
-		void drawQuad() {
-			static bool quad_init = false;
-
-			static std::unique_ptr<VertexArray> vao;
-			static std::unique_ptr<VertexBuffer> vbo;
-
-			if (!quad_init) {
-				vao = std::make_unique<VertexArray>();
-			
-				const float vertices[] = {
-					-1.0f,  1.0f,  0.0f,  0.0f,  1.0f,
-					-1.0f, -1.0f,  0.0f,  0.0f,  0.0f,
-					 1.0f,  1.0f,  0.0f,  1.0f,  1.0f,
-					 1.0f, -1.0f,  0.0f,  1.0f,  0.0f
-				};
-				vbo = std::make_unique<VertexBuffer>(vertices, 4 * 5 * sizeof(float));
-				vao->addBuffer(*vbo, VertexBufferLayout::DEFAULT_PT());
-
-				quad_init = true;
-			}
-
-			vao->bind();
-			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-		}
-
-		void genTexture2D(unsigned int& handle, unsigned int type, unsigned int attachment_slot) {
-			glGenTextures(1, &handle);
-			glBindTexture(GL_TEXTURE_2D, handle);
-
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, m_width, m_height, 0, GL_RGB, type, nullptr);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + attachment_slot, GL_TEXTURE_2D, handle, 0);
-		}
-};*/
+};

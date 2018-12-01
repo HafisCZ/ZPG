@@ -10,6 +10,7 @@ class Object : public TransformableObject {
 		Model& _model;
 
 	public:
+	
 		Object(Model& model, Program& program);
 		
 		inline Model& getModel() { return _model; }

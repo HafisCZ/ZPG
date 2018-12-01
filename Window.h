@@ -34,63 +34,6 @@ enum Culling {
 	FRONT = GL_FRONT
 };
 
-class InputManager {
-	private:
-		std::unordered_map<int, bool> _keys;
-		std::unordered_map<int, bool> _hist;
-
-		InputManager() {
-			_keys.reserve(255);
-			_hist.reserve(255);
-		}
-
-	public:
-		inline static InputManager getManager() {
-			static InputManager manager;
-			return manager;
-		}
-
-		inline bool isDown(int key) { return _keys[key]; }
-		inline bool wasDown(int key) { return _hist[key]; }
-		inline bool isPressed(int key) { return _keys[key] && !_hist[key]; }
-		inline void invalidate() { for (auto& key : _keys) _hist[key.first] = key.second; }
-			
-		inline void processKey(int key, int act) { _keys[key] = act; }
-};
-
-namespace WindowEvent {
-
-	enum WindowEventType {
-		RESIZE
-	};
-
-	struct Event {
-
-	};
-
-	struct ResizeEvent : Event {
-		int width;
-		int height;
-
-		ResizeEvent(int w, int h) : width(w), height(h) {}
-	};
-
-}
-
-class WindowEventManager {
-	private:
-		std::unordered_multimap<WindowEvent::WindowEventType, std::function<void(WindowEvent::Event)>> listeners;
-
-	public:
-		static WindowEventManager getManager() {
-			static WindowEventManager manager;
-			return manager;
-		}
-
-		void setListener(WindowEvent::WindowEventType type, std::function<void(WindowEvent::Event)> listener);
-		void fireEvent(WindowEvent::WindowEventType type, WindowEvent::Event event);
-};
-
 class Window {
 	private:
 		using glwPtr = GLFWwindow * ;
@@ -98,6 +41,7 @@ class Window {
 		class GLWrapper {
 			public:
 				static void init();
+				static void init(int major, int minor, Profile profile, int samples, glwPtr& ptr, int wpx, int hpx, const std::string& title, WindowStyle style);
 				static void setVersion(int major, int minor, Profile profile);
 				static void setSamples(unsigned int samples = 4);
 				static void createWindow(glwPtr& ptr, int wpx, int hpx, const std::string& title, WindowStyle style);
@@ -106,6 +50,7 @@ class Window {
 				static void setCulling(Culling cull);
 				static void enableDebugCallback();
 				static void enableKeyCallback(glwPtr ptr);
+				static void enablePointerCallback(glwPtr ptr);
 				static void enableCursorKeyCallback(glwPtr ptr);
 				static void disableCursor(glwPtr ptr);
 				static void enableResizeCallback(glwPtr ptr);
@@ -123,41 +68,11 @@ class Window {
 		};
 
 		glwPtr _glw;
-		Renderer* _renderer;
+		Renderer _renderer;
 
 	public:
-		Window(int wpx, int hpx, WindowStyle style = WINDOW, Renderer* renderer = nullptr) : _renderer(renderer) {
-			GLWrapper::init();
-			GLWrapper::setVersion(3, 3, CORE);
-			GLWrapper::setSamples(4);
-			GLWrapper::createWindow(_glw, wpx, hpx, "", style);
-			GLWrapper::enable(GL_BLEND, GL_DEPTH_TEST, GL_CULL_FACE, GL_MULTISAMPLE, GL_DEBUG_OUTPUT);
-			GLWrapper::setBlending(SRC_ALPHA, ONE_MINUS_SRC_ALPHA);
-			GLWrapper::setDepthFilter(LESS_OR_EQUAL);
-			GLWrapper::setCulling(BACK);
-			GLWrapper::enableDebugCallback();
-			GLWrapper::enableResizeCallback(_glw);
+		Window(int wpx, int hpx, WindowStyle style = WINDOW);
+		~Window();
 
-			/* GLWrapper::disableCursor(); */
-			GLWrapper::enableKeyCallback(_glw);
-			GLWrapper::enableCursorKeyCallback(_glw);
-
-			if (!_renderer) {
-				_renderer = Renderer("resources/shaders/renderer/renderer");
-			}
-		}
-
-		~Window() {
-			glfwTerminate();
-			exit(EXIT_SUCCESS);
-		}
-
-		void loop(Scene& scene, std::function<void()> workload) {
-			while (GLWrapper::beginFrame(_glw)) {
-				workload();
-				_renderer.draw(scene);
-
-				GLWrapper::endFrame(_glw);
-			}
-		}
+		void loop(Scene& scene, std::function<void()> workload);
 };

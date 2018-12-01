@@ -1,12 +1,35 @@
-#include "Window.h"		
+#include "Window.h"
 
-void WindowEventManager::setListener(WindowEvent::WindowEventType type, std::function<void(WindowEvent::Event)> listener) {
-	listeners.insert(std::make_pair(type, listener));
+#include "WindowEvent.h"
+#include "InputManager.h" 
+#include "WindowManager.h"
+
+Window::Window(int wpx, int hpx, WindowStyle style) : _renderer((GLWrapper::init(), GLWrapper::setVersion(3, 3, CORE), GLWrapper::createWindow(_glw, wpx, hpx, "", style), wpx), hpx) {
+	GLWrapper::enable(GL_DEPTH_TEST, GL_CULL_FACE, GL_MULTISAMPLE, GL_DEBUG_OUTPUT);
+	GLWrapper::setDepthFilter(LESS_OR_EQUAL);
+	GLWrapper::setCulling(BACK);
+
+	GLWrapper::enableDebugCallback();
+	GLWrapper::enableResizeCallback(_glw);
+	GLWrapper::enableKeyCallback(_glw);
+	GLWrapper::enableCursorKeyCallback(_glw);
+	GLWrapper::enablePointerCallback(_glw);
+
+	WindowManager::init(wpx, hpx);
 }
 
-void WindowEventManager::fireEvent(WindowEvent::WindowEventType type, WindowEvent::Event event) {
-	for (auto& listener : listeners) {
-		listener.second(event);
+Window::~Window() {
+	glfwTerminate();
+	exit(EXIT_SUCCESS);
+}
+
+void Window::loop(Scene& scene, std::function<void()> workload) {
+	while (GLWrapper::beginFrame(_glw)) {
+		workload();
+		_renderer.draw(scene);
+
+		WindowEventManager::getManager().fire();
+		GLWrapper::endFrame(_glw);
 	}
 }
 
@@ -14,6 +37,13 @@ void Window::GLWrapper::init() {
 	if (!glfwInit()) {
 		exit(EXIT_FAILURE);
 	}
+}
+
+void Window::GLWrapper::init(int major, int minor, Profile profile, int samples, glwPtr& ptr, int wpx, int hpx, const std::string& title, WindowStyle style) {
+	GLWrapper::init();
+	GLWrapper::setVersion(major, minor, profile);
+	GLWrapper::setSamples(samples);
+	GLWrapper::createWindow(ptr, wpx, hpx, title, style);
 }
 
 void Window::GLWrapper::setVersion(int major, int minor, Profile profile) {
@@ -60,6 +90,10 @@ void Window::GLWrapper::enableKeyCallback(glwPtr ptr) {
 	glfwSetKeyCallback(ptr, [](glwPtr, int key, int, int act, int) { InputManager::getManager().processKey(key, act); });
 }
 
+void Window::GLWrapper::enablePointerCallback(glwPtr ptr) {
+	glfwSetCursorPosCallback(ptr, [](glwPtr, double x, double y) { InputManager::getManager().processCursor(static_cast<float>(x), static_cast<float>(y)); });
+}
+
 void Window::GLWrapper::enableCursorKeyCallback(glwPtr ptr) {
 	glfwSetMouseButtonCallback(ptr, [](glwPtr, int but, int act, int) { InputManager::getManager().processKey(but, act); });
 }
@@ -69,7 +103,9 @@ void Window::GLWrapper::disableCursor(glwPtr ptr) {
 }
 
 void Window::GLWrapper::enableResizeCallback(glwPtr ptr) {
-	glfwSetWindowSizeCallback(ptr, [](glwPtr ptr, int w, int h) { WindowEventManager::getManager().fireEvent(WindowEvent::RESIZE, WindowEvent::ResizeEvent(w, h)); });
+	glfwSetWindowSizeCallback(ptr, [](glwPtr ptr, int w, int h) {
+		// void
+	});
 }
 
 void Window::GLWrapper::endFrame(glwPtr ptr) {

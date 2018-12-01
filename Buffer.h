@@ -4,15 +4,16 @@
 
 #include <unordered_map>
 
-using void_cptr = const void *;
+using void_ptr = void*;
+using void_cptr = const void*;
 
 enum BufferType {
-	VAO, VBO, IBO, FRAME, UNIFORM
+	VAO, IBO, VBO, FRAME, UNIFORM
 };
 
 class Buffer {
 	protected:
-		std::size_t _hid;
+		unsigned int _hid;
 		BufferType _type;
 
 	public:
@@ -28,6 +29,15 @@ class Buffer {
 class BufferGuard {
 	public:
 		static void attemptBind(BufferType type, Buffer* buffer);
-		static void attemptBind(Buffer* buffer);
+		static void attemptBind(Buffer& buffer);
 		static void unbind(BufferType type);
+
+		template <typename Arg> static void attemptBindEx(Arg& buffer) {
+			attemptBind(buffer);
+		}
+
+		template <typename Arg, typename ... Args> static void attemptBindEx(Arg& buffer, Args& ... buffers) {
+			attemptBind(buffer);
+			attemptBindEx(buffers ...);
+		}
 };

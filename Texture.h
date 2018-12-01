@@ -10,7 +10,6 @@
 
 #include "vendor/stb_image.h"
 
-
 #include <iostream>
 
 class Texture;
@@ -74,8 +73,6 @@ class Texture {
 		void bindUnsafe(unsigned int slot) {
 			glBindTexture(_type, _handle);
 			_binds++;
-
-			std::cout << "BIND\n";
 		}
 
 		unsigned long getBindCount() {

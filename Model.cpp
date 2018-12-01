@@ -87,13 +87,20 @@ void Model::loadViaAssimp(const std::string& filepath) {
 			mtp.setHandleOfType(MeshTexturePack::Type::HEIGHT, processMaterial(materials, aiTextureType_AMBIENT));
 			mtp.setHandleOfType(MeshTexturePack::Type::NORMAL, processMaterial(materials, aiTextureType_HEIGHT));
 
+			VertexLayout layout;
+			layout.addBlock<float>(3);
+			layout.addBlock<float>(3);
+			layout.addBlock<float>(2);
+			layout.addBlock<float>(3);
+			layout.addBlock<float>(3);
+
 			_meshes.emplace_back(
 				std::move(
 					std::make_shared<Mesh>(
 						vertices.data(),
 						indices.data(),
+						layout,
 						Mesh::Property{ vertices.size(), indices.size() },
-						VertexBufferLayout::DEFAULT_PNTTB(),
 						mtp
 					)
 				)
