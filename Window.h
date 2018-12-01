@@ -53,6 +53,7 @@ class Window {
 				static void enablePointerCallback(glwPtr ptr);
 				static void enableCursorKeyCallback(glwPtr ptr);
 				static void disableCursor(glwPtr ptr);
+				static void enableCursor(glwPtr ptr);
 				static void enableResizeCallback(glwPtr ptr);
 				static void endFrame(glwPtr ptr);
 				static bool beginFrame(glwPtr ptr);

@@ -1,12 +1,12 @@
 #version 330 core
 
-layout(location = 0) out vec4 color;
+layout(location = 0) out vec4 gColor;
 
-in vec3 tex;
+in vec3 TexCoords;
 
-uniform samplerCube skybox;
+uniform samplerCube uDiffuse;
 
 void main() 
 {
-	color = texture(skybox, tex);
+	gColor = texture(uDiffuse, TexCoords);
 }

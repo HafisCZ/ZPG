@@ -1,18 +1,19 @@
 #pragma once
 
-#include "Program.h"
 #include "Model.h"
 #include "TransformableObject.h"
 
+class ProgramAdapter;
+
 class Object : public TransformableObject {
 	private:
-		Program& _program;
+		ProgramAdapter& _program;
 		Model& _model;
 
 	public:
 	
-		Object(Model& model, Program& program);
+		Object(Model& model, ProgramAdapter& program);
 		
 		inline Model& getModel() { return _model; }
-		inline Program& getProgram() { return _program; }
+		inline ProgramAdapter* getAdapter() { return &_program; }
 };

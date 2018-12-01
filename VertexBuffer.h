@@ -26,6 +26,15 @@ class VertexLayout {
 			_stride += count * 4;
 		}
 
+		template<typename T> void addBlocks(unsigned int count) {
+			addBlock<T>(count);
+		}
+
+		template<typename T, typename ... V> void addBlocks(unsigned int count, V ... counts) {
+			addBlock<T>(count);
+			addBlocks<T>(counts ...);
+		}
+
 		inline std::vector<Block>& getBlocks() { return _blocks; }
 		inline unsigned int getStride() { return _stride; }
 

@@ -1,6 +1,5 @@
-
-
 #version 330 core
+
 layout (location = 0) out vec3 gPosition;
 layout (location = 1) out vec3 gNormal;
 layout (location = 2) out vec4 gAlbedoSpec;
@@ -8,19 +7,31 @@ layout (location = 2) out vec4 gAlbedoSpec;
 in vec2 TexCoords;
 in vec3 FragPos;
 in vec3 Normal;
+in vec3 TangentNormal;
 
-uniform sampler2D texture_diffuse1;
-uniform sampler2D texture_specular1;
+uniform bool uDiffuseEnabled;
+uniform bool uSpecularEnabled;
+uniform bool uNormalEnabled;
+
+uniform sampler2D uDiffuse;
+uniform sampler2D uSpecular;
+uniform sampler2D uNormal;
 
 void main()
 {    
-    // store the fragment position vector in the first gbuffer texture
     gPosition = FragPos;
-    // also store the per-fragment normals into the gbuffer
-    gNormal = normalize(Normal);
-    // and the diffuse per-fragment color
-    gAlbedoSpec.rgb = texture(texture_diffuse1, TexCoords).rgb;
-    // store specular intensity in gAlbedoSpec's alpha component
-    gAlbedoSpec.a = texture(texture_specular1, TexCoords).r;
+
+	if (uNormalEnabled) {
+		gNormal = texture(uNormal, TexCoords).rgb * 2.0 - 1.0;
+	} else {
+		if (uDiffuseEnabled) {
+			gNormal = Normal;
+		} else {
+			gNormal = vec3(1.0);
+		}
+	}
+	
+    gAlbedoSpec.rgb = uDiffuseEnabled ? texture(uDiffuse, TexCoords).rgb : vec3(0.1);
+    gAlbedoSpec.a = uSpecularEnabled ? texture(uSpecular, TexCoords).r : 0.0;
 }
 

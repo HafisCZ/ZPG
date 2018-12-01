@@ -9,6 +9,7 @@ Window::Window(int wpx, int hpx, WindowStyle style) : _renderer((GLWrapper::init
 	GLWrapper::setDepthFilter(LESS_OR_EQUAL);
 	GLWrapper::setCulling(BACK);
 
+	GLWrapper::enableCursor(_glw);
 	GLWrapper::enableDebugCallback();
 	GLWrapper::enableResizeCallback(_glw);
 	GLWrapper::enableKeyCallback(_glw);
@@ -16,6 +17,14 @@ Window::Window(int wpx, int hpx, WindowStyle style) : _renderer((GLWrapper::init
 	GLWrapper::enablePointerCallback(_glw);
 
 	WindowManager::init(wpx, hpx);
+
+	WindowEventManager::getManager().setListener(WindowEvent::CURSOR_SHOWN, [this](WindowEvent::Event* e) {
+		if (((WindowEvent::CursorShownEvent*)e)->shown) {
+			GLWrapper::enableCursor(_glw);
+		} else {
+			GLWrapper::disableCursor(_glw);
+		}
+	});
 }
 
 Window::~Window() {
@@ -100,6 +109,10 @@ void Window::GLWrapper::enableCursorKeyCallback(glwPtr ptr) {
 
 void Window::GLWrapper::disableCursor(glwPtr ptr) {
 	glfwSetInputMode(ptr, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+}
+
+void Window::GLWrapper::enableCursor(glwPtr ptr) {
+	glfwSetInputMode(ptr, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 }
 
 void Window::GLWrapper::enableResizeCallback(glwPtr ptr) {

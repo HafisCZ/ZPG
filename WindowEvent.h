@@ -8,11 +8,17 @@
 namespace WindowEvent {
 
 	enum WindowEventType {
-		GLOBAL
+		GLOBAL, CURSOR_SHOWN
 	};
 
 	struct Event {
 		WindowEventType type;
+	};
+
+	struct CursorShownEvent : public Event {
+		bool shown;
+
+		CursorShownEvent(bool shown) : Event{ CURSOR_SHOWN }, shown(shown) {}
 	};
 }
 

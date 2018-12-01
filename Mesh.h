@@ -10,49 +10,42 @@
 
 using TextureHandle = std::shared_ptr<Texture>;
 
-class MeshTexturePack {
-	public:
-		enum class Type {
-			DIFFUSE, NORMAL, HEIGHT, SPECULAR
-		};
+namespace MeshData {
 
-	private:
-		std::unordered_map<Type, TextureHandle> _textures;
+	enum class Texture {
+		DIFFUSE, NORMAL, HEIGHT, SPECULAR
+	};
 
-	public:
-		inline TextureHandle requestHandleOfType(Type type) {
-			return _textures[type];
-		}
+	class Pack {
+		private:
+			std::unordered_map<Texture, TextureHandle> _textures;
 
-		void setHandleOfType(Type type, TextureHandle handle) {
-			_textures[type] = handle;
-		}
-};
+		public:
+			inline TextureHandle getHandle(Texture type) { return _textures[type]; }
+			void setHandle(Texture type, TextureHandle handle) { _textures[type] = handle; }
+	};
+
+	struct Property {
+		std::size_t vertex_cnt;
+		std::size_t indice_cnt;
+	};
+
+}
 
 class Mesh {
-	public:
-		struct Property {
-			std::size_t vertex_cnt;
-			std::size_t indice_cnt;
-		};
-
 	private:
 		VertexArray _vao;
 		VertexBuffer _vbo;
 		IndexBuffer _ibo;
-		Property _prop;
-		MeshTexturePack _pack;
+		MeshData::Pack _pack;
 
 	public:
-		Mesh(void* vptr, void* iptr, VertexLayout layout, Property prop, MeshTexturePack pack) : _prop(prop), _pack(pack), _vao(), _vbo(vptr, prop.vertex_cnt, layout), _ibo(iptr, prop.indice_cnt) {
-			_vao.setBuffer(_vbo);
-		}
+		Mesh(void* vptr, void* iptr, VertexLayout layout, MeshData::Property prop, MeshData::Pack pack) : _pack(pack), _vao(), _vbo(vptr, prop.vertex_cnt, layout), _ibo((_vao.setBuffer(_vbo), iptr), prop.indice_cnt) { }
 
-		inline const bool hasIndices() const { return _prop.indice_cnt; }
+		inline const bool hasIndices() { return _ibo.getCount(); }
 
 		inline VertexArray& getVAO() { return _vao; }
 		inline VertexBuffer& getVBO() { return _vbo; }
 		inline IndexBuffer& getIBO() { return _ibo; }
-		inline Property& getProperty() { return _prop; }
-		inline MeshTexturePack& getTexturePack() { return _pack; }
+		inline MeshData::Pack& getTexturePack() { return _pack; }
 };

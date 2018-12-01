@@ -21,12 +21,6 @@
     <Filter Include="Source Files\Engine">
       <UniqueIdentifier>{fd67eeef-7359-4906-aeec-a45f542b7659}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Engine\Headers">
-      <UniqueIdentifier>{d3b479cd-fce9-4ea1-abb0-e037ab36f15f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Engine\Sources">
-      <UniqueIdentifier>{fa583eb6-f956-4b77-9cda-dccffd721842}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Engine\Vendor">
       <UniqueIdentifier>{0fdf4172-63b9-4ac8-9a4f-54c42e450064}</UniqueIdentifier>
     </Filter>
@@ -60,6 +54,21 @@
     <Filter Include="Source Files\Scene\View">
       <UniqueIdentifier>{f2b266ff-31b2-4a24-96c0-69f61939496a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Engine\Program">
+      <UniqueIdentifier>{8df9f57c-7bf1-416d-900e-bdf006536adf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Buffer\Data">
+      <UniqueIdentifier>{93df8b95-54c4-4a18-9dca-c74fe888e7c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Buffer\Frame">
+      <UniqueIdentifier>{0e777f6f-dad6-4a8f-9ee9-4c529a23c340}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Buffer\Ext">
+      <UniqueIdentifier>{1e36e251-097d-422f-a3a4-4397218472bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Scene\Model">
+      <UniqueIdentifier>{16731ec6-f1e9-404d-98e8-ebb83729dad2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="vendor\stb_image.cpp">
@@ -68,19 +77,7 @@
     <ClCompile Include="Source.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Framebuffer.cpp">
-      <Filter>Source Files\Engine\Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Program.cpp">
-      <Filter>Source Files\Engine\Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderer.cpp">
-      <Filter>Source Files\Engine\Sources</Filter>
-    </ClCompile>
     <ClCompile Include="Model.cpp">
-      <Filter>Source Files\Scene\Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Mesh.cpp">
       <Filter>Source Files\Scene\Sources</Filter>
     </ClCompile>
     <ClCompile Include="Object.cpp">
@@ -107,18 +104,6 @@
     <ClCompile Include="Buffer.cpp">
       <Filter>Source Files\Engine\Buffer</Filter>
     </ClCompile>
-    <ClCompile Include="IndexBuffer.cpp">
-      <Filter>Source Files\Engine\Buffer</Filter>
-    </ClCompile>
-    <ClCompile Include="VertexBuffer.cpp">
-      <Filter>Source Files\Engine\Buffer</Filter>
-    </ClCompile>
-    <ClCompile Include="VertexArray.cpp">
-      <Filter>Source Files\Engine\Buffer</Filter>
-    </ClCompile>
-    <ClCompile Include="UniformBuffer.cpp">
-      <Filter>Source Files\Engine\Buffer</Filter>
-    </ClCompile>
     <ClCompile Include="Texture.cpp">
       <Filter>Source Files\Engine\Texture</Filter>
     </ClCompile>
@@ -131,6 +116,33 @@
     <ClCompile Include="WindowManager.cpp">
       <Filter>Source Files\Engine\Core</Filter>
     </ClCompile>
+    <ClCompile Include="Renderer.cpp">
+      <Filter>Source Files\Engine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Program.cpp">
+      <Filter>Source Files\Engine\Program</Filter>
+    </ClCompile>
+    <ClCompile Include="IndexBuffer.cpp">
+      <Filter>Source Files\Engine\Buffer\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="VertexArray.cpp">
+      <Filter>Source Files\Engine\Buffer\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="VertexBuffer.cpp">
+      <Filter>Source Files\Engine\Buffer\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="Framebuffer.cpp">
+      <Filter>Source Files\Engine\Buffer\Frame</Filter>
+    </ClCompile>
+    <ClCompile Include="GBuffer.cpp">
+      <Filter>Source Files\Engine\Buffer\Frame</Filter>
+    </ClCompile>
+    <ClCompile Include="UniformBuffer.cpp">
+      <Filter>Source Files\Engine\Buffer\Ext</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Source Files\Scene\Model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="vendor\stb_image.h">
@@ -138,18 +150,6 @@
     </ClInclude>
     <ClInclude Include="Application.h">
       <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Program.h">
-      <Filter>Source Files\Engine\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Framebuffer.h">
-      <Filter>Source Files\Engine\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderer.h">
-      <Filter>Source Files\Engine\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Mesh.h">
-      <Filter>Source Files\Scene\Headers</Filter>
     </ClInclude>
     <ClInclude Include="Model.h">
       <Filter>Source Files\Scene\Headers</Filter>
@@ -169,9 +169,6 @@
     <ClInclude Include="Skybox.h">
       <Filter>Source Files\Scene\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="ModelLoader.h">
-      <Filter>Source Files\Scene\Headers</Filter>
-    </ClInclude>
     <ClInclude Include="WindowEvent.h">
       <Filter>Source Files\Engine\Event</Filter>
     </ClInclude>
@@ -182,18 +179,6 @@
       <Filter>Source Files\Engine\Core</Filter>
     </ClInclude>
     <ClInclude Include="Buffer.h">
-      <Filter>Source Files\Engine\Buffer</Filter>
-    </ClInclude>
-    <ClInclude Include="IndexBuffer.h">
-      <Filter>Source Files\Engine\Buffer</Filter>
-    </ClInclude>
-    <ClInclude Include="VertexBuffer.h">
-      <Filter>Source Files\Engine\Buffer</Filter>
-    </ClInclude>
-    <ClInclude Include="VertexArray.h">
-      <Filter>Source Files\Engine\Buffer</Filter>
-    </ClInclude>
-    <ClInclude Include="UniformBuffer.h">
       <Filter>Source Files\Engine\Buffer</Filter>
     </ClInclude>
     <ClInclude Include="Texture.h">
@@ -208,8 +193,35 @@
     <ClInclude Include="WindowManager.h">
       <Filter>Source Files\Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="TextureManager.h">
-      <Filter>Source Files\Engine\Texture</Filter>
+    <ClInclude Include="Renderer.h">
+      <Filter>Source Files\Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="ProgramAdapter.h">
+      <Filter>Source Files\Engine\Program</Filter>
+    </ClInclude>
+    <ClInclude Include="Program.h">
+      <Filter>Source Files\Engine\Program</Filter>
+    </ClInclude>
+    <ClInclude Include="IndexBuffer.h">
+      <Filter>Source Files\Engine\Buffer\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexArray.h">
+      <Filter>Source Files\Engine\Buffer\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexBuffer.h">
+      <Filter>Source Files\Engine\Buffer\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Framebuffer.h">
+      <Filter>Source Files\Engine\Buffer\Frame</Filter>
+    </ClInclude>
+    <ClInclude Include="GBuffer.h">
+      <Filter>Source Files\Engine\Buffer\Frame</Filter>
+    </ClInclude>
+    <ClInclude Include="UniformBuffer.h">
+      <Filter>Source Files\Engine\Buffer\Ext</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Source Files\Scene\Model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

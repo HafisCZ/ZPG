@@ -11,11 +11,6 @@ Model::Model(const std::string& filepath) {
 	loadViaAssimp(filepath);
 }
 
-Model::Model(const std::string& filepath, std::shared_ptr<Texture>& cubetex) {
-	loadViaAssimp(filepath);
-	_meshes[0]->getTexturePack().setHandleOfType(MeshTexturePack::Type::DIFFUSE, cubetex);
-}
-
 void Model::loadViaAssimp(const std::string& filepath) {
 	Assimp::Importer importer;
 
@@ -81,18 +76,14 @@ void Model::loadViaAssimp(const std::string& filepath) {
 				}
 			);
 
-			MeshTexturePack mtp;
-			mtp.setHandleOfType(MeshTexturePack::Type::DIFFUSE, processMaterial(materials, aiTextureType_DIFFUSE));
-			mtp.setHandleOfType(MeshTexturePack::Type::SPECULAR, processMaterial(materials, aiTextureType_SPECULAR));
-			mtp.setHandleOfType(MeshTexturePack::Type::HEIGHT, processMaterial(materials, aiTextureType_AMBIENT));
-			mtp.setHandleOfType(MeshTexturePack::Type::NORMAL, processMaterial(materials, aiTextureType_HEIGHT));
+			MeshData::Pack pack;
+			pack.setHandle(MeshData::Texture::DIFFUSE, processMaterial(materials, aiTextureType_DIFFUSE));
+			pack.setHandle(MeshData::Texture::SPECULAR, processMaterial(materials, aiTextureType_SPECULAR));
+			pack.setHandle(MeshData::Texture::HEIGHT, processMaterial(materials, aiTextureType_AMBIENT));
+			pack.setHandle(MeshData::Texture::NORMAL, processMaterial(materials, aiTextureType_HEIGHT));
 
 			VertexLayout layout;
-			layout.addBlock<float>(3);
-			layout.addBlock<float>(3);
-			layout.addBlock<float>(2);
-			layout.addBlock<float>(3);
-			layout.addBlock<float>(3);
+			layout.addBlocks<float>(3, 3, 2, 3, 3);
 
 			_meshes.emplace_back(
 				std::move(
@@ -100,8 +91,8 @@ void Model::loadViaAssimp(const std::string& filepath) {
 						vertices.data(),
 						indices.data(),
 						layout,
-						Mesh::Property{ vertices.size(), indices.size() },
-						mtp
+						MeshData::Property { vertices.size(), indices.size() },
+						pack
 					)
 				)
 			);

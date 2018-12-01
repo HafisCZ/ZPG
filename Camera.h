@@ -18,6 +18,8 @@ class Camera {
 		glm::vec2 _angle;
 		glm::vec2 _last;
 
+		bool _showCursor;
+
 	public:
 		Camera();
 		Camera(unsigned int width, unsigned int height);

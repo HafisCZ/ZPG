@@ -74,7 +74,7 @@ class PointLight : public Light, public SpatialObject {
 			_data[1] = position;
 			_data[2].y = diff;
 			_data[2].z = spec;
-			_data[3].x = 0.0f;
+			_data[3].x = 1.0f;
 			_data[3].y = lin;
 			_data[3].z = qad;
 		
