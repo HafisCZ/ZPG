@@ -15,7 +15,8 @@ struct Defaults {
 	static const unsigned int TEXTURE_SLOT_POSITION = 0;
 	static const unsigned int TEXTURE_SLOT_NORMAL = 1;
 	static const unsigned int TEXTURE_SLOT_TEXTURE = 2;
-	static const unsigned int TEXTURE_SLOT_SHADOW = 3;
+	static const unsigned int TEXTURE_SLOT_POINT_SHADOW = 3;
+	static const unsigned int TEXTURE_SLOT_DIRECTIONAL_SHADOW = 4;
 
 };
 
@@ -40,6 +41,8 @@ class Renderer {
 		void draw(Scene& scene);
 
 		void passForward(Scene& scene);
+
+		void passShading(Scene& scene);
 		void passGeom(Scene& scene);
 		void passLight(Scene& scene);
 };

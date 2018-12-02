@@ -21,5 +21,5 @@ class Framebuffer3D : public Framebuffer {
 	public:
 		Framebuffer3D(unsigned int size);
 
-		void unbind(unsigned int width, unsigned int size) const override;
+		void unbind(unsigned int slot, unsigned int width, unsigned int size) const;
 };

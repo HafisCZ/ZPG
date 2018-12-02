@@ -2,10 +2,10 @@
 
 in vec4 FragPos;
 
-uniform vec3 u_smap;
-uniform float u_smaf;
+uniform vec3 uPosition;
+uniform float uFar;
 
 void main() 
 {
-	gl_FragDepth = length(FragPos.xyz - u_smap) / u_smaf;
+	gl_FragDepth = length(FragPos.xyz - uPosition) / uFar;
 }

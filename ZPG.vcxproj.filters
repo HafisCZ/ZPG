@@ -15,9 +15,6 @@
     <Filter Include="Resource Files\Shadow shaders">
       <UniqueIdentifier>{4c3d92b4-e4d9-4129-b6e0-b6941e40f811}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files\Textures">
-      <UniqueIdentifier>{aaca78b8-f4e4-420a-861d-683afb067b22}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Engine">
       <UniqueIdentifier>{fd67eeef-7359-4906-aeec-a45f542b7659}</UniqueIdentifier>
     </Filter>
@@ -223,37 +220,11 @@
     <ClInclude Include="Mesh.h">
       <Filter>Source Files\Scene\Model</Filter>
     </ClInclude>
+    <ClInclude Include="Constants.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="resources\textures\spc.png">
-      <Filter>Resource Files\Textures</Filter>
-    </Image>
-    <Image Include="resources\textures\tex.png">
-      <Filter>Resource Files\Textures</Filter>
-    </Image>
-    <Image Include="resources\textures\tile.png">
-      <Filter>Resource Files\Textures</Filter>
-    </Image>
-    <Image Include="resources\textures\tile_spc.png">
-      <Filter>Resource Files\Textures</Filter>
-    </Image>
-    <Image Include="resources\textures\grass.png">
-      <Filter>Resource Files\Textures</Filter>
-    </Image>
-    <Image Include="resources\textures\grass_spc.png">
-      <Filter>Resource Files\Textures</Filter>
-    </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="resources\shaders\shadow.vert">
-      <Filter>Resource Files\Shadow shaders</Filter>
-    </None>
-    <None Include="resources\shaders\shadow.frag">
-      <Filter>Resource Files\Shadow shaders</Filter>
-    </None>
-    <None Include="resources\shaders\shadow.geom">
-      <Filter>Resource Files\Shadow shaders</Filter>
-    </None>
     <None Include="resources\shaders\default.frag">
       <Filter>Resource Files\Object shaders</Filter>
     </None>
@@ -286,6 +257,15 @@
     </None>
     <None Include="light.frag">
       <Filter>Resource Files\Deferred shaders</Filter>
+    </None>
+    <None Include="shadow.frag">
+      <Filter>Resource Files\Shadow shaders</Filter>
+    </None>
+    <None Include="shadow.geom">
+      <Filter>Resource Files\Shadow shaders</Filter>
+    </None>
+    <None Include="shadow.vert">
+      <Filter>Resource Files\Shadow shaders</Filter>
     </None>
   </ItemGroup>
 </Project>

@@ -1,9 +1,19 @@
 #pragma once
 
+#include <glm/gtc/matrix_transform.hpp>
+
 #include "Scene.h"
 #include "Program.h"
 
+#define SLASH(x) x##/ 
+#define COMMENT SLASH(/)
+
 #define FORWARD_CONSTRUCTOR(x) x##(Program& program) : ProgramAdapter(program)
+#define CUSTOM_ADAPTER(x) class x : public ProgramAdapter { public: FORWARD_CONSTRUCTOR(x) {} COMMENT
+
+#define MESH void set(Mesh& mesh) override
+#define OBJECT void set(Object& object) override
+#define SCENE void set(Scene& scene) override
 
 class ProgramAdapter {
 	protected:
@@ -46,6 +56,46 @@ namespace Adapters {
 				_program.setUniform("uDiffuse", diffuse ? mesh.getTexturePack().getHandle(MeshData::Texture::DIFFUSE)->bind() : 8);
 				_program.setUniform("uSpecular", specular ? mesh.getTexturePack().getHandle(MeshData::Texture::SPECULAR)->bind() : 8);
 				_program.setUniform("uNormal", normal ? mesh.getTexturePack().getHandle(MeshData::Texture::NORMAL)->bind() : 8);
+			}
+	};
+
+	class ShadingPassProgramAdapter : ProgramAdapter {
+		public:
+			FORWARD_CONSTRUCTOR(ShadingPassProgramAdapter) {}
+
+			void set(Object& object) override {
+				_program.setUniform("uModel", object.getMatrix());
+			}
+
+			void set(Scene& scene) override {
+				for (auto& light : scene.getLights()) {
+					if (light->getType() == POINT_WITH_SHADOW) {
+						static glm::mat4 perspective = glm::perspective(glm::half_pi<float>(), 1.0f, 1.0f, 100.0f);
+						static glm::vec3 vectors[] = {
+							{ 1.0f, 0.0f, 0.0f }, { -1.0f, 0.0f, 0.0f },
+							{ 0.0f, 1.0f, 0.0f }, { 0.0f, -1.0f, 0.0f },
+							{ 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, -1.0f }
+						};
+
+						glm::mat4 faces[6];
+						for (unsigned int i = 0; i < 6; i++) {
+							faces[i] = perspective * glm::lookAt(light->getRaw()[1], light->getRaw()[1] + vectors[i], i == 2 ? vectors[4] : (i == 3 ? vectors[5] : vectors[3]));
+						}
+
+						_program.setUniform("uFar", 100.0f);
+						_program.setUniform("uPosition", light->getRaw()[1]);
+
+						for (unsigned int i = 0; i < 6; i++) {
+							_program.setUniform("uFaces[" + std::to_string(i) + "]", faces[i]);
+						}
+
+						return;
+					}
+				}
+			}
+
+			void set(Mesh& mesh) override {
+
 			}
 	};
 
@@ -99,7 +149,8 @@ namespace Adapters {
 					float radius = (-linear + std::sqrt(linear * linear - 4 * quadratic * (constant - (256.0f / 5.0f) * maxBrightness))) / (2.0f * quadratic);
 
 					_program.setUniform("lights[" + std::to_string(index) + "].Radius", radius);
-
+					_program.setUniform("lights[" + std::to_string(index) + "].Shadow", light->getType() >= 2);
+	
 					index++;
 				}
 

@@ -5,7 +5,7 @@
 #include <array>
 
 enum LightType {
-	POINT, DIRECTIONAL
+	POINT, DIRECTIONAL, POINT_WITH_SHADOW, DIRECTIONAL_WIDTH_SHADOW
 };
 
 class Light {
@@ -79,6 +79,8 @@ class PointLight : public Light, public SpatialObject {
 			_data[3].z = qad;
 		
 		}
+
+		void set(LightType t) { _type = t; }
 
 		inline float getDiffuseIntensity() { return _di; }
 		inline float getSpecularIntensity() { return _si; }

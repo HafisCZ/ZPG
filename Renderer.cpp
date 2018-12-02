@@ -1,5 +1,7 @@
 #include "Renderer.h"
 
+#include <glm/gtc/matrix_transform.hpp>
+
 void Renderer::draw(Mesh& mesh) {
 	mesh.getVAO().bind();
 
@@ -32,12 +34,13 @@ Renderer::Renderer(unsigned int width, unsigned int height) :
 	_geom("geom.vert", "geom.frag"), 
 	_light("light.vert", "light.frag"),
 	_shading("shadow.vert", "shadow.frag", "shadow.geom"),
-	_shadows(2048)
+	_shadows(4096)
 {
 	_light.bind();
 	_light.setUniform("gPosition", Defaults::TEXTURE_SLOT_POSITION);
 	_light.setUniform("gNormal", Defaults::TEXTURE_SLOT_NORMAL);
 	_light.setUniform("gAlbedoSpec", Defaults::TEXTURE_SLOT_TEXTURE);
+	_light.setUniform("gShadowPoint", Defaults::TEXTURE_SLOT_POINT_SHADOW);
 }
 
 void Renderer::draw(Scene& scene) {
@@ -47,7 +50,9 @@ void Renderer::draw(Scene& scene) {
 	scene.getCamera().sync();
 
 	passGeom(scene);
+	passShading(scene);
 	passLight(scene);
+
 	passForward(scene);
 
 	if (scene.getSkybox() != nullptr) {
@@ -74,6 +79,31 @@ void Renderer::passForward(Scene& scene) {
 			adapter->set(*mesh);
 
 			draw(*mesh);
+		}
+	}
+}
+
+void Renderer::passShading(Scene& scene) {
+	for (auto& light : scene.getLights()) {
+		if (light->getType() == POINT_WITH_SHADOW) {
+			_shadows.bind();
+			glDisable(GL_CULL_FACE);
+
+			Adapters::ShadingPassProgramAdapter adapter(_shading);
+			adapter.set(scene);
+
+			for (auto& object : scene.getObjectsDeferred()) {
+				adapter.set(*object);
+
+				for (auto& mesh : object->getModel().getMeshes()) {
+					draw(*mesh);
+				}
+			}
+
+			glEnable(GL_CULL_FACE);
+			_shadows.unbind(Defaults::TEXTURE_SLOT_POINT_SHADOW, _width, _height);
+
+			return;
 		}
 	}
 }

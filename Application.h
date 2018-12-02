@@ -5,25 +5,23 @@
 
 #include "Window.h"
 #include "InputManager.h"
+#include "Constants.h"
 
 #include <random>
 #include <glm/gtc/matrix_transform.hpp>
 
-class MyAdapter : public ProgramAdapter {
-	public:
-		FORWARD_CONSTRUCTOR(MyAdapter) {}
+CUSTOM_ADAPTER(MyAdapter) {
+	MESH { 
+	
+	}
 
-		void set(Object& object) override {
-			_program.setUniform("u_model", object.getMatrix());
-		}
+	OBJECT {
+		_program.setUniform("u_model", object.getMatrix());
+	}
 
-		void set(Scene& scene) override {
-			_program.setUniform("vp", scene.getCamera().getViewProjectionMatrix());
-		}
-
-		void set(Mesh& mesh) override {
-
-		}
+	SCENE {
+		_program.setUniform("vp", scene.getCamera().getViewProjectionMatrix());
+	}
 };
 
 class Application {
@@ -51,18 +49,23 @@ class Application {
 			scene.setSkybox(object3);
 
 			std::random_device rnd;
-			std::uniform_real_distribution<float> dist(-10.0f, 10.0f);
+			std::uniform_real_distribution<float> dist(-20.0f, 20.0f);
+			std::uniform_real_distribution<float> col(0.0f, 1.0f);
 			PointLight lights[30];
-
+			Object* objects[30];
 			for (int i = 0; i < 5; i++) {
 				glm::vec3 pos = glm::vec3(dist(rnd), 5.0f, dist(rnd));
-
-				lights[i] = PointLight(glm::vec3(1.0f), pos, 0.5f, 0.2f, 0.007f, 0.0002f);
+				objects[i] = new Object(test2, adapter);
+				objects[i]->setTransformation(glm::scale(glm::mat4(1.0f), glm::vec3(0.5f)));
+				objects[i]->setPosition(pos);
+				lights[i] = PointLight(i == 0 ? Color::getColor(Color::RED) : 0.5f * glm::vec3(col(rnd), col(rnd), col(rnd)), pos, 1.0f, 0.8f, 0.007f, 0.0002f);
+				lights[i].set(i == 0 ? POINT_WITH_SHADOW : POINT);
 				scene.addLight(lights[i]);
+				scene.addForward(*objects[i]);
 			}
 			
 			Object floorObj(floor, adapter);
-			floorObj.setTransformation(glm::scale(glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f)), glm::vec3(25.0f)));
+			floorObj.setTransformation(glm::scale(glm::mat4(1.0f), glm::vec3(25.0f)));
 
 			scene.addDeferred(floorObj);
 
