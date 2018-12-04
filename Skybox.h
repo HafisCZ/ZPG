@@ -5,11 +5,10 @@
 
 class Skybox {
 	private:
-		Program& _program;
 		Model _model;
 
 	public:
-		Skybox(const std::string& model, Program& program) : _program(program), _model(model + "/skybox.obj") {
+		Skybox(const std::string& model) : _model(model + "/skybox.obj") {
 			_model.getMeshes()[0]->getTexturePack().setHandle(MeshData::Texture::DIFFUSE, TextureLoader::load(
 				std::vector<std::string> {
 					{
@@ -22,6 +21,5 @@ class Skybox {
 			, GL_CLAMP_TO_EDGE_EXT));
 		}
 
-		Program& getProgram() { return _program; }
 		Mesh& getMesh() { return *_model.getMeshes()[0]; }
 };

@@ -10,7 +10,7 @@ Camera::Camera() : Camera(WindowManager::getManager().getWindowWidth(), WindowMa
 
 Camera::Camera(unsigned int width, unsigned int height) :
 	_angle(0.0f, glm::pi<float>() / 2.0f), _position(0.0f),
-	_direction(1.0f, 1.0f, 0.0f), _upVector(0.0f, 1.0f, 0.0f), _last((float)width / 2.0f, (float)height / 2.0f),
+	_direction(1.0f, 1.0f, 0.0f), _upVector(0.0f, 1.0f, 0.0f), _last((float)width / 2.0f, (float)height / 2.0f), 
 	_view(glm::lookAt(_position, _position + _direction, _upVector)),
 	_projection(glm::perspective(glm::radians(60.0f), (float)width / height, 0.1f, 100.0f)),
 	_viewProjection(_projection * _view), _showCursor(false) {
@@ -30,13 +30,14 @@ void Camera::setCursor(float x, float y) {
 
 void Camera::sync() {
 	bool control = InputManager::getManager().isDown(70);
+
 	if (control != _showCursor) {
 		WindowEventManager::getManager().createEvent(new WindowEvent::CursorShownEvent(!control));
 		_showCursor = control;
 	}
 
+	auto cursor = InputManager::getManager().getCursor();
 	if (control) {
-		auto cursor = InputManager::getManager().getCursor();
 		setCursor(cursor[0], cursor[1]);
 	}
 

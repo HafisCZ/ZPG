@@ -21,23 +21,7 @@ class Buffer {
 		virtual ~Buffer() {}
 
 		virtual void bind() = 0;
-		virtual void unbind() = 0;
+		virtual void unbind();
 
 		inline BufferType getType() { return _type; }
-};
-
-class BufferGuard {
-	public:
-		static void attemptBind(BufferType type, Buffer* buffer);
-		static void attemptBind(Buffer& buffer);
-		static void unbind(BufferType type);
-
-		template <typename Arg> static void attemptBindEx(Arg& buffer) {
-			attemptBind(buffer);
-		}
-
-		template <typename Arg, typename ... Args> static void attemptBindEx(Arg& buffer, Args& ... buffers) {
-			attemptBind(buffer);
-			attemptBindEx(buffers ...);
-		}
 };

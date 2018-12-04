@@ -31,16 +31,17 @@ void Renderer::drawQuad() {
 
 Renderer::Renderer(unsigned int width, unsigned int height) :
 	_width(width), _height(height), _buffer(width, height),
-	_geom("geom.vert", "geom.frag"), 
-	_light("light.vert", "light.frag"),
-	_shading("shadow.vert", "shadow.frag", "shadow.geom"),
-	_shadows(4096)
+	_geom(ProgramIO::getProgram("geom", FRAGMENT | VERTEX)),
+	_light(ProgramIO::getProgram("light", FRAGMENT | VERTEX)),
+	_pshading(ProgramIO::getProgram("point", ALL)),
+	_skybox(ProgramIO::getProgram("skybox", FRAGMENT | VERTEX)),
+	_pshadows(4096)
 {
-	_light.bind();
-	_light.setUniform("gPosition", Defaults::TEXTURE_SLOT_POSITION);
-	_light.setUniform("gNormal", Defaults::TEXTURE_SLOT_NORMAL);
-	_light.setUniform("gAlbedoSpec", Defaults::TEXTURE_SLOT_TEXTURE);
-	_light.setUniform("gShadowPoint", Defaults::TEXTURE_SLOT_POINT_SHADOW);
+	_light->bind();
+	_light->setUniform("gPosition", Defaults::TEXTURE_SLOT_POSITION);
+	_light->setUniform("gNormal", Defaults::TEXTURE_SLOT_NORMAL);
+	_light->setUniform("gAlbedoSpec", Defaults::TEXTURE_SLOT_TEXTURE);
+	_light->setUniform("gShadowPoint", Defaults::TEXTURE_SLOT_POINT_SHADOW);
 }
 
 void Renderer::draw(Scene& scene) {
@@ -55,20 +56,20 @@ void Renderer::draw(Scene& scene) {
 
 	passForward(scene);
 
-	if (scene.getSkybox() != nullptr) {
+	if (scene.skybox().get() != nullptr) {
 		glDepthMask(GL_FALSE);
 
-		Adapters::SkyboxProgramAdapter adapter(scene.getSkybox()->getProgram());
+		Adapters::SkyboxProgramAdapter adapter(_skybox);
 		adapter.set(scene);
 
-		draw(scene.getSkybox()->getMesh());
+		draw(scene.skybox().get()->getMesh());
 
 		glDepthMask(GL_TRUE);
 	}
 }
 
 void Renderer::passForward(Scene& scene) {
-	for (auto& obj : scene.getObjectsForward()) {
+	for (auto& obj : scene.forward().get()) {
 		ProgramAdapter* adapter = obj->getAdapter();
 
 		adapter->bind();
@@ -84,15 +85,16 @@ void Renderer::passForward(Scene& scene) {
 }
 
 void Renderer::passShading(Scene& scene) {
-	for (auto& light : scene.getLights()) {
-		if (light->getType() == POINT_WITH_SHADOW) {
-			_shadows.bind();
-			glDisable(GL_CULL_FACE);
+	glDisable(GL_CULL_FACE);
 
-			Adapters::ShadingPassProgramAdapter adapter(_shading);
+	for (auto& light : scene.point().get()) {
+		if (light->getType() == POINT_SHADOW) {
+			_pshadows.bind();
+
+			Adapters::ShadingPointPassProgramAdapter adapter(_pshading);
 			adapter.set(scene);
 
-			for (auto& object : scene.getObjectsDeferred()) {
+			for (auto& object : scene.deferred().get()) {
 				adapter.set(*object);
 
 				for (auto& mesh : object->getModel().getMeshes()) {
@@ -100,12 +102,13 @@ void Renderer::passShading(Scene& scene) {
 				}
 			}
 
-			glEnable(GL_CULL_FACE);
-			_shadows.unbind(Defaults::TEXTURE_SLOT_POINT_SHADOW, _width, _height);
+			_pshadows.unbind(_width, _height, Defaults::TEXTURE_SLOT_POINT_SHADOW);
 
-			return;
+			break;
 		}
 	}
+
+	glEnable(GL_CULL_FACE);
 }
 
 void Renderer::passGeom(Scene& scene) {
@@ -116,7 +119,7 @@ void Renderer::passGeom(Scene& scene) {
 	Adapters::GeometryPassProgramAdapter adapter(_geom);
 	adapter.set(scene);
 
-	for (auto& object : scene.getObjectsDeferred()) {
+	for (auto& object : scene.deferred().get()) {
 		adapter.set(*object);
 
 		for (auto& mesh : object->getModel().getMeshes()) {
@@ -131,7 +134,7 @@ void Renderer::passGeom(Scene& scene) {
 void Renderer::passLight(Scene& scene) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	_light.bind();
+	_light->bind();
 	_buffer.bindTextures(Defaults::TEXTURE_SLOT_POSITION);
 
 	Adapters::LightPassProgramAdapter adapter(_light);

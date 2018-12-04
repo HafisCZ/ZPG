@@ -19,7 +19,8 @@ void VertexArray::unbind() {
 }
 
 void VertexArray::setBuffer(VertexBuffer& vbo) {
-	BufferGuard::attemptBindEx(*this, vbo);
+	bind();
+	vbo.bind();
 
 	const auto& blocks = vbo.getLayout().getBlocks();
 	unsigned int blockOffset = 0;

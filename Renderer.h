@@ -16,18 +16,19 @@ struct Defaults {
 	static const unsigned int TEXTURE_SLOT_NORMAL = 1;
 	static const unsigned int TEXTURE_SLOT_TEXTURE = 2;
 	static const unsigned int TEXTURE_SLOT_POINT_SHADOW = 3;
-	static const unsigned int TEXTURE_SLOT_DIRECTIONAL_SHADOW = 4;
 
 };
 
 class Renderer {
 	private:
-		Program _geom;
-		Program _light;
+		std::shared_ptr<Program> _geom;
+		std::shared_ptr<Program> _light;
+		std::shared_ptr<Program> _skybox;
+		std::shared_ptr<Program> _pshading;
+
 		GBuffer _buffer;
 
-		Program _shading;
-		Framebuffer3D _shadows;
+		Framebuffer3D _pshadows;
 
 		unsigned int _width;
 		unsigned int _height;

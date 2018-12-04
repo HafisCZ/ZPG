@@ -9,12 +9,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Resource Files\Object shaders">
-      <UniqueIdentifier>{9a9c9cff-e5c0-4840-8f12-acedd954ff95}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resource Files\Shadow shaders">
-      <UniqueIdentifier>{4c3d92b4-e4d9-4129-b6e0-b6941e40f811}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Engine">
       <UniqueIdentifier>{fd67eeef-7359-4906-aeec-a45f542b7659}</UniqueIdentifier>
     </Filter>
@@ -23,12 +17,6 @@
     </Filter>
     <Filter Include="Source Files\Scene">
       <UniqueIdentifier>{876995fb-efff-473d-a6cb-13898a487cea}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Scene\Headers">
-      <UniqueIdentifier>{564e6561-2f77-40d1-9c62-4d27923966a3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Scene\Sources">
-      <UniqueIdentifier>{a6d6da21-d1b2-442b-a0fd-4655d31dfa6b}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Engine\Core">
       <UniqueIdentifier>{3893ce0c-447d-4ba5-9230-6ea944e6cd07}</UniqueIdentifier>
@@ -45,9 +33,6 @@
     <Filter Include="Source Files\Engine\Texture">
       <UniqueIdentifier>{3e20c7a8-679c-49cf-b38b-de721c5129fe}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files\Deferred shaders">
-      <UniqueIdentifier>{da5cc260-9352-4fcd-a59d-5622dd7eb6ba}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Scene\View">
       <UniqueIdentifier>{f2b266ff-31b2-4a24-96c0-69f61939496a}</UniqueIdentifier>
     </Filter>
@@ -57,14 +42,38 @@
     <Filter Include="Source Files\Engine\Buffer\Data">
       <UniqueIdentifier>{93df8b95-54c4-4a18-9dca-c74fe888e7c8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Engine\Buffer\Frame">
-      <UniqueIdentifier>{0e777f6f-dad6-4a8f-9ee9-4c529a23c340}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Engine\Buffer\Ext">
       <UniqueIdentifier>{1e36e251-097d-422f-a3a4-4397218472bf}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Scene\Model">
       <UniqueIdentifier>{16731ec6-f1e9-404d-98e8-ebb83729dad2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Scene\Object">
+      <UniqueIdentifier>{1141a1c0-16ac-47a1-9972-d1c5617c2784}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Scene\Light">
+      <UniqueIdentifier>{4cc6def6-7e15-4c2c-ae13-6a1e9d41b2b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Scene\Common">
+      <UniqueIdentifier>{ffa761df-d7fe-441d-b394-5fdfdac0b3e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Deferred shading">
+      <UniqueIdentifier>{da5cc260-9352-4fcd-a59d-5622dd7eb6ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shadow mapping">
+      <UniqueIdentifier>{4c3d92b4-e4d9-4129-b6e0-b6941e40f811}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Skybox">
+      <UniqueIdentifier>{031b2ffa-6422-4627-bab4-631816e4a9ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Deferred shading\Geometry pass">
+      <UniqueIdentifier>{eb7643bb-4bdd-46c8-9064-08e01cc5841b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Deferred shading\Shading pass">
+      <UniqueIdentifier>{aeb308e0-3703-413a-bd34-989ba08744fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Buffer\Framebuffers">
+      <UniqueIdentifier>{0e777f6f-dad6-4a8f-9ee9-4c529a23c340}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -73,21 +82,6 @@
     </ClCompile>
     <ClCompile Include="Source.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Model.cpp">
-      <Filter>Source Files\Scene\Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Object.cpp">
-      <Filter>Source Files\Scene\Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Light.cpp">
-      <Filter>Source Files\Scene\Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="SpatialObject.cpp">
-      <Filter>Source Files\Scene\Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="TransformableObject.cpp">
-      <Filter>Source Files\Scene\Sources</Filter>
     </ClCompile>
     <ClCompile Include="WindowEvent.cpp">
       <Filter>Source Files\Engine\Event</Filter>
@@ -129,16 +123,31 @@
       <Filter>Source Files\Engine\Buffer\Data</Filter>
     </ClCompile>
     <ClCompile Include="Framebuffer.cpp">
-      <Filter>Source Files\Engine\Buffer\Frame</Filter>
+      <Filter>Source Files\Engine\Buffer\Framebuffers</Filter>
     </ClCompile>
     <ClCompile Include="GBuffer.cpp">
-      <Filter>Source Files\Engine\Buffer\Frame</Filter>
+      <Filter>Source Files\Engine\Buffer\Framebuffers</Filter>
     </ClCompile>
     <ClCompile Include="UniformBuffer.cpp">
       <Filter>Source Files\Engine\Buffer\Ext</Filter>
     </ClCompile>
     <ClCompile Include="Mesh.cpp">
       <Filter>Source Files\Scene\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Source Files\Scene\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Object.cpp">
+      <Filter>Source Files\Scene\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="SpatialObject.cpp">
+      <Filter>Source Files\Scene\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="TransformableObject.cpp">
+      <Filter>Source Files\Scene\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Light.cpp">
+      <Filter>Source Files\Scene\Light</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -147,24 +156,6 @@
     </ClInclude>
     <ClInclude Include="Application.h">
       <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Model.h">
-      <Filter>Source Files\Scene\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Light.h">
-      <Filter>Source Files\Scene\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Object.h">
-      <Filter>Source Files\Scene\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="SpatialObject.h">
-      <Filter>Source Files\Scene\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="TransformableObject.h">
-      <Filter>Source Files\Scene\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Skybox.h">
-      <Filter>Source Files\Scene\Headers</Filter>
     </ClInclude>
     <ClInclude Include="WindowEvent.h">
       <Filter>Source Files\Engine\Event</Filter>
@@ -209,10 +200,10 @@
       <Filter>Source Files\Engine\Buffer\Data</Filter>
     </ClInclude>
     <ClInclude Include="Framebuffer.h">
-      <Filter>Source Files\Engine\Buffer\Frame</Filter>
+      <Filter>Source Files\Engine\Buffer\Framebuffers</Filter>
     </ClInclude>
     <ClInclude Include="GBuffer.h">
-      <Filter>Source Files\Engine\Buffer\Frame</Filter>
+      <Filter>Source Files\Engine\Buffer\Framebuffers</Filter>
     </ClInclude>
     <ClInclude Include="UniformBuffer.h">
       <Filter>Source Files\Engine\Buffer\Ext</Filter>
@@ -223,49 +214,52 @@
     <ClInclude Include="Constants.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>Source Files\Scene\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Object.h">
+      <Filter>Source Files\Scene\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="TransformableObject.h">
+      <Filter>Source Files\Scene\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="SpatialObject.h">
+      <Filter>Source Files\Scene\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Source Files\Scene\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="Skybox.h">
+      <Filter>Source Files\Scene\Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="resources\shaders\default.frag">
-      <Filter>Resource Files\Object shaders</Filter>
+    <None Include="point.frag">
+      <Filter>Resource Files\Shadow mapping</Filter>
     </None>
-    <None Include="resources\shaders\default.vert">
-      <Filter>Resource Files\Object shaders</Filter>
+    <None Include="point.geom">
+      <Filter>Resource Files\Shadow mapping</Filter>
     </None>
-    <None Include="resources\shaders\object.frag">
-      <Filter>Resource Files\Object shaders</Filter>
+    <None Include="point.vert">
+      <Filter>Resource Files\Shadow mapping</Filter>
     </None>
-    <None Include="resources\shaders\object.vert">
-      <Filter>Resource Files\Object shaders</Filter>
+    <None Include="skybox.frag">
+      <Filter>Resource Files\Skybox</Filter>
     </None>
-    <None Include="resources\shaders\skybox.frag">
-      <Filter>Resource Files\Object shaders</Filter>
-    </None>
-    <None Include="resources\shaders\skybox.vert">
-      <Filter>Resource Files\Object shaders</Filter>
-    </None>
-    <None Include="resources\shaders\library.glsl">
-      <Filter>Resource Files\Object shaders</Filter>
-    </None>
-    <None Include="light.vert">
-      <Filter>Resource Files\Deferred shaders</Filter>
-    </None>
-    <None Include="geom.vert">
-      <Filter>Resource Files\Deferred shaders</Filter>
+    <None Include="skybox.vert">
+      <Filter>Resource Files\Skybox</Filter>
     </None>
     <None Include="geom.frag">
-      <Filter>Resource Files\Deferred shaders</Filter>
+      <Filter>Resource Files\Deferred shading\Geometry pass</Filter>
+    </None>
+    <None Include="geom.vert">
+      <Filter>Resource Files\Deferred shading\Geometry pass</Filter>
     </None>
     <None Include="light.frag">
-      <Filter>Resource Files\Deferred shaders</Filter>
+      <Filter>Resource Files\Deferred shading\Shading pass</Filter>
     </None>
-    <None Include="shadow.frag">
-      <Filter>Resource Files\Shadow shaders</Filter>
-    </None>
-    <None Include="shadow.geom">
-      <Filter>Resource Files\Shadow shaders</Filter>
-    </None>
-    <None Include="shadow.vert">
-      <Filter>Resource Files\Shadow shaders</Filter>
+    <None Include="light.vert">
+      <Filter>Resource Files\Deferred shading\Shading pass</Filter>
     </None>
   </ItemGroup>
 </Project>

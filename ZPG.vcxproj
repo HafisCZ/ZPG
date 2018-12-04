@@ -182,16 +182,11 @@
     <None Include="geom.vert" />
     <None Include="light.frag" />
     <None Include="light.vert" />
-    <None Include="resources\shaders\default.frag" />
-    <None Include="resources\shaders\default.vert" />
-    <None Include="resources\shaders\library.glsl" />
-    <None Include="resources\shaders\object.frag" />
-    <None Include="resources\shaders\object.vert" />
-    <None Include="resources\shaders\skybox.frag" />
-    <None Include="resources\shaders\skybox.vert" />
-    <None Include="shadow.frag" />
-    <None Include="shadow.geom" />
-    <None Include="shadow.vert" />
+    <None Include="point.frag" />
+    <None Include="point.geom" />
+    <None Include="point.vert" />
+    <None Include="skybox.frag" />
+    <None Include="skybox.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

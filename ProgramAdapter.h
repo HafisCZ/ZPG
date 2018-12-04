@@ -5,12 +5,12 @@
 #include "Scene.h"
 #include "Program.h"
 
-#define SLASH(x) x##/ 
-#define COMMENT SLASH(/)
+#ifndef _WIN32
+	#error NOT SUPPORTED
+#endif
 
-#define FORWARD_CONSTRUCTOR(x) x##(Program& program) : ProgramAdapter(program)
-#define CUSTOM_ADAPTER(x) class x : public ProgramAdapter { public: FORWARD_CONSTRUCTOR(x) {} COMMENT
-
+#define FORWARD_CONSTRUCTOR(x) x##(std::shared_ptr<Program>& program) : ProgramAdapter(program)
+#define CUSTOM_ADAPTER(x) class x : public ProgramAdapter { public: FORWARD_CONSTRUCTOR(x) {} /##/
 #define MESH void set(Mesh& mesh) override
 #define OBJECT void set(Object& object) override
 #define SCENE void set(Scene& scene) override
@@ -20,7 +20,7 @@ class ProgramAdapter {
 		Program& _program;
 
 	public:
-		ProgramAdapter(Program& program) : _program((program.bind(), program)) {}
+		ProgramAdapter(std::shared_ptr<Program>& program) : _program((program->bind(), *program)) {}
 
 		virtual void set(Scene& scene) = 0;
 		virtual void set(Object& object) = 0;
@@ -59,17 +59,17 @@ namespace Adapters {
 			}
 	};
 
-	class ShadingPassProgramAdapter : ProgramAdapter {
+	class ShadingPointPassProgramAdapter : ProgramAdapter {
 		public:
-			FORWARD_CONSTRUCTOR(ShadingPassProgramAdapter) {}
+			FORWARD_CONSTRUCTOR(ShadingPointPassProgramAdapter) {}
 
 			void set(Object& object) override {
 				_program.setUniform("uModel", object.getMatrix());
 			}
 
 			void set(Scene& scene) override {
-				for (auto& light : scene.getLights()) {
-					if (light->getType() == POINT_WITH_SHADOW) {
+				for (auto& light : scene.point().get()) {
+					if (light->getType() == POINT_SHADOW) {
 						static glm::mat4 perspective = glm::perspective(glm::half_pi<float>(), 1.0f, 1.0f, 100.0f);
 						static glm::vec3 vectors[] = {
 							{ 1.0f, 0.0f, 0.0f }, { -1.0f, 0.0f, 0.0f },
@@ -110,7 +110,7 @@ namespace Adapters {
 			void set(Scene& scene) override {
 				_program.setUniform("uTranslatedView", glm::mat4(glm::mat3(scene.getCamera().getViewMatrix())));
 				_program.setUniform("uProjection", scene.getCamera().getProjectionMatrix());
-				_program.setUniform("uDiffuse", scene.getSkybox()->getMesh().getTexturePack().getHandle(MeshData::Texture::DIFFUSE)->bind());
+				_program.setUniform("uDiffuse", scene.skybox().get()->getMesh().getTexturePack().getHandle(MeshData::Texture::DIFFUSE)->bind());
 			}
 
 			void set(Mesh& mesh) override {
@@ -129,29 +129,47 @@ namespace Adapters {
 			void set(Scene& scene) override {
 				unsigned int index = 0;
 
-				for (unsigned int i = 0; i < scene.getLights().size(); i++) {
-					Light* light = scene.getLights()[i];
+				for (unsigned int i = 0; i < scene.point().get().size(); i++) {
+					Light* light = scene.point().get()[i];
 
-					_program.setUniform("lights[" + std::to_string(index) + "].Position", light->getRaw()[1]);
-					_program.setUniform("lights[" + std::to_string(index) + "].Color", light->getRaw()[0]);
+					_program.setUniform("lights[" + std::to_string(index) + "].Position", light->_vector());
+					_program.setUniform("lights[" + std::to_string(index) + "].Color", light->_color());
 
-					_program.setUniform("lights[" + std::to_string(index) + "].Diffuse", light->getRaw()[2].y);
-					_program.setUniform("lights[" + std::to_string(index) + "].Specular", light->getRaw()[2].z);
+					_program.setUniform("lights[" + std::to_string(index) + "].Diffuse", light->_intensity().y);
+					_program.setUniform("lights[" + std::to_string(index) + "].Specular", light->_intensity().z);
 
-					const float constant = light->getRaw()[3].x;
-					const float linear = light->getRaw()[3].y;
-					const float quadratic = light->getRaw()[3].z;
+					const float constant = light->_attenuation().x;
+					const float linear = light->_attenuation().y;
+					const float quadratic = light->_attenuation().z;
 
 					_program.setUniform("lights[" + std::to_string(index) + "].Linear", linear);
 					_program.setUniform("lights[" + std::to_string(index) + "].Quadratic", quadratic);
 
-					const float maxBrightness = std::fmaxf(std::fmaxf(light->getRaw()[0].r, light->getRaw()[0].g), light->getRaw()[0].b);
+					const float maxBrightness = std::fmaxf(std::fmaxf(light->_color().r, light->_color().g), light->_color().b);
 					float radius = (-linear + std::sqrt(linear * linear - 4 * quadratic * (constant - (256.0f / 5.0f) * maxBrightness))) / (2.0f * quadratic);
 
 					_program.setUniform("lights[" + std::to_string(index) + "].Radius", radius);
 					_program.setUniform("lights[" + std::to_string(index) + "].Shadow", light->getType() >= 2);
 	
 					index++;
+				}
+
+				if (scene.vector().isSet()) {
+					_program.setUniform("vector.Direction", scene.vector().get()->_vector());
+					_program.setUniform("vector.Color", scene.vector().get()->_color());
+					_program.setUniform("vector.Diffuse", scene.vector().get()->_intensity().y);
+					_program.setUniform("vector.Specular", scene.vector().get()->_intensity().z);
+					_program.setUniform("vector.Enabled", 1);
+				} else {
+					_program.setUniform("vector.Enabled", 0);
+				}
+
+				if (scene.ambient().isSet()) {
+					_program.setUniform("ambient.Color", scene.ambient().get()->_color());
+					_program.setUniform("ambient.Ambient", scene.ambient().get()->_intensity().x);
+					_program.setUniform("ambient.Enabled", 1);
+				} else {
+					_program.setUniform("ambient.Enabled", 0);
 				}
 
 				_program.setUniform("lightCount", index);

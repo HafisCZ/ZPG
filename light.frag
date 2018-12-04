@@ -7,7 +7,9 @@ in vec2 TexCoords;
 uniform sampler2D gPosition;
 uniform sampler2D gNormal;
 uniform sampler2D gAlbedoSpec;
+
 uniform samplerCube gShadowPoint;
+uniform sampler2D gShadowVector;
 
 struct Light {
     vec3 Position;
@@ -23,10 +25,30 @@ struct Light {
 	bool Shadow;
 };
 
+struct LightVector {
+	vec3 Direction;
+	vec3 Color;
+	float Diffuse;
+	float Specular;
+
+	bool Enabled;
+};
+
+struct LightAmbient {
+	vec3 Color;
+	float Ambient;
+
+	bool Enabled;
+};
+
+
 const int MAX_LIGHTS = 64;
 
 uniform Light lights[MAX_LIGHTS];
 uniform int lightCount;
+
+uniform LightVector vector;
+uniform LightAmbient ambient;
 
 uniform vec3 viewPos;
 
@@ -57,6 +79,16 @@ float getFragmentShadow(vec3 fragPos, vec3 lightPos) {
 	}
 
 	return shadow / 20.0;
+} 
+
+vec3 getVectorLight(vec3 Diffuse, float Specular, vec3 Normal, vec3 ViewDir, LightVector Light) {
+	vec3 lightDir = normalize(-Light.Direction);
+	float diffuse = max(dot(Normal, lightDir), 0.0);
+
+	vec3 halfDir = normalize(lightDir + ViewDir);
+	float specular = pow(max(dot(Normal, halfDir), 0.0), 32.0);
+
+	return (Diffuse * diffuse * Light.Diffuse * Light.Color + Specular * specular * Light.Specular * Light.Color);
 }
 
 void main()
@@ -90,7 +122,15 @@ void main()
 
 			color += (Diffuse * diffuseColor + Specular * specularColor) * intensity;
         }
-    }    
+    }
+
+	if (vector.Enabled) {
+		color += getVectorLight(Diffuse, Specular, Normal, viewDir, vector);
+	}
+
+	if (ambient.Enabled) {
+		color += Diffuse * ambient.Color * ambient.Ambient;
+	}
 
     FragColor = vec4(color, 1.0);
 }
