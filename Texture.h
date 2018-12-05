@@ -14,10 +14,21 @@
 
 class Texture;
 
-class TextureBindGuard {
+class TextureGuard {
+	private:
+		std::unordered_map<unsigned int, Texture*> _slotAlloc;
+		std::unordered_map<unsigned int, bool> _slotLock;
+
+		TextureGuard(unsigned int offset, unsigned int slots);
+
+		unsigned int _autoBind(Texture* texture);
+		void _flush();
+	
+		static TextureGuard& getInstance();
+
 	public:
-		static void attemptBind(unsigned int slot, Texture* texture);
 		static unsigned int autoBind(Texture* texture);
+		static void flush();
 };
 
 class Texture {
@@ -62,12 +73,8 @@ class Texture {
 			glDeleteTextures(1, &_handle);
 		}
 
-		void bind(unsigned int slot) {
-			TextureBindGuard::attemptBind(slot, this);
-		}
-
 		unsigned int bind() {
-			return TextureBindGuard::autoBind(this);
+			return TextureGuard::autoBind(this);
 		}
 
 		void bindUnsafe(unsigned int slot) {

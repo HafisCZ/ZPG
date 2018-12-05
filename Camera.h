@@ -17,6 +17,7 @@ class Camera {
 
 		glm::vec2 _angle;
 		glm::vec2 _last;
+		glm::vec2 _exit;
 
 		bool _showCursor;
 
@@ -31,7 +32,7 @@ class Camera {
 		inline glm::vec3& getPosition() { return _position; }
 		inline glm::vec3& getDirection() { return _direction; }
 		
-		void setCursor(float x, float y);
+		void setCursor(glm::vec2 cursor);
 		void move(float x, float y, float z);
 
 		void sync();

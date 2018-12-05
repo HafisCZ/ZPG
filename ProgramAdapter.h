@@ -55,7 +55,7 @@ namespace Adapters {
 
 				_program.setUniform("uDiffuse", diffuse ? mesh.getTexturePack().getHandle(MeshData::Texture::DIFFUSE)->bind() : 8);
 				_program.setUniform("uSpecular", specular ? mesh.getTexturePack().getHandle(MeshData::Texture::SPECULAR)->bind() : 8);
-				_program.setUniform("uNormal", normal ? mesh.getTexturePack().getHandle(MeshData::Texture::NORMAL)->bind() : 8);
+				//_program.setUniform("uNormal", normal ? mesh.getTexturePack().getHandle(MeshData::Texture::NORMAL)->bind() : 8);
 			}
 	};
 

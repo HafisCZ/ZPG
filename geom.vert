@@ -9,7 +9,7 @@ layout (location = 4) in vec3 aBitangent;
 out vec3 FragPos;
 out vec2 TexCoords;
 out vec3 Normal;
-out vec3 TangentNormal;
+out mat3 TangentSpace;
 
 uniform mat4 uModel;
 uniform mat4 uInver;
@@ -23,11 +23,13 @@ void main()
 	TexCoords = aTexCoords;
 	Normal = mat3(uInver) * aNormal;
 
-	vec3 t = normalize(mat3(uInver) * aTangent);
-	vec3 n = normalize(mat3(uInver) * aNormal);
-	vec3 b = normalize(cross(t, n));
+	mat3 normalMatrix = mat3(uInver);
+	vec3 t = normalize(normalMatrix * aTangent);
+	vec3 n = normalize(normalMatrix * aNormal);
+	t = normalize(t - dot(t, n) * n);
+	vec3 b = cross(n, t);
 
-	TangentNormal = transpose(mat3(t, b, n)) * aNormal;
+	mat3 TangentSpace = mat3(t, b, n);
 
     gl_Position = uViewProjection * worldPos;
 }

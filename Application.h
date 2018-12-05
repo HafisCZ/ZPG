@@ -47,14 +47,14 @@ class Application {
 			*/
 			Model mPerson("resources/models/ghost/ghost.obj");
 			Model mSphere("resources/models/sphere.obj");
-			Model m_Quad("resources/models/quad.obj");
+			Model mQuad("resources/models/quad.obj");
 
 			/*
 				Scene objects
 			*/
 			Object person(mPerson);
 
-			Object floor(m_Quad);
+			Object floor(mQuad);
 			floor.setTransformation(glm::scale(glm::mat4(1.0f), glm::vec3(25.0f)));
 
 			/*

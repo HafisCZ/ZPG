@@ -12,6 +12,8 @@ void Renderer::draw(Mesh& mesh) {
 	} else {
 		glDrawArrays(GL_TRIANGLES, 0, mesh.getVBO().getCount());
 	}
+
+	TextureGuard::flush();
 }
 
 void Renderer::drawQuad() {
