@@ -27,9 +27,9 @@ void main()
 	vec3 t = normalize(normalMatrix * aTangent);
 	vec3 n = normalize(normalMatrix * aNormal);
 	t = normalize(t - dot(t, n) * n);
-	vec3 b = cross(n, t);
+	vec3 b = cross(t, n);
 
-	mat3 TangentSpace = mat3(t, b, n);
+	TangentSpace = mat3(uModel) * mat3(t, b, n);
 
     gl_Position = uViewProjection * worldPos;
 }

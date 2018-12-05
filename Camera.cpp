@@ -19,8 +19,8 @@ Camera::Camera(unsigned int width, unsigned int height) :
 void Camera::setCursor(glm::vec2 cursor) {
 	static bool init = [this, &cursor]() { return (_last = { cursor.x, cursor.y }, true); }();
 
-	_angle.x += (1.0f / 600.0f) * (_last.x - cursor.x);
-	_angle.y += (1.0f / 600.0f) * (_last.y - cursor.y);
+	_angle.x += (1.0f / 300.0f) * (_last.x - cursor.x);
+	_angle.y += (1.0f / 300.0f) * (_last.y - cursor.y);
 
 	if (_angle.y > 3.14f / 2.0f) _angle.y = 3.14f / 2.0f;
 	if (_angle.y < -3.14f / 2.0f) _angle.y = -3.14f / 2.0f;

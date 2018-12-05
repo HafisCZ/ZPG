@@ -22,7 +22,7 @@ void main()
     gPosition = FragPos;
 
 	if (uNormalEnabled) {
-		gNormal = normalize(Normal);
+		gNormal = normalize(TangentSpace * normalize(texture(uNormal, TexCoords).rgb * 2.0 - 1.0));
 	} else {
 		gNormal = normalize(Normal);
 	}
