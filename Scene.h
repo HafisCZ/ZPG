@@ -49,10 +49,19 @@ class Scene {
 		struct LightPointProxy {
 			private:
 				std::vector<PointLight*> _lights;
+				std::vector<PointLight*> _shaded;
 
 			public:
-				void add(PointLight& light) { _lights.emplace_back(&light); }
+				void add(PointLight& light) { 
+					if (light.getType() == POINT_SHADOW) {
+						_shaded.emplace_back(&light);
+					}
+						
+					_lights.emplace_back(&light);
+				}
+
 				inline std::vector<PointLight*>& get() { return _lights; }
+				inline std::vector<PointLight*>& getSM() { return _shaded; }
 
 		} _lightPoint;
 

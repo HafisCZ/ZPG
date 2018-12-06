@@ -87,28 +87,25 @@ void Renderer::passForward(Scene& scene) {
 }
 
 void Renderer::passShading(Scene& scene) {
-	for (auto& light : scene.point().get()) {
-		if (light->getType() == POINT_SHADOW) {
-			glDisable(GL_CULL_FACE);
+	if (scene.point().getSM().size()) {
+		glDisable(GL_CULL_FACE);
 
-			_pshadows.bind();
+		_pshadows.bind();
 
-			Adapters::ShadingPointPassProgramAdapter adapter(_pshading);
-			adapter.set(scene);
+		Adapters::ShadingPointPassProgramAdapter adapter(_pshading);
+		adapter.set(scene);
 
-			for (auto& object : scene.deferred().get()) {
-				adapter.set(*object);
+		for (auto& object : scene.deferred().get()) {
+			adapter.set(*object);
 
-				for (auto& mesh : object->getModel().getMeshes()) {
-					draw(*mesh);
-				}
+			for (auto& mesh : object->getModel().getMeshes()) {
+				draw(*mesh);
 			}
-
-			_pshadows.unbind(_width, _height, Defaults::TEXTURE_SLOT_POINT_SHADOW);
-
-			glEnable(GL_CULL_FACE);
-			break;
 		}
+
+		_pshadows.unbind(_width, _height, Defaults::TEXTURE_SLOT_POINT_SHADOW);
+
+		glEnable(GL_CULL_FACE);
 	}
 }
 

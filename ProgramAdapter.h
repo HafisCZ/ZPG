@@ -79,17 +79,15 @@ namespace Adapters {
 
 				unsigned int index = 0;
 
-				for (auto& light : scene.point().get()) {
-					if (light->getType() == POINT_SHADOW) {
-						_program.setUniform("uPosition[" + std::to_string(index) + "]", light->getRaw()[1]);
+				for (auto& light : scene.point().getSM()) {
+					_program.setUniform("uPosition[" + std::to_string(index) + "]", light->getRaw()[1]);
 
-						for (unsigned int i = 0; i < 6; i++) {
-							_program.setUniform("uFaces[" + std::to_string(index * 6 + i) + "]", perspective * glm::lookAt(light->getRaw()[1], light->getRaw()[1] + vectors[i], i == 2 ? vectors[4] : (i == 3 ? vectors[5] : vectors[3])));
-						}
+					for (unsigned int i = 0; i < 6; i++) {
+						_program.setUniform("uFaces[" + std::to_string(index * 6 + i) + "]", perspective * glm::lookAt(light->getRaw()[1], light->getRaw()[1] + vectors[i], i == 2 ? vectors[4] : (i == 3 ? vectors[5] : vectors[3])));
+					}
 
-						if (++index > 5) {
-							break;
-						}
+					if (++index > 5) {
+						break;
 					}
 				}
 
