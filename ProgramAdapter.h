@@ -68,30 +68,32 @@ namespace Adapters {
 			}
 
 			void set(Scene& scene) override {
+				static glm::mat4 perspective = glm::perspective(glm::half_pi<float>(), 1.0f, 1.0f, 100.0f);
+				static glm::vec3 vectors[] = {
+					{ 1.0f, 0.0f, 0.0f }, { -1.0f, 0.0f, 0.0f },
+					{ 0.0f, 1.0f, 0.0f }, { 0.0f, -1.0f, 0.0f },
+					{ 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, -1.0f }
+				};
+				
+				_program.setUniform("uFar", 100.0f);
+
+				unsigned int index = 0;
+
 				for (auto& light : scene.point().get()) {
 					if (light->getType() == POINT_SHADOW) {
-						static glm::mat4 perspective = glm::perspective(glm::half_pi<float>(), 1.0f, 1.0f, 100.0f);
-						static glm::vec3 vectors[] = {
-							{ 1.0f, 0.0f, 0.0f }, { -1.0f, 0.0f, 0.0f },
-							{ 0.0f, 1.0f, 0.0f }, { 0.0f, -1.0f, 0.0f },
-							{ 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, -1.0f }
-						};
-
-						glm::mat4 faces[6];
-						for (unsigned int i = 0; i < 6; i++) {
-							faces[i] = perspective * glm::lookAt(light->getRaw()[1], light->getRaw()[1] + vectors[i], i == 2 ? vectors[4] : (i == 3 ? vectors[5] : vectors[3]));
-						}
-
-						_program.setUniform("uFar", 100.0f);
-						_program.setUniform("uPosition", light->getRaw()[1]);
+						_program.setUniform("uPosition[" + std::to_string(index) + "]", light->getRaw()[1]);
 
 						for (unsigned int i = 0; i < 6; i++) {
-							_program.setUniform("uFaces[" + std::to_string(i) + "]", faces[i]);
+							_program.setUniform("uFaces[" + std::to_string(index * 6 + i) + "]", perspective * glm::lookAt(light->getRaw()[1], light->getRaw()[1] + vectors[i], i == 2 ? vectors[4] : (i == 3 ? vectors[5] : vectors[3])));
 						}
 
-						return;
+						if (++index > 5) {
+							break;
+						}
 					}
 				}
+
+				_program.setUniform("uFaceCount", index * 6);
 			}
 
 			void set(Mesh& mesh) override {

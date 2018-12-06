@@ -1,4 +1,4 @@
-#version 330 core
+#version 440 core
 
 out vec4 FragColor;
 
@@ -8,7 +8,7 @@ uniform sampler2D gPosition;
 uniform sampler2D gNormal;
 uniform sampler2D gAlbedoSpec;
 
-uniform samplerCube gShadowPoint;
+uniform samplerCubeArray gShadowPoint;
 uniform sampler2D gShadowVector;
 
 struct Light {
@@ -41,7 +41,6 @@ struct LightAmbient {
 	bool Enabled;
 };
 
-
 const int MAX_LIGHTS = 64;
 
 uniform Light lights[MAX_LIGHTS];
@@ -62,7 +61,7 @@ vec3 samples[20] = vec3[]
 	vec3(0, 1, 1), vec3(0, -1, 1), vec3(0, -1, -1), vec3(0, 1, -1)
 );
 
-float getFragmentShadow(vec3 fragPos, vec3 lightPos) {
+float getFragmentShadow(vec3 fragPos, vec3 lightPos, int sid) {
 	vec3 distance = fragPos - lightPos;
 	float current = length(distance);
 
@@ -73,7 +72,7 @@ float getFragmentShadow(vec3 fragPos, vec3 lightPos) {
 	float disk = (1.0 + (dist / 100.0)) / 25.0;
 
 	for (int i = 0; i < 20; i++) {
-		if (current - bias > texture(gShadowPoint, distance + samples[i] * disk).r * 100.0) {
+		if (current - bias > texture(gShadowPoint, vec4(distance + samples[i] * disk, sid)).r * 100.0) {
 			shadow += 1.0;
 		}
 	}
@@ -101,6 +100,7 @@ void main()
     vec3 color = vec3(0.0);
     vec3 viewDir = normalize(viewPos - FragPos);
 
+	int sid = 0;
     for(int i = 0; i < min(lightCount, MAX_LIGHTS); ++i)
     {
         float distance = length(lights[i].Position - FragPos);
@@ -115,7 +115,7 @@ void main()
 
 			float attenuation = 1.0 / (1.0 + lights[i].Linear * distance + lights[i].Quadratic * distance * distance);
 			
-			float intensity = lights[i].Shadow ? 1.0 - getFragmentShadow(FragPos, lights[i].Position) : 1.0;
+			float intensity = lights[i].Shadow ? 1.0 - getFragmentShadow(FragPos, lights[i].Position, sid++) : 1.0;
 
 			vec3 diffuseColor = (lights[i].Color * lights[i].Diffuse * diffuse) * attenuation;
 			vec3 specularColor = (lights[i].Color * lights[i].Specular * specular) * attenuation;

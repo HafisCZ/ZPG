@@ -4,7 +4,7 @@
 #include "InputManager.h" 
 #include "WindowManager.h"
 
-Window::Window(int wpx, int hpx, WindowStyle style) : _renderer((GLWrapper::init(), GLWrapper::setVersion(3, 3, CORE), GLWrapper::createWindow(_glw, wpx, hpx, "", style), wpx), hpx) {
+Window::Window(int wpx, int hpx, WindowStyle style) : _renderer((GLWrapper::init(), GLWrapper::setVersion(4, 4, CORE), GLWrapper::createWindow(_glw, wpx, hpx, "", style), wpx), hpx) {
 	GLWrapper::enable(GL_DEPTH_TEST, GL_CULL_FACE, GL_MULTISAMPLE, GL_DEBUG_OUTPUT);
 	GLWrapper::setDepthFilter(LESS_OR_EQUAL);
 	GLWrapper::setCulling(BACK);

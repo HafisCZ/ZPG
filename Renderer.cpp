@@ -37,7 +37,7 @@ Renderer::Renderer(unsigned int width, unsigned int height) :
 	_light(ProgramIO::getProgram("light", FRAGMENT | VERTEX)),
 	_pshading(ProgramIO::getProgram("point", ALL)),
 	_skybox(ProgramIO::getProgram("skybox", FRAGMENT | VERTEX)),
-	_pshadows(4096)
+	_pshadows(2048, 5)
 {
 	_light->bind();
 	_light->setUniform("gPosition", Defaults::TEXTURE_SLOT_POSITION);
@@ -87,10 +87,10 @@ void Renderer::passForward(Scene& scene) {
 }
 
 void Renderer::passShading(Scene& scene) {
-	glDisable(GL_CULL_FACE);
-
 	for (auto& light : scene.point().get()) {
 		if (light->getType() == POINT_SHADOW) {
+			glDisable(GL_CULL_FACE);
+
 			_pshadows.bind();
 
 			Adapters::ShadingPointPassProgramAdapter adapter(_pshading);
@@ -106,11 +106,10 @@ void Renderer::passShading(Scene& scene) {
 
 			_pshadows.unbind(_width, _height, Defaults::TEXTURE_SLOT_POINT_SHADOW);
 
+			glEnable(GL_CULL_FACE);
 			break;
 		}
 	}
-
-	glEnable(GL_CULL_FACE);
 }
 
 void Renderer::passGeom(Scene& scene) {

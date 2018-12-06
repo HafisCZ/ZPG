@@ -98,7 +98,7 @@ class Application {
 				objects[i]->setPosition(vpos);
 				objects[i]->setTransformation(glm::scale(glm::mat4(1.0f), glm::vec3(0.2f)));
 
-				lights[i] = new PointLight(0.5f * vcol, vpos, 0.8f, 0.2f, 0.007f, 0.0002f, i == 0);
+				lights[i] = new PointLight(0.5f * vcol, vpos, 0.8f, 0.2f, 0.007f, 0.0002f, true);
 
 				scene.deferred().add(*objects[i]);
 				scene.point().add(*lights[i]);

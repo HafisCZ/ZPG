@@ -36,3 +36,15 @@ class Framebuffer3D : public Framebuffer {
 		void bind() override;
 		void unbind(unsigned int width, unsigned int height, unsigned int slot) override;
 };
+
+class Framebuffer3DArray : public Framebuffer {
+	private:
+		unsigned int _size;
+		unsigned int _count;
+
+	public:
+		Framebuffer3DArray(unsigned int size, unsigned int count);
+
+		void bind() override;
+		void unbind(unsigned int width, unsigned int height, unsigned int slot) override;
+};

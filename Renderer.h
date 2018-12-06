@@ -28,7 +28,7 @@ class Renderer {
 
 		GBuffer _buffer;
 
-		Framebuffer3D _pshadows;
+		Framebuffer3DArray _pshadows;
 
 		unsigned int _width;
 		unsigned int _height;

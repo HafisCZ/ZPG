@@ -69,6 +69,10 @@ Framebuffer3D::Framebuffer3D(unsigned int size) : _size(size) {
 	glDrawBuffer(GL_NONE);
 	glReadBuffer(GL_NONE);
 
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+
+	}
+
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
@@ -87,4 +91,52 @@ void Framebuffer3D::unbind(unsigned int width, unsigned int height, unsigned int
 
 	glActiveTexture(GL_TEXTURE0 + slot);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, _tid);
+}
+
+Framebuffer3DArray::Framebuffer3DArray(unsigned int size, unsigned int count) : _size(size), _count(count) {
+	glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY, _tid);
+
+	glTexImage3D(GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_DEPTH_COMPONENT, size, size, count * 6, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+
+	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_BORDER);
+
+	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY, GL_TEXTURE_BASE_LEVEL, 0);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY, GL_TEXTURE_MAX_LEVEL, 0);
+
+	float border[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	glTexParameterfv(GL_TEXTURE_CUBE_MAP_ARRAY, GL_TEXTURE_BORDER_COLOR, border);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, _hid);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, _tid, 0);
+
+	glDrawBuffer(GL_NONE);
+	glReadBuffer(GL_NONE);
+
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+		printf_s("FRAMEBUFFER ERROR!");
+	}
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void Framebuffer3DArray::bind() {
+	glViewport(0, 0, _size, _size);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, _hid);
+	glClear(GL_DEPTH_BUFFER_BIT);
+}
+
+void Framebuffer3DArray::unbind(unsigned int width, unsigned int height, unsigned int slot) {
+	glViewport(0, 0, width, height);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
+	glActiveTexture(GL_TEXTURE0 + slot);
+	glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY, _tid);
 }
