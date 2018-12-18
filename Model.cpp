@@ -11,6 +11,10 @@ Model::Model(const std::string& filepath) {
 	loadViaAssimp(filepath);
 }
 
+Model::Model(float size, float height) {
+	generate(size, height);
+}
+
 void Model::loadViaAssimp(const std::string& filepath) {
 	Assimp::Importer importer;
 
@@ -109,4 +113,11 @@ void Model::loadViaAssimp(const std::string& filepath) {
 	};
 
 	processNode(scene, scene->mRootNode);
+}
+
+void Model::generate(float size, float height) {
+	const float minor = size / 100.0f;
+	const float major = size / 5.0f;
+
+
 }

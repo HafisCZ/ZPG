@@ -48,11 +48,16 @@ class Application {
 			Model mPerson("resources/models/ghost/ghost.obj");
 			Model mSphere("resources/models/sphere.obj");
 			Model mQuad("resources/models/quad.obj");
+			Model mNano("resources/models/nanosuit/nanosuit.obj");
 
 			/*
 				Scene objects
 			*/
 			Object person(mPerson);
+
+			Object nano(mNano);
+			nano.setTransformation(glm::scale(glm::mat4(1.0f), glm::vec3(0.5f)));
+			nano.setPosition(3.0f, 0.0f, 0.0f);
 
 			Object floor(mQuad);
 			floor.setTransformation(glm::scale(glm::mat4(1.0f), glm::vec3(25.0f)));
@@ -66,7 +71,7 @@ class Application {
 				Scene
 			*/
 			Scene scene;
-
+			
 			/*
 				Lighting configuration
 			*/
@@ -78,6 +83,7 @@ class Application {
 			*/
 			scene.deferred().add(person);
 			scene.deferred().add(floor);
+			scene.deferred().add(nano);
 
 			scene.skybox().set(skybox);
 

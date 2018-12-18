@@ -1,0 +1,436 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="FullSignature">
+  <Class Name="Application">
+    <Position X="14" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Application.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Renderer">
+    <Position X="18" Y="14.5" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAiAAgAACAAAAAAAIAAAIQADAAAAhAAgCCAAEAAAA=</HashCode>
+      <FileName>Renderer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Window">
+    <Position X="31.25" Y="16.75" Width="8" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Class Name="Window::GLWrapper">
+        <TypeIdentifier>
+          <NewMemberFileName>Window.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAACAAAAAAAAAAAEQAAAAAAAACACAAAAAA=</HashCode>
+      <FileName>Window.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WindowManager">
+    <Position X="28.75" Y="12.75" Width="4.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAAAAAAAAAAAAABAAAAIABAAgAAAIAAQ=</HashCode>
+      <FileName>WindowManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WindowEventManager">
+    <Position X="27.25" Y="1.5" Width="6.25" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAAAEAgAAoAAAAAAAAAAAAAABAAAAAAAAAQ=</HashCode>
+      <FileName>WindowEvent.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="InputManager">
+    <Position X="28" Y="8.25" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AIAQAAAAAAAABAAAAIAAAAAAAACAAAAAAAACLAABEAQ=</HashCode>
+      <FileName>InputManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Buffer">
+    <Position X="1" Y="0.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAAQAAAAAAAAAAQAAAAAAAAAAAAAQRAA=</HashCode>
+      <FileName>Buffer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="IndexBuffer">
+    <Position X="2.5" Y="9.25" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAAAAAAAAEAABAAAAAAAAAACAAAAEBAA=</HashCode>
+      <FileName>IndexBuffer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="VertexArray">
+    <Position X="2.5" Y="11.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAACAAQEAABAA=</HashCode>
+      <FileName>VertexArray.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="VertexLayout">
+    <Position X="23" Y="18.25" Width="3.75" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Struct Name="VertexLayout::Block">
+        <TypeIdentifier>
+          <NewMemberFileName>VertexBuffer.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAIIAAABAAAAAAAAAAAAAAAAAAEABAAAAAA=</HashCode>
+      <FileName>VertexBuffer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="VertexBuffer">
+    <Position X="2.5" Y="6.25" Width="4.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAAAAIAAAAAAAAAAAAAAAAgAACAAAACAAAAEFAA=</HashCode>
+      <FileName>VertexBuffer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Alignment">
+    <Position X="17.25" Y="1.25" Width="4.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>UniformBuffer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UniformLayout">
+    <Position X="10" Y="19.5" Width="3" />
+    <NestedTypes>
+      <Struct Name="UniformLayout::BlockItem" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>UniformBuffer.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Struct Name="UniformLayout::Block" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>UniformBuffer.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAAIAIAAAAAAAEAgAAABAAAAAAEAAABAIAAAA=</HashCode>
+      <FileName>UniformBuffer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UniformBuffer">
+    <Position X="2.5" Y="3.5" Width="5.25" />
+    <InheritanceLine Type="Buffer" FixedToPoint="true">
+      <Path>
+        <Point X="2" Y="3.017" />
+        <Point X="2" Y="4.875" />
+        <Point X="2.5" Y="4.875" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAAAAAAACAAAAAAgAACAAAAAAAAAABAI=</HashCode>
+      <FileName>UniformBuffer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Framebuffer">
+    <Position X="3.75" Y="0.75" Width="4.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAIAAAAAAAAAAABAAAAAAAAAAAAAAAAAABAA=</HashCode>
+      <FileName>Framebuffer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Framebuffer2D">
+    <Position X="9.25" Y="3.25" Width="4.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAICAAAAAAAAAAAAAABAAAAAAAAAAAAAABAE=</HashCode>
+      <FileName>Framebuffer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Framebuffer3D">
+    <Position X="8.5" Y="6.25" Width="4.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAIABAE=</HashCode>
+      <FileName>Framebuffer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Framebuffer3DArray">
+    <Position X="9.25" Y="0.75" Width="4.75" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAACAAAIABAA=</HashCode>
+      <FileName>Framebuffer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GBuffer">
+    <Position X="27" Y="18.25" Width="3.5" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Enum Name="GBuffer::Textures">
+        <TypeIdentifier>
+          <NewMemberFileName>GBuffer.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAIAAAEAYAAAAAAAAAAAAAAAAAAAAIQIAAAAAAABAA=</HashCode>
+      <FileName>GBuffer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TextureGuard">
+    <Position X="23.5" Y="9" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAIAAIACAAQAAAAAAAAAAAAQAAQgAAAAAAAA=</HashCode>
+      <FileName>Texture.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Texture">
+    <Position X="7.5" Y="8.75" Width="4.25" />
+    <TypeIdentifier>
+      <HashCode>QAAIAABAAMCAgAQAAQACACAAABAAAAAgAAIAAAAAAEA=</HashCode>
+      <FileName>Texture.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Texture2D">
+    <Position X="12.5" Y="11.75" Width="3.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACA=</HashCode>
+      <FileName>Texture.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Texture3D">
+    <Position X="12.5" Y="10.25" Width="4.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Texture.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TextureLoader">
+    <Position X="17.5" Y="19" Width="5.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Texture.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Program">
+    <Position X="24.25" Y="12.5" Width="4.25" />
+    <TypeIdentifier>
+      <HashCode>AAAIAQAAAIAAAAEAAAABAAAAAAgAAAAAAAABAAAABAA=</HashCode>
+      <FileName>Program.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ProgramIO">
+    <Position X="4.5" Y="19.5" Width="4.75" />
+    <TypeIdentifier>
+      <HashCode>ACIAAABAAAAAAAAAAAAAAQIAAQAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Program.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ProgramAdapter">
+    <Position X="14.5" Y="4.5" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAAAAAIQAAIAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ProgramAdapter.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Camera">
+    <Position X="23.5" Y="1.25" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAACICggAIAAAACRAAAQBAAAAAACAgQgQCAIgAABAAA=</HashCode>
+      <FileName>Camera.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Scene">
+    <Position X="33.75" Y="1.5" Width="4.5" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Struct Name="Scene::LightVectorProxy">
+        <TypeIdentifier>
+          <NewMemberFileName>Scene.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Struct Name="Scene::LightAmbProxy">
+        <TypeIdentifier>
+          <NewMemberFileName>Scene.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Struct Name="Scene::LightPointProxy">
+        <TypeIdentifier>
+          <NewMemberFileName>Scene.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Struct Name="Scene::SkyboxProxy">
+        <TypeIdentifier>
+          <NewMemberFileName>Scene.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Struct Name="Scene::ObjectProxy">
+        <TypeIdentifier>
+          <NewMemberFileName>Scene.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>QCAAggCAAACAAAAgAABCAAAAAAAARAAAIAEAACAAAAA=</HashCode>
+      <FileName>Scene.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Mesh">
+    <Position X="17.75" Y="11" Width="4.75" />
+    <TypeIdentifier>
+      <HashCode>AAAACACAAAIAAAAABBgAAAAAAAAACAAAAQACAAAAAAA=</HashCode>
+      <FileName>Mesh.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Model">
+    <Position X="0.75" Y="19.75" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAgAAIAgAAA=</HashCode>
+      <FileName>Model.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Object">
+    <Position X="13.5" Y="18.25" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAAAAAAAAgAgAAAAAAAAAAAAAAAAACAAAAABA=</HashCode>
+      <FileName>Object.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Skybox">
+    <Position X="21.75" Y="16.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAgwAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Skybox.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Light">
+    <Position X="5.25" Y="13" Width="3" />
+    <TypeIdentifier>
+      <HashCode>EEAAAAAIBAAIAAQAAAAAAgAAAQAAAAAAAAAAIAAAAAA=</HashCode>
+      <FileName>Light.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AmbientLight">
+    <Position X="0.5" Y="17.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Light.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="VectorLight">
+    <Position X="3.25" Y="17.75" Width="3.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Light.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PointLight">
+    <Position X="7.25" Y="17.75" Width="5.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAA=</HashCode>
+      <FileName>Light.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpatialObject">
+    <Position X="9.25" Y="13.25" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>IAABIAAAAAAAAAAAAAAAAAACAEAAAAAAAAAAgGABAAA=</HashCode>
+      <FileName>SpatialObject.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TransformableObject">
+    <Position X="13.25" Y="13.5" Width="4" />
+    <TypeIdentifier>
+      <HashCode>YAABAAAAAAAAAAIIAQBABAAAAAAAAAAAAAAAAQAQAAA=</HashCode>
+      <FileName>TransformableObject.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Adapters::GeometryPassProgramAdapter">
+    <Position X="18.75" Y="2.75" Width="4.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>ProgramAdapter.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Adapters::ShadingPointPassProgramAdapter">
+    <Position X="18.5" Y="8.75" Width="4.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>ProgramAdapter.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Adapters::SkyboxProgramAdapter">
+    <Position X="18.75" Y="4.75" Width="4" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>ProgramAdapter.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Adapters::LightPassProgramAdapter">
+    <Position X="18.75" Y="6.75" Width="4" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>ProgramAdapter.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MeshData::Pack">
+    <Position X="17.5" Y="20.75" Width="3.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAACAAQgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Mesh.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="Color">
+    <Position X="28" Y="4.5" Width="2.5" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Enum Name="Color::Predefined">
+        <TypeIdentifier>
+          <NewMemberFileName>Constants.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAA=</HashCode>
+      <FileName>Constants.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="Defaults">
+    <Position X="23.25" Y="6.75" Width="3.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAIAAAAAAIAE=</HashCode>
+      <FileName>Renderer.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="WindowEvent::Event">
+    <Position X="14.5" Y="0.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>WindowEvent.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="WindowEvent::CursorShownEvent">
+    <Position X="14.25" Y="2.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAYA=</HashCode>
+      <FileName>WindowEvent.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="MeshData::Property">
+    <Position X="21.75" Y="14.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAQAA=</HashCode>
+      <FileName>Mesh.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

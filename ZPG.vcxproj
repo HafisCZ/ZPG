@@ -178,6 +178,7 @@
     <ClInclude Include="WindowManager.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ClassDiagram.cd" />
     <None Include="geom.frag" />
     <None Include="geom.vert" />
     <None Include="light.frag" />

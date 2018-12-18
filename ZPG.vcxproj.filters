@@ -261,5 +261,6 @@
     <None Include="light.vert">
       <Filter>Resource Files\Deferred shading\Shading pass</Filter>
     </None>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
 </Project>
